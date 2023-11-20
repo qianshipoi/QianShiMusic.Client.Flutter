@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_music/pages/home/index_page.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/utils/logger.dart';
+import 'package:qianshi_music/utils/ssj_request_manager.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
   const PlaylistDetailPage({super.key});
@@ -13,9 +16,10 @@ class PlaylistDetailPage extends StatefulWidget {
 class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   final int playlistId = Get.arguments;
 
-  Future<void> getPlaylistDetail() async {
+  Future<Playlist> getPlaylistDetail() async {
     final response = await HttpUtils.get('playlist/detail?id=$playlistId');
-    logger.i(response.data);
+    final playlist = Playlist.fromMap(response.data['playlist']);
+    return playlist;
   }
 
   @override
@@ -30,8 +34,50 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
       appBar: AppBar(
         title: const Text("PlaylistDetailPage"),
       ),
-      body: const Center(
-        child: Text("PlaylistDetailPage"),
+      body: FutureBuilder(
+        future: getPlaylistDetail(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            final playlist = snapshot.data as Playlist;
+            logger.i(playlist.tracks.length);
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  CachedNetworkImage(
+                    httpHeaders: Map<String, String>.from(
+                        {"User-Agent": bytesUserAgent}),
+                    imageUrl: playlist.coverImgUrl,
+                    progressIndicatorBuilder:
+                        (context, url, downloadProgress) =>
+                            CircularProgressIndicator(
+                                value: downloadProgress.progress),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ),
+                  Text(playlist.name),
+                  Text(playlist.description),
+                  Text(playlist.playCount.toString()),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: playlist.tracks.length,
+                    itemBuilder: (context, index) {
+                      final track = playlist.tracks[index];
+                      return ListTile(
+                        title: Text(track.name),
+                        subtitle: Text(track.al.name),
+                        onTap: () {
+                          logger.i(track.name);
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }

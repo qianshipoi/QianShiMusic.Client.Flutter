@@ -6,6 +6,7 @@ import 'package:qianshi_music/provider/auth_provider.dart';
 import 'package:qianshi_music/stores/index_controller.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/utils/logger.dart';
+import 'package:qianshi_music/utils/sputils.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -244,6 +245,7 @@ class _LoginPageState extends State<LoginPage> {
         throw ErrorDescription(response.toString());
       }
       logger.i(response.bodyString);
+      SpUtil().setBool("IsLogin", true);
       Get.off(() => const HomePage());
     } catch (e) {
       logger.e(e);
@@ -255,6 +257,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future _anonimousLogin() async {
     await HttpUtils.get("register/anonimous");
+    SpUtil().setBool("IsLogin", true);
     Get.off(() => const HomePage());
   }
 
