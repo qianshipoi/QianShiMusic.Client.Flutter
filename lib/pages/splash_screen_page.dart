@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/pages/home_page.dart';
 import 'package:lottie/lottie.dart';
-import 'package:qianshi_music/utils/http/http_util.dart';
+import 'package:qianshi_music/pages/login_page.dart';
+import 'package:qianshi_music/utils/sputils.dart';
 
 class SplahScreenPage extends StatefulWidget {
   const SplahScreenPage({super.key});
@@ -38,8 +39,11 @@ class _SplahScreenPageState extends State<SplahScreenPage>
     );
   }
 
-  _checkToken(context) async {
-    await HttpUtils.get("register/anonimous");
-    Get.off(() => const HomePage());
+  _checkToken(context) {
+    if (SpUtil().getBool("IsLogin") ?? false) {
+      Get.off(() => const HomePage());
+    } else {
+      Get.off(() => const LoginPage());
+    }
   }
 }

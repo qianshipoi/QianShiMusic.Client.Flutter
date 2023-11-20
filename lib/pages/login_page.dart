@@ -4,6 +4,7 @@ import 'package:qianshi_music/locale/globalization.dart';
 import 'package:qianshi_music/pages/home_page.dart';
 import 'package:qianshi_music/provider/auth_provider.dart';
 import 'package:qianshi_music/stores/index_controller.dart';
+import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/utils/logger.dart';
 
 class LoginPage extends StatefulWidget {
@@ -57,6 +58,7 @@ class _LoginPageState extends State<LoginPage> {
                 buildLanguageSelect(context),
                 const SizedBox(height: 50),
                 buildLoginButton(context),
+                buildAnonimousLoginLink(context),
                 const SizedBox(height: 30),
                 buildOtherLoginText(),
                 buildOtherMethod(context),
@@ -166,6 +168,24 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Widget buildAnonimousLoginLink(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: TextButton(
+          onPressed: () {
+            _anonimousLogin();
+          },
+          child: const Text(
+            '游客登录',
+            style: TextStyle(fontSize: 14, color: Colors.grey),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget buildOtherLoginText() {
     return Center(
         child: Text(Globalization.otherAccountLogin.tr,
@@ -219,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future _doLogin(context) async {
     try {
-      var response = await _authProvider.anonimous();
+      var response = await _authProvider.login(_account, _password);
       if (!response.isOk) {
         throw ErrorDescription(response.toString());
       }
@@ -231,6 +251,11 @@ class _LoginPageState extends State<LoginPage> {
           Globalization.errorAccountNoExistsOrIncorrectPassword.tr,
           backgroundColor: Theme.of(context).primaryColor);
     }
+  }
+
+  Future _anonimousLogin() async {
+    await HttpUtils.get("register/anonimous");
+    Get.off(() => const HomePage());
   }
 
   Widget buildLanguageSelect(BuildContext context) {
