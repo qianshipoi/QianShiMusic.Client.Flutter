@@ -153,7 +153,7 @@ class _IndexPageState extends State<IndexPage> {
           leading: CachedNetworkImage(
             httpHeaders:
                 Map<String, String>.from({"User-Agent": bytesUserAgent}),
-            imageUrl: playlist.coverImgUrl,
+            imageUrl: "${playlist.coverImgUrl}?param=48y48",
             progressIndicatorBuilder: (context, url, downloadProgress) =>
                 CircularProgressIndicator(value: downloadProgress.progress),
             errorWidget: (context, url, error) => const Icon(Icons.error),

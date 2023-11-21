@@ -11,6 +11,7 @@ import 'package:qianshi_music/pages/home/my_page.dart';
 import 'package:qianshi_music/stores/index_controller.dart';
 import 'package:qianshi_music/utils/capture_util.dart';
 import 'package:qianshi_music/utils/circle_image_painter.dart';
+import 'package:qianshi_music/utils/sputils.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -139,7 +140,10 @@ class _HomePageState extends State<HomePage>
                   ),
                   ListTile(
                     title: Text(Globalization.logout.tr),
-                    onTap: () {},
+                    onTap: () {
+                      SpUtil().setBool('IsLogin', false);
+                      Get.offNamed(RouterContants.login);
+                    },
                   )
                 ],
               ),

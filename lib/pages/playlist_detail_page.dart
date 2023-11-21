@@ -30,55 +30,56 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("PlaylistDetailPage"),
-      ),
-      body: FutureBuilder(
-        future: getPlaylistDetail(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            final playlist = snapshot.data as Playlist;
-            logger.i(playlist.tracks.length);
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  CachedNetworkImage(
+    return FutureBuilder(
+      future: getPlaylistDetail(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          final playlist = snapshot.data as Playlist;
+          logger.i(playlist.tracks.length);
+          return CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                expandedHeight: 230.0,
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(playlist.name),
+                  background: CachedNetworkImage(
                     httpHeaders: Map<String, String>.from(
                         {"User-Agent": bytesUserAgent}),
                     imageUrl: playlist.coverImgUrl,
-                    progressIndicatorBuilder:
-                        (context, url, downloadProgress) =>
-                            CircularProgressIndicator(
-                                value: downloadProgress.progress),
+                    fit: BoxFit.fitHeight,
                     errorWidget: (context, url, error) =>
                         const Icon(Icons.error),
                   ),
-                  Text(playlist.name),
-                  Text(playlist.description),
-                  Text(playlist.playCount.toString()),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: playlist.tracks.length,
-                    itemBuilder: (context, index) {
-                      final track = playlist.tracks[index];
-                      return ListTile(
-                        title: Text(track.name),
-                        subtitle: Text(track.al.name),
-                        onTap: () {
-                          logger.i(track.name);
-                        },
-                      );
-                    },
-                  ),
-                ],
+                ),
               ),
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+              SliverFixedExtentList(
+                  itemExtent: 40,
+                  delegate: SliverChildListDelegate(
+                    [
+                      Text(playlist.name),
+                      Text(playlist.description),
+                      Text(playlist.playCount.toString()),
+                    ],
+                  )),
+              SliverList(
+                delegate: SliverChildBuilderDelegate((content, index) {
+                  final track = playlist.tracks[index];
+                  return ListTile(
+                    title: Text(track.name),
+                    subtitle: Text(track.al.name),
+                    onTap: () {
+                      logger.i(track.name);
+                    },
+                  );
+                }, childCount: playlist.tracks.length),
+              ),
+            ],
+          );
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 }

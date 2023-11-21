@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/locale/globalization.dart';
 import 'package:qianshi_music/pages/home_page.dart';
 import 'package:qianshi_music/provider/auth_provider.dart';
+import 'package:qianshi_music/stores/current_user_controller.dart';
 import 'package:qianshi_music/stores/index_controller.dart';
-import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/utils/sputils.dart';
 
@@ -17,9 +19,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey _formKey = GlobalKey<FormState>();
-  final _authProvider = Get.find<AuthProvider>();
   var _isObscure = true;
-  late String _account, _password;
+  String? _account, _password;
   Color _eyeColor = Colors.grey;
   final List _loginMethod = [
     {
@@ -36,6 +37,9 @@ class _LoginPageState extends State<LoginPage> {
     }
   ];
   final _indexController = Get.find<IndexController>();
+  final CurrentUserController _currentUserController = Get.find();
+  Timer? _timer;
+  final _countDown = 60.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -104,35 +108,63 @@ class _LoginPageState extends State<LoginPage> {
         }
         return null;
       },
-      onSaved: (v) => _account = v!,
+      onChanged: (value) {
+        _account = value;
+        logger.i(_account);
+      },
     );
   }
 
   Widget buildPasswordTextField(BuildContext context) {
-    return TextFormField(
-      obscureText: _isObscure,
-      onSaved: (v) => _password = v!,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return Globalization.passwordCanNotBeEmpty.tr;
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-          labelText: Globalization.password.tr,
-          suffixIcon: IconButton(
-              onPressed: () {
-                setState(() {
-                  _isObscure = !_isObscure;
-                  _eyeColor = _isObscure
-                      ? Colors.grey
-                      : Theme.of(context).iconTheme.color!;
-                });
-              },
-              icon: Icon(
-                Icons.remove_red_eye,
-                color: _eyeColor,
-              ))),
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            // obscureText: _isObscure,
+            onChanged: (v) => _password = v,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return Globalization.passwordCanNotBeEmpty.tr;
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+                labelText: Globalization.password.tr,
+                suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isObscure = !_isObscure;
+                        _eyeColor = _isObscure
+                            ? Colors.grey
+                            : Theme.of(context).iconTheme.color!;
+                      });
+                    },
+                    icon: Icon(
+                      Icons.remove_red_eye,
+                      color: _eyeColor,
+                    ))),
+          ),
+        ),
+        Obx(
+          () => _countDown.value == 60
+              ? TextButton(
+                  onPressed: () {
+                    _sent(context);
+                  },
+                  child: const Text(
+                    "发送",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                )
+              : TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "${_countDown.value}s",
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ),
+        ),
+      ],
     );
   }
 
@@ -176,7 +208,7 @@ class _LoginPageState extends State<LoginPage> {
         alignment: Alignment.centerRight,
         child: TextButton(
           onPressed: () {
-            _anonimousLogin();
+            _anonimousLogin(context);
           },
           child: const Text(
             '游客登录',
@@ -238,15 +270,41 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Future _sent(context) async {
+    logger.i(_account);
+    if (_account == null || _account == '' || _timer != null) {
+      return;
+    }
+    final response = await AuthProvider.sent(_account!);
+    logger.i(response);
+    if (response.statusCode == 200 && response.data['code'] == 200) {
+      _countDown.value = 60;
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        _countDown.value--;
+        if (timer.tick == 60) {
+          timer.cancel();
+          _timer = null;
+        }
+      });
+    } else {
+      Get.snackbar(Globalization.error.tr, "发送短信失败",
+          backgroundColor: Theme.of(context).primaryColor);
+    }
+  }
+
   Future _doLogin(context) async {
     try {
-      var response = await _authProvider.login(_account, _password);
-      if (!response.isOk) {
-        throw ErrorDescription(response.toString());
+      final response = await AuthProvider.login(_account!, captcha: _password);
+      if (response.code == 200) {
+        SpUtil().setBool("IsLogin", true);
+        _currentUserController.currentAccount.value = response.account;
+        _currentUserController.currentProfile.value = response.profile;
+        Get.off(() => const HomePage());
+      } else {
+        Get.snackbar(Globalization.error.tr,
+            Globalization.errorAccountNoExistsOrIncorrectPassword.tr,
+            backgroundColor: Theme.of(context).primaryColor);
       }
-      logger.i(response.bodyString);
-      SpUtil().setBool("IsLogin", true);
-      Get.off(() => const HomePage());
     } catch (e) {
       logger.e(e);
       Get.snackbar(Globalization.error.tr,
@@ -255,9 +313,17 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future _anonimousLogin() async {
-    await HttpUtils.get("register/anonimous");
+  Future _anonimousLogin(context) async {
+    await AuthProvider.anonimous();
+    final response = await AuthProvider.account();
+    if (response == null || response.code != 200) {
+      Get.snackbar(Globalization.error.tr, "游客登录失败",
+          backgroundColor: Theme.of(context).primaryColor);
+      return;
+    }
     SpUtil().setBool("IsLogin", true);
+    _currentUserController.currentAccount.value = response.account;
+    _currentUserController.currentProfile.value = response.profile;
     Get.off(() => const HomePage());
   }
 

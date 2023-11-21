@@ -4,6 +4,8 @@ import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/pages/home_page.dart';
 import 'package:lottie/lottie.dart';
 import 'package:qianshi_music/pages/login_page.dart';
+import 'package:qianshi_music/provider/auth_provider.dart';
+import 'package:qianshi_music/stores/current_user_controller.dart';
 import 'package:qianshi_music/utils/sputils.dart';
 
 class SplahScreenPage extends StatefulWidget {
@@ -39,9 +41,17 @@ class _SplahScreenPageState extends State<SplahScreenPage>
     );
   }
 
-  _checkToken(context) {
+  Future _checkToken(context) async {
     if (SpUtil().getBool("IsLogin") ?? false) {
-      Get.off(() => const HomePage());
+      final response = await AuthProvider.account();
+      if (response != null && response.code == 200) {
+        final currentUserController = Get.find<CurrentUserController>();
+        currentUserController.currentAccount.value = response.account;
+        currentUserController.currentProfile.value = response.profile;
+        Get.off(() => const HomePage());
+      } else {
+        Get.off(() => const LoginPage());
+      }
     } else {
       Get.off(() => const LoginPage());
     }

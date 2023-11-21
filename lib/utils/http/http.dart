@@ -91,7 +91,7 @@ class Http {
     return headers;
   }
 
-  Future get(
+  Future<Response<T>> get<T>(
     String path, {
     Map<String, dynamic>? params,
     Options? options,
@@ -114,8 +114,8 @@ class Http {
     if (authorization != null) {
       requestOptions = requestOptions.copyWith(headers: authorization);
     }
-    Response response;
-    response = await dio.get(
+    Response<T> response;
+    response = await dio.get<T>(
       path,
       queryParameters: params,
       options: requestOptions,
@@ -125,7 +125,7 @@ class Http {
     return response;
   }
 
-  Future post(
+  Future<Response<T>> post<T>(
     String path, {
     Map<String, dynamic>? params,
     data,
@@ -137,7 +137,7 @@ class Http {
     if (authorization != null) {
       requestOptions = requestOptions.copyWith(headers: authorization);
     }
-    var response = await dio.post(
+    var response = await dio.post<T>(
       path,
       data: data,
       queryParameters: params,

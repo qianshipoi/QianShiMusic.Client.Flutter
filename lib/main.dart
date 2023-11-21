@@ -13,6 +13,7 @@ import 'package:qianshi_music/pages/search_page.dart';
 import 'package:qianshi_music/pages/settings_page.dart';
 import 'package:qianshi_music/pages/splash_screen_page.dart';
 import 'package:qianshi_music/provider/auth_provider.dart';
+import 'package:qianshi_music/stores/current_user_controller.dart';
 import 'package:qianshi_music/stores/index_controller.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/utils/sputils.dart';
@@ -39,6 +40,7 @@ Future<void> initStore() async {
   HttpUtils.init(
       baseUrl: ApiContants.baseUrl, interceptors: [CookieManager(jar)]);
   Get.put(IndexController());
+  Get.put(CurrentUserController());
   Get.lazyPut(() => AuthProvider());
 }
 

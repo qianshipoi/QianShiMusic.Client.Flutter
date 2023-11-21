@@ -25,7 +25,7 @@ class HttpUtils {
     Http().cancelRequests(token: token);
   }
 
-  static Future get(
+  static Future<Response<T>> get<T>(
     String path, {
     Map<String, dynamic>? params,
     Options? options,
@@ -46,14 +46,14 @@ class HttpUtils {
     );
   }
 
-  static Future post(
+  static Future<Response<T>> post<T>(
     String path, {
     data,
     Map<String, dynamic>? params,
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    return await Http().post(
+    return await Http().post<T>(
       path,
       data: data,
       params: params,
