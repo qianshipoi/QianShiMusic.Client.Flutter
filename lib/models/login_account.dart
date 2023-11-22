@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class LoginAccount {
@@ -7,13 +8,12 @@ class LoginAccount {
   int status;
   int whitelistAuthority;
   int createTime;
-  String salt;
+  String? salt;
   int tokenVersion;
   int ban;
   int vipType;
-  int viptypeVersion;
   bool anonimousUser;
-  bool uninitialized;
+  bool? uninitialized;
   LoginAccount({
     required this.id,
     required this.userName,
@@ -21,13 +21,12 @@ class LoginAccount {
     required this.status,
     required this.whitelistAuthority,
     required this.createTime,
-    required this.salt,
+    this.salt,
     required this.tokenVersion,
     required this.ban,
     required this.vipType,
-    required this.viptypeVersion,
     required this.anonimousUser,
-    required this.uninitialized,
+    this.uninitialized,
   });
 
   Map<String, dynamic> toMap() {
@@ -42,7 +41,6 @@ class LoginAccount {
       'tokenVersion': tokenVersion,
       'ban': ban,
       'vipType': vipType,
-      'viptypeVersion': viptypeVersion,
       'anonimousUser': anonimousUser,
       'uninitialized': uninitialized,
     };
@@ -56,18 +54,16 @@ class LoginAccount {
       status: map['status'] as int,
       whitelistAuthority: map['whitelistAuthority'] as int,
       createTime: map['createTime'] as int,
-      salt: map['salt'] as String,
+      salt: map['salt'] != null ? map['salt'] as String : null,
       tokenVersion: map['tokenVersion'] as int,
       ban: map['ban'] as int,
       vipType: map['vipType'] as int,
-      viptypeVersion: map['viptypeVersion'] as int,
       anonimousUser: map['anonimousUser'] as bool,
-      uninitialized: map['uninitialized'] as bool,
+      uninitialized: map['uninitialized'] != null ? map['uninitialized'] as bool : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory LoginAccount.fromJson(String source) =>
-      LoginAccount.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory LoginAccount.fromJson(String source) => LoginAccount.fromMap(json.decode(source) as Map<String, dynamic>);
 }

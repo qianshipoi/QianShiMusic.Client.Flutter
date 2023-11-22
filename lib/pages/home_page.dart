@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/locale/globalization.dart';
+import 'package:qianshi_music/main.dart';
 import 'package:qianshi_music/pages/home/found_page.dart';
 import 'package:qianshi_music/pages/home/index_page.dart';
 import 'package:qianshi_music/pages/home/my_page.dart';
@@ -142,6 +143,7 @@ class _HomePageState extends State<HomePage>
                     title: Text(Globalization.logout.tr),
                     onTap: () {
                       SpUtil().setBool('IsLogin', false);
+                      jar.deleteAll();
                       Get.offNamed(RouterContants.login);
                     },
                   )
