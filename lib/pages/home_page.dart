@@ -13,6 +13,7 @@ import 'package:qianshi_music/stores/index_controller.dart';
 import 'package:qianshi_music/utils/capture_util.dart';
 import 'package:qianshi_music/utils/circle_image_painter.dart';
 import 'package:qianshi_music/utils/sputils.dart';
+import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -97,6 +98,8 @@ class _HomePageState extends State<HomePage>
     }
   }
 
+  final PageController _pageController = PageController();
+
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
@@ -166,9 +169,22 @@ class _HomePageState extends State<HomePage>
                 onTap: (index) {
                   setState(() {
                     _currentPage = index;
+                    _pageController.jumpToPage(index);
                   });
                 }),
-            body: pages[_currentPage],
+            body: PageView(
+              controller: _pageController,
+              children: pages
+                  .map((e) => KeepAliveWrapper(
+                        child: e,
+                      ))
+                  .toList(),
+              onPageChanged: (value) {
+                setState(() {
+                  _currentPage = value;
+                });
+              },
+            ),
           ),
           _buildImageFromBytes()
         ],

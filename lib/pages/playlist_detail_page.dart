@@ -42,12 +42,15 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                 pinned: true,
                 expandedHeight: 230.0,
                 flexibleSpace: FlexibleSpaceBar(
-                  title: Text(playlist.name),
+                  title: Text(
+                    playlist.name,
+                    style: const TextStyle(overflow: TextOverflow.ellipsis),
+                  ),
                   background: CachedNetworkImage(
                     httpHeaders: Map<String, String>.from(
                         {"User-Agent": bytesUserAgent}),
                     imageUrl: playlist.coverImgUrl,
-                    fit: BoxFit.fitHeight,
+                    fit: BoxFit.fitWidth,
                     errorWidget: (context, url, error) =>
                         const Icon(Icons.error),
                   ),
@@ -57,7 +60,6 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                   itemExtent: 40,
                   delegate: SliverChildListDelegate(
                     [
-                      Text(playlist.name),
                       Text(playlist.description),
                       Text(playlist.playCount.toString()),
                     ],
