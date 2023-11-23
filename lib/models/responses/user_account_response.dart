@@ -5,10 +5,12 @@ import 'package:qianshi_music/models/login_profile.dart';
 
 class UserAccountResponse {
   final int code;
+  final String? msg;
   LoginAccount? account;
   LoginProfile? profile;
   UserAccountResponse({
     required this.code,
+    this.msg,
     this.account,
     this.profile,
   });

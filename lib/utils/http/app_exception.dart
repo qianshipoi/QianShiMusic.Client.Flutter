@@ -47,6 +47,11 @@ class AppException implements Exception {
             switch (errCode) {
               case 400:
                 {
+                  if (error.response!.data['message'] != null) {
+                    return ServerException(
+                        errCode!, error.response!.data['message']);
+                  }
+
                   return BadRequestException(errCode!, "请求语法错误");
                 }
               case 401:
@@ -106,4 +111,8 @@ class BadRequestException extends AppException {
 /// 未认证异常
 class UnauthorisedException extends AppException {
   UnauthorisedException(int code, String message) : super(code, message);
+}
+
+class ServerException extends AppException {
+  ServerException(int code, String message) : super(code, message);
 }

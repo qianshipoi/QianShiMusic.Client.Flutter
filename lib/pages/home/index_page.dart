@@ -1,12 +1,11 @@
 import 'dart:convert';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
-import 'package:qianshi_music/utils/ssj_request_manager.dart';
+import 'package:qianshi_music/widgets/fix_image.dart';
 
 class IndexPage extends StatefulWidget {
   const IndexPage({super.key});
@@ -150,13 +149,10 @@ class _IndexPageState extends State<IndexPage> {
       itemBuilder: (context, index) {
         final playlist = _playlists[index];
         return ListTile(
-          leading: CachedNetworkImage(
-            httpHeaders:
-                Map<String, String>.from({"User-Agent": bytesUserAgent}),
+          leading: FixImage(
             imageUrl: "${playlist.coverImgUrl}?param=48y48",
             progressIndicatorBuilder: (context, url, downloadProgress) =>
                 CircularProgressIndicator(value: downloadProgress.progress),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
           title: Text(
             playlist.name,

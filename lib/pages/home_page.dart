@@ -174,11 +174,7 @@ class _HomePageState extends State<HomePage>
                 }),
             body: PageView(
               controller: _pageController,
-              children: pages
-                  .map((e) => KeepAliveWrapper(
-                        child: e,
-                      ))
-                  .toList(),
+              children: pages.map((e) => KeepAliveWrapper(child: e)).toList(),
               onPageChanged: (value) {
                 setState(() {
                   _currentPage = value;

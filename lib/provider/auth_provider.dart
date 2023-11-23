@@ -1,9 +1,12 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_music/models/responses/login_anonimous_response.dart';
 import 'package:qianshi_music/models/responses/login_callphone_response.dart';
 import 'package:qianshi_music/models/responses/user_account_response.dart';
+import 'package:qianshi_music/utils/http/app_exception.dart';
 
 import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/utils/logger.dart';
@@ -52,15 +55,23 @@ class AuthProvider {
     return LoginCallphoneResponse.fromMap(response.data!);
   }
 
-  static Future<bool> anonimous() async {
+  static Future<LoginAnonimousResponse> anonimous() async {
     final response = await HttpUtils.get<dynamic>('register/anonimous');
-    return response.statusCode == 200;
+    return response.statusCode == 200
+        ? LoginAnonimousResponse.fromMap(response.data!)
+        : LoginAnonimousResponse(code: -1, cookie: null);
   }
 
-  static Future<UserAccountResponse?> account() async {
-    final response = await HttpUtils.get('user/account');
-    return response.statusCode == 200
-        ? UserAccountResponse.fromMap(response.data)
-        : null;
+  static Future<UserAccountResponse> account() async {
+    try {
+      final response = await HttpUtils.get('user/account', params: {
+        't': DateTime.now().millisecondsSinceEpoch,
+      });
+      return UserAccountResponse.fromMap(response.data);
+    } on DioException catch (e) {
+      final error = e.error as AppException;
+      Get.snackbar("错误", error.getMessage());
+      return UserAccountResponse(code: -406, msg: error.getMessage());
+    }
   }
 }

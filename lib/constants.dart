@@ -18,3 +18,11 @@ class AssetsContants {
   static const defaultAvatar =
       "https://chat-api.kuriyama.top/Raw/DefaultAvatar/1.jpg";
 }
+
+String formatMusicImageUrl(String url, {int? size}) {
+  return url + (size == null ? "" : "?param=$size");
+}
+
+class Global {
+  static String cookie = "";
+}

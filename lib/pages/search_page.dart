@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
+import 'package:qianshi_music/widgets/cat_playlist.dart';
+import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -9,7 +11,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
-  final List<String> tabs = ['单曲', '歌手', '专辑', '视频', '歌单', '电台', '用户'];
+  final List<String> tabs = [];
   late TabController _controller;
 
   @override
@@ -51,10 +53,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                 vsync: this);
             setState(() {});
           }),
-      body: TabBarView(
-        controller: _controller,
-        children: _buildItems(),
-      ),
+      body: _buildTabBarPageView(),
     );
   }
 
@@ -62,7 +61,6 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     return TabBar(
       controller: _controller,
       isScrollable: true,
-      labelColor: Colors.black,
       indicator: const UnderlineTabIndicator(
         borderSide: BorderSide(color: Color(0xff2fcfbb), width: 3),
         insets: EdgeInsets.fromLTRB(0, 0, 0, 10),
@@ -74,26 +72,20 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   }
 
   _buildTabBarPageView() {
-    return KeepAlive(
-      keepAlive: true,
-      child: Expanded(
-        flex: 1,
-        child: Container(
-          color: Colors.grey.withOpacity(0.3),
-          child: TabBarView(
-            controller: _controller,
-            children: _buildItems(),
-          ),
-        ),
+    return Container(
+      color: Colors.grey.withOpacity(0.3),
+      child: TabBarView(
+        controller: _controller,
+        children: _buildItems(),
       ),
     );
   }
 
   _buildItems() {
     return tabs.map<Widget>((e) {
-      return Container(
-        child: Center(
-          child: Text(e),
+      return KeepAliveWrapper(
+        child: CatPlaylist(
+          cat: e,
         ),
       );
     }).toList();

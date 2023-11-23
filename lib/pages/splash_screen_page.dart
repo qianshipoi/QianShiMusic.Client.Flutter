@@ -42,16 +42,18 @@ class _SplahScreenPageState extends State<SplahScreenPage>
   }
 
   Future _checkToken(context) async {
-    if (SpUtil().getBool("IsLogin") ?? false) {
-      final response = await AuthProvider.account();
-      if (response != null && response.code == 200) {
-        final currentUserController = Get.find<CurrentUserController>();
-        currentUserController.currentAccount.value = response.account;
-        currentUserController.currentProfile.value = response.profile;
-        Get.off(() => const HomePage());
-      } else {
-        Get.off(() => const LoginPage());
-      }
+    final isLogin = SpUtil().getBool("IsLogin") ?? false;
+    if (!isLogin) {
+      Get.off(() => const LoginPage());
+      return;
+    }
+    Global.cookie = SpUtil().getString("cookie") ?? "";
+    final response = await AuthProvider.account();
+    if (response.code == 200) {
+      final currentUserController = Get.find<CurrentUserController>();
+      currentUserController.currentAccount.value = response.account;
+      currentUserController.currentProfile.value = response.profile;
+      Get.off(() => const HomePage());
     } else {
       Get.off(() => const LoginPage());
     }

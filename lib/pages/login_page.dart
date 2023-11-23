@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/locale/globalization.dart';
 import 'package:qianshi_music/pages/home_page.dart';
 import 'package:qianshi_music/provider/auth_provider.dart';
@@ -297,6 +298,8 @@ class _LoginPageState extends State<LoginPage> {
       final response = await AuthProvider.login(_account!, captcha: _password);
       if (response.code == 200) {
         SpUtil().setBool("IsLogin", true);
+        SpUtil().setString("cookie", response.cookie!);
+        Global.cookie = response.cookie!;
         _currentUserController.currentAccount.value = response.account;
         _currentUserController.currentProfile.value = response.profile;
         Get.off(() => const HomePage());
@@ -314,14 +317,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future _anonimousLogin(context) async {
-    await AuthProvider.anonimous();
+    final anonimousResponse = await AuthProvider.anonimous();
+    if (anonimousResponse.code != 200) {
+      Get.snackbar(Globalization.error.tr, anonimousResponse.msg ?? "登录失败",
+          backgroundColor: Theme.of(context).primaryColor);
+      return;
+    }
+    Global.cookie = anonimousResponse.cookie!;
     final response = await AuthProvider.account();
-    if (response == null || response.code != 200) {
-      Get.snackbar(Globalization.error.tr, "游客登录失败",
+    if (response.code != 200) {
+      Get.snackbar(Globalization.error.tr, response.msg ?? "登录失败",
           backgroundColor: Theme.of(context).primaryColor);
       return;
     }
     SpUtil().setBool("IsLogin", true);
+    SpUtil().setString("cookie", anonimousResponse.cookie!);
     _currentUserController.currentAccount.value = response.account;
     _currentUserController.currentProfile.value = response.profile;
     Get.off(() => const HomePage());

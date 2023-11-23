@@ -1,10 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/pages/home/index_page.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/utils/logger.dart';
-import 'package:qianshi_music/utils/ssj_request_manager.dart';
+import 'package:qianshi_music/widgets/fix_image.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
   const PlaylistDetailPage({super.key});
@@ -44,15 +45,19 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(
                     playlist.name,
-                    style: const TextStyle(overflow: TextOverflow.ellipsis),
+                    style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: Theme.of(context).colorScheme.onBackground),
                   ),
-                  background: CachedNetworkImage(
-                    httpHeaders: Map<String, String>.from(
-                        {"User-Agent": bytesUserAgent}),
-                    imageUrl: playlist.coverImgUrl,
-                    fit: BoxFit.fitWidth,
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+                  background: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 0.0),
+                    child: Opacity(
+                      opacity: 0.5,
+                      child: FixImage(
+                        imageUrl: playlist.coverImgUrl,
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -68,6 +73,13 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                 delegate: SliverChildBuilderDelegate((content, index) {
                   final track = playlist.tracks[index];
                   return ListTile(
+                    leading: FixImage(
+                      width: 48,
+                      height: 48,
+                      imageUrl:
+                          "${playlist.tracks[index].al.picUrl}?param=50y50",
+                      fit: BoxFit.fitWidth,
+                    ),
                     title: Text(track.name),
                     subtitle: Text(track.al.name),
                     onTap: () {
