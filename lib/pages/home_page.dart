@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage>
   ];
   final List<Text> bottomLabels = [
     Text(Globalization.message.tr),
-    Text(Globalization.contacts.tr),
+    Text(Globalization.found.tr),
     Text(Globalization.my.tr)
   ];
   int _currentPage = 0;

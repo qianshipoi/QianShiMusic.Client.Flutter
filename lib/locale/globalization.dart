@@ -3,6 +3,7 @@ class Globalization {
   static const String message = "message";
   static const String my = "my";
   static const String contacts = "contacts";
+  static const String found = "found";
 
   static const String logout = "logout";
 

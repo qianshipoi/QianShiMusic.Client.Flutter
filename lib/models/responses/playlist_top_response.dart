@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:qianshi_music/pages/home/index_page.dart';
+import 'package:qianshi_music/models/playlist.dart';
 
 class PlaylistTopResponse {
   final int code;

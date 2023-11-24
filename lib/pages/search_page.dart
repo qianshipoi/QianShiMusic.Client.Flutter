@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/widgets/cat_playlist.dart';
 import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
 
@@ -10,27 +9,29 @@ class SearchPage extends StatefulWidget {
   State<SearchPage> createState() => _SearchPageState();
 }
 
+class SearchType {
+  final String name;
+  final int type;
+  const SearchType(this.name, this.type);
+}
+
 class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
-  final List<String> tabs = [];
+  final List<SearchType> tabs = [
+    const SearchType('综合', 1018),
+    const SearchType('单曲', 1),
+    const SearchType('歌手', 100),
+    const SearchType('专辑', 10),
+    const SearchType('视频', 1014),
+    const SearchType('歌单', 1000),
+    const SearchType('电台', 1009),
+    const SearchType('用户', 1002),
+  ];
   late TabController _controller;
 
   @override
   void initState() {
     super.initState();
     _controller = TabController(length: tabs.length, vsync: this);
-    getCatlist();
-  }
-
-  Future getCatlist() async {
-    final response = await PlaylistProvider.getPlaylistCatlist();
-    if (response.code == 200) {
-      tabs.clear();
-      tabs.add(response.all!.name);
-      tabs.addAll(response.sub!.map((e) => e.name).toList());
-      _controller = TabController(
-          length: tabs.length, initialIndex: _controller.index, vsync: this);
-      setState(() {});
-    }
   }
 
   @override
@@ -43,21 +44,11 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
           child: _buildTabBar(),
         ),
       ),
-      floatingActionButton: IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            tabs.add("新标签");
-            _controller = TabController(
-                length: tabs.length,
-                initialIndex: _controller.index,
-                vsync: this);
-            setState(() {});
-          }),
       body: _buildTabBarPageView(),
     );
   }
 
-  _buildTabBar() {
+  TabBar _buildTabBar() {
     return TabBar(
       controller: _controller,
       isScrollable: true,
@@ -65,13 +56,11 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         borderSide: BorderSide(color: Color(0xff2fcfbb), width: 3),
         insets: EdgeInsets.fromLTRB(0, 0, 0, 10),
       ),
-      tabs: tabs.map<Tab>((e) {
-        return Tab(text: e);
-      }).toList(),
+      tabs: tabs.map<Tab>((e) => Tab(text: e.name)).toList(),
     );
   }
 
-  _buildTabBarPageView() {
+  Widget _buildTabBarPageView() {
     return Container(
       color: Colors.grey.withOpacity(0.3),
       child: TabBarView(
@@ -81,13 +70,9 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     );
   }
 
-  _buildItems() {
-    return tabs.map<Widget>((e) {
-      return KeepAliveWrapper(
-        child: CatPlaylist(
-          cat: e,
-        ),
-      );
-    }).toList();
+  List<Widget> _buildItems() {
+    return tabs
+        .map<Widget>((e) => KeepAliveWrapper(child: CatPlaylist(cat: e.name)))
+        .toList();
   }
 }

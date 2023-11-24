@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qianshi_music/pages/home/index_page.dart';
+import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
@@ -77,11 +77,11 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                       width: 48,
                       height: 48,
                       imageUrl:
-                          "${playlist.tracks[index].al.picUrl}?param=50y50",
+                          "${playlist.tracks[index].album.picUrl}?param=50y50",
                       fit: BoxFit.fitWidth,
                     ),
                     title: Text(track.name),
-                    subtitle: Text(track.al.name),
+                    subtitle: Text(track.album.name),
                     onTap: () {
                       logger.i(track.name);
                     },

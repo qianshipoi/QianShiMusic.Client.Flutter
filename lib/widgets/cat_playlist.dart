@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qianshi_music/constants.dart';
-import 'package:qianshi_music/pages/home/index_page.dart';
+import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
@@ -29,9 +29,7 @@ class _CatPlaylistState extends State<CatPlaylist> {
   void initState() {
     super.initState();
     logger.i("initState:${widget.cat}");
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      logger.i("addPostFrameCallback:${timeStamp}");
       _refreshController.requestLoading();
     });
   }

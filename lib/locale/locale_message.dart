@@ -70,6 +70,7 @@ class LocaleMessage extends Translations {
           Globalization.groupNameCanNotBeEmpty: "Group name can not be empty",
           Globalization.search: "Search",
           Globalization.loading: "Loading...",
+          Globalization.found: "Found",
         },
         "zh_CN": {
           Globalization.language: "语言",
@@ -136,6 +137,7 @@ class LocaleMessage extends Translations {
           Globalization.groupNameCanNotBeEmpty: "群聊名称不能为空",
           Globalization.search: "搜索",
           Globalization.loading: "加载中...",
+          Globalization.found: "发现",
         },
       };
 }
