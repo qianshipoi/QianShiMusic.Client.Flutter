@@ -10,6 +10,7 @@ import 'package:qianshi_music/locale/locale_message.dart';
 import 'package:qianshi_music/pages/login_page.dart';
 import 'package:qianshi_music/pages/playlist_detail_page.dart';
 import 'package:qianshi_music/pages/search_page.dart';
+import 'package:qianshi_music/pages/search_result_page.dart';
 import 'package:qianshi_music/pages/settings_page.dart';
 import 'package:qianshi_music/pages/splash_screen_page.dart';
 import 'package:qianshi_music/provider/auth_provider.dart';
@@ -66,6 +67,8 @@ class MyApp extends StatelessWidget {
         RouterContants.search: (context) => const SearchPage(),
         RouterContants.login: (context) => const LoginPage(),
         RouterContants.playlistDetail: (context) => const PlaylistDetailPage(),
+        RouterContants.searchResult: (context) =>
+            SearchResultPage(keyword: Get.arguments),
       },
       home: const SplahScreenPage(),
     );

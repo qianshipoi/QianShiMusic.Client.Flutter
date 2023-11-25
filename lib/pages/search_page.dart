@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:qianshi_music/widgets/cat_playlist.dart';
-import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
+import 'package:get/get.dart';
+import 'package:qianshi_music/models/responses/search_suggest_response.dart';
+import 'package:qianshi_music/pages/search_result_page.dart';
+import 'package:qianshi_music/provider/search_provider.dart';
+import 'package:qianshi_music/utils/logger.dart';
+import 'package:qianshi_music/widgets/app_bar_search.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,63 +20,61 @@ class SearchType {
 }
 
 class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
-  final List<SearchType> tabs = [
-    const SearchType('综合', 1018),
-    const SearchType('单曲', 1),
-    const SearchType('歌手', 100),
-    const SearchType('专辑', 10),
-    const SearchType('视频', 1014),
-    const SearchType('歌单', 1000),
-    const SearchType('电台', 1009),
-    const SearchType('用户', 1002),
-  ];
-  late TabController _controller;
+  final TextEditingController _controller = TextEditingController();
+  final List<SearchSuggestResultMatch> _results = [];
 
   @override
   void initState() {
     super.initState();
-    _controller = TabController(length: tabs.length, vsync: this);
+  }
+
+  Future<void> _suggest() async {
+    logger.i('suggest');
+    if (_controller.text.isEmpty) {
+      _results.clear();
+      return;
+    }
+    final response =
+        await SearchProvider.suggest(_controller.text, isMobile: true);
+    if (response.code != 200) {
+      Get.snackbar('提示', response.msg!);
+      return;
+    }
+    logger.i('reset');
+    final result = response.result!;
+    _results.clear();
+    _results.addAll(result.allMatch);
+    setState(() {});
+  }
+
+  _search(String keyword) {
+    if (keyword.isEmpty) {
+      return;
+    }
+    _controller.text = keyword;
+    Get.to(SearchResultPage(keyword: keyword),
+        transition: Transition.noTransition);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('搜索'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(40),
-          child: _buildTabBar(),
-        ),
-      ),
-      body: _buildTabBarPageView(),
-    );
-  }
-
-  TabBar _buildTabBar() {
-    return TabBar(
-      controller: _controller,
-      isScrollable: true,
-      indicator: const UnderlineTabIndicator(
-        borderSide: BorderSide(color: Color(0xff2fcfbb), width: 3),
-        insets: EdgeInsets.fromLTRB(0, 0, 0, 10),
-      ),
-      tabs: tabs.map<Tab>((e) => Tab(text: e.name)).toList(),
-    );
-  }
-
-  Widget _buildTabBarPageView() {
-    return Container(
-      color: Colors.grey.withOpacity(0.3),
-      child: TabBarView(
+      appBar: AppBarSearch(
         controller: _controller,
-        children: _buildItems(),
+        hintText: '搜索歌曲、歌手、专辑',
+        onSearch: (value) => _search(value),
+        onChanged: (value) => _suggest(),
       ),
+      body: ListView.builder(
+          itemCount: _results.length,
+          itemBuilder: (context, index) {
+            final result = _results[index];
+            return ListTile(
+              leading: const Icon(Icons.search),
+              title: Text(result.keyword),
+              onTap: () => _search(result.keyword),
+            );
+          }),
     );
-  }
-
-  List<Widget> _buildItems() {
-    return tabs
-        .map<Widget>((e) => KeepAliveWrapper(child: CatPlaylist(cat: e.name)))
-        .toList();
   }
 }

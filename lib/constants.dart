@@ -11,6 +11,7 @@ class RouterContants {
   static const login = "/login";
   static const search = "/search";
   static const playlistDetail = "/playlistDetail";
+  static const searchResult = "/search_result";
 }
 
 class AssetsContants {

@@ -1,4 +1,5 @@
 import 'package:qianshi_music/models/responses/search_collect_response.dart';
+import 'package:qianshi_music/models/responses/search_suggest_response.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 
 enum MusicSearchType {
@@ -21,7 +22,7 @@ enum MusicSearchType {
 }
 
 class SearchProvider {
-  Future<dynamic> search(String query, MusicSearchType type,
+  static Future<dynamic> search(String query, MusicSearchType type,
       {int limit = 10, int offset = 0}) async {
     final response = await HttpUtils.get('/search', params: {
       'keywords': query,
@@ -50,5 +51,19 @@ class SearchProvider {
       case MusicSearchType.collect:
         return SearchCollectResponse.fromMap(data);
     }
+  }
+
+  static Future<SearchSuggestResponse> suggest(String keywords,
+      {bool isMobile = false}) async {
+    final params = {
+      'keywords': keywords,
+    };
+    if (isMobile) {
+      params['type'] = 'mobile';
+    }
+    final response = await HttpUtils.get('/search/suggest', params: params);
+    return response.statusCode == 200
+        ? SearchSuggestResponse.fromMap(response.data)
+        : SearchSuggestResponse(code: -1, msg: '请求失败');
   }
 }

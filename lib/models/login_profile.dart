@@ -8,7 +8,7 @@ class LoginProfile {
   int vipType;
   int authStatus;
   int djStatus;
-  String detailDescription;
+  String? detailDescription;
   int accountStatus;
   String nickname;
   int birthday;
@@ -16,11 +16,11 @@ class LoginProfile {
   int city;
   int province;
   bool defaultAvatar;
-  String description;
-  int followeds;
-  int follows;
-  int playlistCount;
-  int playlistBeSubscribedCount;
+  String? description;
+  int? followeds;
+  int? follows;
+  int? playlistCount;
+  int? playlistBeSubscribedCount;
   LoginProfile({
     required this.userId,
     required this.backgroundUrl,
@@ -29,7 +29,7 @@ class LoginProfile {
     required this.vipType,
     required this.authStatus,
     required this.djStatus,
-    required this.detailDescription,
+    this.detailDescription,
     required this.accountStatus,
     required this.nickname,
     required this.birthday,
@@ -37,11 +37,11 @@ class LoginProfile {
     required this.city,
     required this.province,
     required this.defaultAvatar,
-    required this.description,
-    required this.followeds,
-    required this.follows,
-    required this.playlistCount,
-    required this.playlistBeSubscribedCount,
+    this.description,
+    this.followeds,
+    this.follows,
+    this.playlistCount,
+    this.playlistBeSubscribedCount,
   });
 
   Map<String, dynamic> toMap() {
@@ -78,7 +78,9 @@ class LoginProfile {
       vipType: map['vipType'] as int,
       authStatus: map['authStatus'] as int,
       djStatus: map['djStatus'] as int,
-      detailDescription: map['detailDescription'] as String,
+      detailDescription: map['detailDescription'] != null
+          ? map['detailDescription'] as String
+          : null,
       accountStatus: map['accountStatus'] as int,
       nickname: map['nickname'] as String,
       birthday: map['birthday'] as int,
@@ -86,11 +88,15 @@ class LoginProfile {
       city: map['city'] as int,
       province: map['province'] as int,
       defaultAvatar: map['defaultAvatar'] as bool,
-      description: map['description'] as String,
-      followeds: map['followeds'] as int,
-      follows: map['follows'] as int,
-      playlistCount: map['playlistCount'] as int,
-      playlistBeSubscribedCount: map['playlistBeSubscribedCount'] as int,
+      description:
+          map['description'] != null ? map['description'] as String : null,
+      followeds: map['followeds'] != null ? map['followeds'] as int : null,
+      follows: map['follows'] != null ? map['follows'] as int : null,
+      playlistCount:
+          map['playlistCount'] != null ? map['playlistCount'] as int : null,
+      playlistBeSubscribedCount: map['playlistBeSubscribedCount'] != null
+          ? map['playlistBeSubscribedCount'] as int
+          : null,
     );
   }
 
