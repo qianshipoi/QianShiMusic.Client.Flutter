@@ -4,7 +4,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
-import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 
 class CatPlaylist extends StatefulWidget {
@@ -28,7 +27,6 @@ class _CatPlaylistState extends State<CatPlaylist> {
   @override
   void initState() {
     super.initState();
-    logger.i("initState:${widget.cat}");
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _refreshController.requestLoading();
     });

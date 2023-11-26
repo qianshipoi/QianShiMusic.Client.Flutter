@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
-import 'package:qianshi_music/widgets/fix_image.dart';
+import 'package:qianshi_music/widgets/playlist_tile.dart';
 
 class IndexPage extends StatefulWidget {
   const IndexPage({super.key});
@@ -41,27 +39,7 @@ class _IndexPageState extends State<IndexPage> {
       itemCount: _playlists.length,
       itemBuilder: (context, index) {
         final playlist = _playlists[index];
-        return ListTile(
-          leading: FixImage(
-            imageUrl: "${playlist.coverImgUrl}?param=48y48",
-            progressIndicatorBuilder: (context, url, downloadProgress) =>
-                CircularProgressIndicator(value: downloadProgress.progress),
-          ),
-          title: Text(
-            playlist.name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          subtitle: Text(
-            playlist.description,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          trailing: Text(formatPlayCount(playlist.playCount)),
-          onTap: () {
-            Get.toNamed(RouterContants.playlistDetail, arguments: playlist.id);
-          },
-        );
+        return PlaylistTile(playlist: playlist);
       },
     );
   }

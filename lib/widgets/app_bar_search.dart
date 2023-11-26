@@ -171,42 +171,40 @@ class _AppBarSearchState extends State<AppBarSearch> {
             border: Border.all(color: const Color(0xFFF2F2F2)),
             borderRadius: BorderRadius.circular(widget.borderRadius ?? 0),
           ),
-          child: Container(
-            child: Row(
-              children: [
-                SizedBox(
-                  width: widget.height,
-                  height: widget.height,
-                  child: const Icon(Icons.search,
-                      size: 20, color: Color(0xFF999999)),
-                ),
-                Expanded(
-                  // 权重
-                  flex: 1,
-                  child: TextField(
-                    autofocus: widget.autoFocus ?? false,
-                    // 是否自动获取焦点
-                    focusNode: _focusNode,
-                    // 焦点控制
-                    controller: _controller,
-                    // 与输入框交互控制器
-                    //装饰
-                    decoration: InputDecoration(
-                      isDense: true,
-                      border: InputBorder.none,
-                      hintText: widget.hintText ?? '请输入关键字',
-                    ),
-                    // 键盘动作右下角图标
-                    textInputAction: TextInputAction.search,
-                    onTap: widget.onTap,
-                    // 输入框内容改变回调
-                    onChanged: widget.onChanged,
-                    onSubmitted: widget.onSearch, //输入框完成触发
+          child: Row(
+            children: [
+              SizedBox(
+                width: widget.height,
+                height: widget.height,
+                child: const Icon(Icons.search,
+                    size: 20, color: Color(0xFF999999)),
+              ),
+              Expanded(
+                // 权重
+                flex: 1,
+                child: TextField(
+                  autofocus: widget.autoFocus ?? false,
+                  // 是否自动获取焦点
+                  focusNode: _focusNode,
+                  // 焦点控制
+                  controller: _controller,
+                  // 与输入框交互控制器
+                  //装饰
+                  decoration: InputDecoration(
+                    isDense: true,
+                    border: InputBorder.none,
+                    hintText: widget.hintText ?? '请输入关键字',
                   ),
+                  // 键盘动作右下角图标
+                  textInputAction: TextInputAction.search,
+                  onTap: widget.onTap,
+                  // 输入框内容改变回调
+                  onChanged: widget.onChanged,
+                  onSubmitted: widget.onSearch, //输入框完成触发
                 ),
-                _suffix(),
-              ],
-            ),
+              ),
+              _suffix(),
+            ],
           )),
       actions: _actions(),
     );

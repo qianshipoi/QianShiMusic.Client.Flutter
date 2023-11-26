@@ -73,7 +73,7 @@ class SearchCollectResult {
 
   factory SearchCollectResult.fromMap(Map<String, dynamic> map) {
     return SearchCollectResult(
-      order: (map['order'] as List<String>),
+      order: (map['order'] as List<dynamic>).map((e) => e as String).toList(),
       song: map['song'] != null
           ? SearchCollectResultSong.fromMap(map['song'] as Map<String, dynamic>)
           : null,
@@ -126,7 +126,7 @@ class SearchCollectResultSong {
     return SearchCollectResultSong(
       moreText: map['moreText'] as String,
       more: map['more'] as bool,
-      resourceIds: map['resourceIds'] as List<int>,
+      resourceIds: (map['resourceIds'] as List<dynamic>).map((e) => e as int).toList(),
       songs: (map['songs'] as List<dynamic>)
           .map<Track>((x) => Track.fromMap(x as Map<String, dynamic>))
           .toList(),
@@ -165,7 +165,8 @@ class SearchCollectResultPlaylist {
     return SearchCollectResultPlaylist(
       moreText: map['moreText'] as String,
       more: map['more'] as bool,
-      resourceIds: (map['resourceIds'] as List<int>),
+      resourceIds:
+          (map['resourceIds'] as List<dynamic>).map((e) => e as int).toList(),
       playLists: List<Playlist>.from(
         (map['playLists'] as List<dynamic>).map<Playlist>(
           (x) => Playlist.fromMap(x as Map<String, dynamic>),
@@ -206,7 +207,8 @@ class SearchCollectResultUser {
     return SearchCollectResultUser(
       moreText: map['moreText'] as String,
       more: map['more'] as bool,
-      resourceIds: map['resourceIds'] as List<int>,
+      resourceIds:
+          (map['resourceIds'] as List<dynamic>).map((e) => e as int).toList(),
       users: List<UserProfile>.from(
         (map['users'] as List<dynamic>).map<UserProfile>(
           (x) => UserProfile.fromMap(x as Map<String, dynamic>),
@@ -247,7 +249,8 @@ class SearchCollectResultArtist {
     return SearchCollectResultArtist(
       moreText: map['moreText'] as String,
       more: map['more'] as bool,
-      resourceIds: map['resourceIds'] as List<int>,
+      resourceIds:
+          (map['resourceIds'] as List<dynamic>).map((e) => e as int).toList(),
       artists: List<Artist>.from(
         (map['artists'] as List<dynamic>).map<Artist>(
           (x) => Artist.fromMap(x as Map<String, dynamic>),
@@ -288,7 +291,8 @@ class SearchCollectResultAlbum {
     return SearchCollectResultAlbum(
       moreText: map['moreText'] as String,
       more: map['more'] as bool,
-      resourceIds: map['resourceIds'] as List<int>,
+      resourceIds:
+          (map['resourceIds'] as List<dynamic>).map((e) => e as int).toList(),
       albums: List<Artist>.from(
         (map['albums'] as List<dynamic>).map<Artist>(
           (x) => Artist.fromMap(x as Map<String, dynamic>),

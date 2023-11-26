@@ -36,7 +36,6 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           final playlist = snapshot.data as Playlist;
-          logger.i(playlist.tracks.length);
           return CustomScrollView(
             slivers: [
               SliverAppBar(
@@ -65,19 +64,19 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                   itemExtent: 40,
                   delegate: SliverChildListDelegate(
                     [
-                      Text(playlist.description),
+                      Text(playlist.description ?? ""),
                       Text(playlist.playCount.toString()),
                     ],
                   )),
               SliverList(
                 delegate: SliverChildBuilderDelegate((content, index) {
-                  final track = playlist.tracks[index];
+                  final track = playlist.tracks![index];
                   return ListTile(
                     leading: FixImage(
                       width: 48,
                       height: 48,
                       imageUrl:
-                          "${playlist.tracks[index].album.picUrl}?param=50y50",
+                          "${playlist.tracks![index].album.picUrl}?param=50y50",
                       fit: BoxFit.fitWidth,
                     ),
                     title: Text(track.name),
@@ -86,7 +85,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                       logger.i(track.name);
                     },
                   );
-                }, childCount: playlist.tracks.length),
+                }, childCount: playlist.tracks!.length),
               ),
             ],
           );

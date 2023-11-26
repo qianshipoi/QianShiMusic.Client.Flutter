@@ -6,17 +6,18 @@ class Playlist {
   final int id;
   final String name;
   final String coverImgUrl;
-  final String description;
+  final String? description;
   final int playCount;
-  final List<Track> tracks;
+  final List<Track>? tracks;
   Playlist({
     required this.id,
     required this.name,
     required this.coverImgUrl,
-    required this.description,
+    this.description,
     required this.playCount,
-    required this.tracks,
+    this.tracks,
   });
+
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -25,7 +26,7 @@ class Playlist {
       'coverImgUrl': coverImgUrl,
       'description': description,
       'playCount': playCount,
-      'tracks': tracks.map((x) => x.toMap()).toList(),
+      'tracks': tracks?.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -34,13 +35,9 @@ class Playlist {
       id: map['id'] as int,
       name: map['name'] as String,
       coverImgUrl: map['coverImgUrl'] as String,
-      description: map['description'] as String,
+      description: map['description'] != null ? map['description'] as String : null,
       playCount: map['playCount'] as int,
-      tracks: (map.containsKey('tracks') && map['tracks'] != null)
-          ? List<Map<String, dynamic>>.from(map['tracks'])
-              .map((e) => Track.fromMap(e))
-              .toList()
-          : [],
+      tracks: map['tracks'] != null ? List<Track>.from((map['tracks'] as List<dynamic>).map<Track?>((x) => Track.fromMap(x as Map<String,dynamic>),),) : null,
     );
   }
 

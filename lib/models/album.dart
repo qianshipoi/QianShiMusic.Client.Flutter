@@ -3,9 +3,13 @@ import 'dart:convert';
 class Album {
   final int id;
   final String name;
-  final String picUrl;
+  final String? picUrl;
 
-  Album(this.id, this.name, this.picUrl);
+  Album(
+    this.id,
+    this.name,
+    this.picUrl,
+  );
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -19,7 +23,7 @@ class Album {
     return Album(
       map['id'] as int,
       map['name'] as String,
-      map['picUrl'] as String,
+      map['picUrl'] != null ? map['picUrl'] as String : null,
     );
   }
 
