@@ -42,7 +42,7 @@ class SongProvider {
         : LyricResponse(code: -1, msg: '请求失败');
   }
 
-  static Future<SongDetailResponse> detail(int id) async {
+  static Future<SongDetailResponse> detail(String id) async {
     final response = await HttpUtils.get<dynamic>('/song/detail', params: {
       'ids': id,
     });

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qianshi_music/models/responses/search_collect_response.dart';
 import 'package:qianshi_music/models/track.dart';
+import 'package:qianshi_music/pages/play_page.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
 import 'package:qianshi_music/widgets/track_tile.dart';
 
@@ -64,6 +66,8 @@ class _SearchSongViewState extends State<SearchSongView> {
         itemBuilder: (context, index) => TrackTile(
           track: _songs[index],
           index: index,
+          onTap: () =>
+              Get.to(() => const PlayPage(), arguments: _songs[index].id),
         ),
       ),
     );

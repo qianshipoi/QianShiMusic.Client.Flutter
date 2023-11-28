@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:qianshi_music/models/responses/search_collect_response.dart';
+import 'package:qianshi_music/pages/play_page.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
 import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/playlist_tile.dart';
@@ -54,7 +56,11 @@ class _SearchCollectViewState extends State<SearchCollectView> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: songs.length,
-              itemBuilder: (context, index) => TrackTile(track: songs[index]),
+              itemBuilder: (context, index) => TrackTile(
+                  track: songs[index],
+                  index: index,
+                  onTap: () => Get.to(() => const PlayPage(),
+                      arguments: songs[index].id)),
             ));
             children.add(ListTile(
               title: Center(child: Text(result.song!.moreText)),

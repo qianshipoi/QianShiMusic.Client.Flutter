@@ -52,7 +52,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       return;
     }
     _controller.text = keyword;
-    Get.to(SearchResultPage(keyword: keyword),
+    Get.to(() => SearchResultPage(keyword: keyword),
         transition: Transition.noTransition);
   }
 
@@ -60,6 +60,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarSearch(
+        autoFocus: true,
         controller: _controller,
         hintText: '搜索歌曲、歌手、专辑',
         onSearch: (value) => _search(value),

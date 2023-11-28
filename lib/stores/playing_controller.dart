@@ -2,6 +2,7 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/provider/track_provider.dart';
+import 'package:qianshi_music/utils/logger.dart';
 
 class PlayingController extends GetxController {
   bool _showLyric = false;
@@ -12,8 +13,9 @@ class PlayingController extends GetxController {
   }
 
   final _mPlayer = FlutterSoundPlayer();
-  final RxBool _isPlaying = RxBool(false);
+  final RxBool isPlaying = RxBool(false);
   final Rx<Track?> _currentTrack = Rx(null);
+  final RxInt currentPosition = RxInt(0);
   @override
   void onInit() {
     super.onInit();
@@ -31,29 +33,52 @@ class PlayingController extends GetxController {
       Get.snackbar('播放失败', response.msg ?? '未知错误');
       return;
     }
-    _mPlayer.startPlayer(
-      fromURI: response.data!.url,
-      codec: Codec.mp3,
+    var url = response.data!.first.url!;
+    if (url.startsWith("http:")) {
+      url = url.replaceFirst("http:", "https:");
+    }
+    Codec codec = Codec.mp3;
+    switch (response.data!.first.type) {
+      case "flac":
+        codec = Codec.flac;
+        break;
+      case "m4a":
+        codec = Codec.aacADTS;
+        break;
+      case "wav":
+        codec = Codec.pcm16WAV;
+        break;
+      default:
+        break;
+    }
+    logger.i(response.data!.first.url);
+    await _mPlayer.startPlayer(
+      fromURI: url,
+      codec: codec,
       whenFinished: () {
-        _isPlaying.value = false;
+        isPlaying.value = false;
       },
     );
-    _isPlaying.value = true;
+    _mPlayer.setSubscriptionDuration(const Duration(milliseconds: 500));
+    _mPlayer.onProgress!.listen((event) {
+      currentPosition.value = event.position.inMilliseconds;
+    });
+    isPlaying.value = true;
   }
 
   Future<void> pause() async {
     await _mPlayer.pausePlayer();
-    _isPlaying.value = false;
+    isPlaying.value = false;
   }
 
   Future<void> resume() async {
     await _mPlayer.resumePlayer();
-    _isPlaying.value = true;
+    isPlaying.value = true;
   }
 
   Future<void> stop() async {
     await _mPlayer.stopPlayer();
-    _isPlaying.value = false;
+    isPlaying.value = false;
   }
 
   Future<void> seekTo(int millisecond) async {

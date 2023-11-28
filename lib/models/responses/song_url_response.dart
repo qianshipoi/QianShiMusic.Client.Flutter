@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:qianshi_music/models/responses/base_response.dart';
@@ -5,16 +6,14 @@ import 'package:qianshi_music/models/song_url.dart';
 import 'package:qianshi_music/models/track.dart';
 
 class SongUrlResponse extends BaseResponse {
-  final SongUrl? data;
+  final List<SongUrl>? data;
 
   SongUrlResponse({this.data, required super.code, super.msg});
 
   @override
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'data': data?.toMap(),
-      'code': code,
-      'msg': msg,
+      'data': data?.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -22,9 +21,7 @@ class SongUrlResponse extends BaseResponse {
     return SongUrlResponse(
       code: map['code'] as int,
       msg: map['msg'] != null ? map['msg'] as String : null,
-      data: map['data'] != null
-          ? SongUrl.fromMap(map['data'] as Map<String, dynamic>)
-          : null,
+      data: map['data'] != null ? List<SongUrl>.from((map['data'] as List<dynamic>).map<SongUrl?>((x) => SongUrl.fromMap(x as Map<String,dynamic>),),) : null,
     );
   }
 

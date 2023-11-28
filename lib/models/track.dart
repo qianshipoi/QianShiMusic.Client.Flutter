@@ -9,11 +9,13 @@ class Track {
   final String name;
   final Album album;
   final List<Artist> artists;
+  final int dt;
   Track({
     required this.id,
     required this.name,
     required this.album,
     required this.artists,
+    required this.dt,
   });
 
   Map<String, dynamic> toMap() {
@@ -21,6 +23,8 @@ class Track {
       'id': id,
       'name': name,
       'album': album.toMap(),
+      'artists': artists.map((x) => x.toMap()).toList(),
+      'dt': dt,
     };
   }
 
@@ -28,10 +32,13 @@ class Track {
     return Track(
       id: map['id'] as int,
       name: map['name'] as String,
-      album: Album.fromMap((map['al'] ?? map['album']) as Map<String, dynamic>),
-      artists: ((map['ar'] ?? map['artists']) as List<dynamic>)
-          .map<Artist>((e) => Artist.fromMap(e as Map<String, dynamic>))
-          .toList(),
+      album: Album.fromMap((map['album'] ?? map['al']) as Map<String, dynamic>),
+      artists: List<Artist>.from(
+        ((map['artists'] ?? map['ar']) as List<dynamic>).map<Artist>(
+          (x) => Artist.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
+      dt: (map['dt'] ?? map['duration'] ?? 0) as int,
     );
   }
 

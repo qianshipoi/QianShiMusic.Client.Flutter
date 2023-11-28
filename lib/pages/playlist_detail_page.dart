@@ -3,9 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/playlist.dart';
+import 'package:qianshi_music/pages/play_page.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
-import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
+import 'package:qianshi_music/widgets/track_tile.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
   const PlaylistDetailPage({super.key});
@@ -71,20 +72,11 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
               SliverList(
                 delegate: SliverChildBuilderDelegate((content, index) {
                   final track = playlist.tracks![index];
-                  return ListTile(
-                    leading: FixImage(
-                      width: 48,
-                      height: 48,
-                      imageUrl:
-                          "${playlist.tracks![index].album.picUrl}?param=50y50",
-                      fit: BoxFit.fitWidth,
-                    ),
-                    title: Text(track.name),
-                    subtitle: Text(track.album.name),
-                    onTap: () {
-                      logger.i(track.name);
-                    },
-                  );
+                  return TrackTile(
+                      track: track,
+                      index: index,
+                      onTap: () =>
+                          Get.to(() => const PlayPage(), arguments: track.id));
                 }, childCount: playlist.tracks!.length),
               ),
             ],
