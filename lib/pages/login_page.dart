@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                 buildAccountTextField(),
                 const SizedBox(height: 30),
                 buildPasswordTextField(context),
-                buildForgetPasswordText(context),
+                // buildForgetPasswordText(context),
                 buildLanguageSelect(context),
                 const SizedBox(height: 50),
                 buildLoginButton(context),

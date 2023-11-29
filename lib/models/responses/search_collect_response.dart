@@ -126,7 +126,8 @@ class SearchCollectResultSong {
     return SearchCollectResultSong(
       moreText: map['moreText'] as String,
       more: map['more'] as bool,
-      resourceIds: (map['resourceIds'] as List<dynamic>).map((e) => e as int).toList(),
+      resourceIds:
+          (map['resourceIds'] as List<dynamic>).map((e) => e as int).toList(),
       songs: (map['songs'] as List<dynamic>)
           .map<Track>((x) => Track.fromMap(x as Map<String, dynamic>))
           .toList(),
@@ -225,12 +226,12 @@ class SearchCollectResultUser {
 }
 
 class SearchCollectResultArtist {
-  final String moreText;
+  final String? moreText;
   final bool more;
   final List<int> resourceIds;
   final List<Artist> artists;
   SearchCollectResultArtist({
-    required this.moreText,
+    this.moreText,
     required this.more,
     required this.resourceIds,
     required this.artists,
@@ -247,7 +248,7 @@ class SearchCollectResultArtist {
 
   factory SearchCollectResultArtist.fromMap(Map<String, dynamic> map) {
     return SearchCollectResultArtist(
-      moreText: map['moreText'] as String,
+      moreText: map['moreText'] != null ? map['moreText'] as String : null,
       more: map['more'] as bool,
       resourceIds:
           (map['resourceIds'] as List<dynamic>).map((e) => e as int).toList(),

@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
 import 'dart:convert';
 
 class Lyric {
@@ -26,5 +24,6 @@ class Lyric {
 
   String toJson() => json.encode(toMap());
 
-  factory Lyric.fromJson(String source) => Lyric.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Lyric.fromJson(String source) =>
+      Lyric.fromMap(json.decode(source) as Map<String, dynamic>);
 }
