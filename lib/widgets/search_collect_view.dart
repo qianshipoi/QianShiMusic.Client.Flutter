@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/responses/search_collect_response.dart';
-import 'package:qianshi_music/pages/play_page.dart';
+import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
 import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/playlist_tile.dart';
@@ -59,7 +59,7 @@ class _SearchCollectViewState extends State<SearchCollectView> {
               itemBuilder: (context, index) => TrackTile(
                   track: songs[index],
                   index: index,
-                  onTap: () => Get.to(() => const PlayPage(),
+                  onTap: () => Get.to(() => const PlaySongPage(),
                       arguments: songs[index].id)),
             ));
             children.add(ListTile(

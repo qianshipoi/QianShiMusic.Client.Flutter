@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/track.dart';
@@ -16,6 +18,13 @@ class PlayingController extends GetxController {
   final RxBool isPlaying = RxBool(false);
   final Rx<Track?> _currentTrack = Rx(null);
   final RxInt currentPosition = RxInt(0);
+
+  final StreamController<String> _curPositionController =
+      StreamController<String>.broadcast();
+
+  Stream<String> get curPositionStream => _curPositionController.stream;
+  Track? get currentTrack => _currentTrack.value;
+
   @override
   void onInit() {
     super.onInit();
@@ -26,9 +35,19 @@ class PlayingController extends GetxController {
     await _mPlayer.openPlayer();
   }
 
-  Future<void> play(Track track) async {
+  Future<void> load(Track track) async {
     _currentTrack.value = track;
-    final response = await SongProvider.url(track.id.toString());
+  }
+
+  Future<void> play({Track? track}) async {
+    if (track == null) {
+      if (_currentTrack.value == null) {
+        return;
+      }
+      track = _currentTrack.value;
+    }
+    _currentTrack.value = track;
+    final response = await SongProvider.url(track!.id.toString());
     if (response.code != 200) {
       Get.snackbar('播放失败', response.msg ?? '未知错误');
       return;
@@ -62,6 +81,8 @@ class PlayingController extends GetxController {
     _mPlayer.setSubscriptionDuration(const Duration(milliseconds: 500));
     _mPlayer.onProgress!.listen((event) {
       currentPosition.value = event.position.inMilliseconds;
+      _curPositionController.sink.add(
+          "${event.position.inMilliseconds}-${event.duration.inMilliseconds}");
     });
     isPlaying.value = true;
   }
@@ -83,5 +104,8 @@ class PlayingController extends GetxController {
 
   Future<void> seekTo(int millisecond) async {
     await _mPlayer.seekToPlayer(Duration(milliseconds: millisecond));
+    if (!isPlaying.value) {
+      play();
+    }
   }
 }

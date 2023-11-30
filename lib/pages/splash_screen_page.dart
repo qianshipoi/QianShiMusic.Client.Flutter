@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/pages/home_page.dart';
@@ -28,6 +29,7 @@ class _SplahScreenPageState extends State<SplahScreenPage>
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, designSize: const Size(750, 1334));
     return Scaffold(
       body: Lottie.asset(AssetsContants.chatLottie,
           repeat: false,

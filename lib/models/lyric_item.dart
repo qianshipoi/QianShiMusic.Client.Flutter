@@ -34,6 +34,16 @@ class LyricItem {
     return result;
   }
 
+  static int findLyricIndex(double curDuration, List<LyricItem> lyrics) {
+    for (int i = 0; i < lyrics.length; i++) {
+      if (curDuration >= lyrics[i].startTime.inMilliseconds &&
+          curDuration <= lyrics[i].endTime!.inMilliseconds) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
   @override
   String toString() =>
       'LyricItem(startTime: $startTime, endTime: $endTime, text: $text)';

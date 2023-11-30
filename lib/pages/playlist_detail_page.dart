@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/playlist.dart';
-import 'package:qianshi_music/pages/play_page.dart';
+import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/track_tile.dart';
@@ -75,8 +75,8 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                   return TrackTile(
                       track: track,
                       index: index,
-                      onTap: () =>
-                          Get.to(() => const PlayPage(), arguments: track.id));
+                      onTap: () => Get.to(() => const PlaySongPage(),
+                          arguments: track.id));
                 }, childCount: playlist.tracks!.length),
               ),
             ],

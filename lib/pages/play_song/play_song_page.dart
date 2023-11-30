@@ -2,27 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/track.dart';
+import 'package:qianshi_music/pages/play_song/lyric_page.dart';
 import 'package:qianshi_music/provider/track_provider.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
+import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
 
-class PlayPage extends StatefulWidget {
-  const PlayPage({super.key});
+class PlaySongPage extends StatefulWidget {
+  const PlaySongPage({super.key});
 
   @override
-  State<PlayPage> createState() => _PlayPageState();
+  State<PlaySongPage> createState() => _PlaySongPageState();
 }
 
-class _PlayPageState extends State<PlayPage> {
-  bool _showLyric = false;
+class _PlaySongPageState extends State<PlaySongPage> {
   final int _trackId = Get.arguments;
   final PlayingController _playingController = Get.find();
+  final _pageController = PageController();
 
   Future<Track?> _getTrack() async {
     final response = await SongProvider.detail(_trackId.toString());
     if (response.code == 200) {
-      return response.songs!.first;
+      final track = response.songs!.first;
+      _playingController.load(track);
+      return track;
     }
     return null;
   }
@@ -63,10 +67,15 @@ class _PlayPageState extends State<PlayPage> {
                     logger.i('下一曲');
                   }
                 },
-                onTap: () => setState(() => _showLyric = !_showLyric),
-                child: _showLyric
-                    ? _buildLyricView(context, track)
-                    : _buildMainView(context, track),
+                onTap: () => setState(() => _pageController
+                    .jumpToPage(_pageController.page == 1 ? 0 : 1)),
+                child: PageView(
+                  controller: _pageController,
+                  children: [
+                    _buildMainView(context, track),
+                    _buildLyricView(context, track),
+                  ],
+                ),
               );
             }
             return const Center(child: CircularProgressIndicator());
@@ -75,32 +84,33 @@ class _PlayPageState extends State<PlayPage> {
   }
 
   Widget _buildMainView(BuildContext context, Track track) {
-    return Container(
-      margin: const EdgeInsets.only(top: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-      decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.onPrimary,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(48),
-            topRight: Radius.circular(48),
-          )),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildImageView(context, track),
-          _buildCenterView(context, track),
-          _buildBottomView(context, track),
-        ],
+    return KeepAliveWrapper(
+      child: Container(
+        margin: const EdgeInsets.only(top: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onPrimary,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(48),
+              topRight: Radius.circular(48),
+            )),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildImageView(context, track),
+            _buildCenterView(context, track),
+            _buildBottomView(context, track),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildLyricView(BuildContext context, Track track) {
-    return Expanded(
-      child: Container(
-        color: Colors.transparent,
-      ),
-    );
+    return KeepAliveWrapper(
+        child: LyricPage(
+      trackId: _trackId,
+    ));
   }
 
   Widget _buildImageView(BuildContext context, Track track) {
@@ -175,7 +185,7 @@ class _PlayPageState extends State<PlayPage> {
           if (_playingController.isPlaying.value) {
             _playingController.pause();
           } else {
-            _playingController.play(track);
+            _playingController.play(track: track);
           }
         },
       ),
