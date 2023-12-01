@@ -67,7 +67,7 @@ class LyricWidget extends CustomPainter with ChangeNotifier {
         if (curLine == i) {
           // 如果是当前行
           lyricPaints[i].text =
-              TextSpan(text: lyric[i].text, style: commonWhiteTextStyle);
+              TextSpan(text: lyric[i].text, style: commonGrayTextStyle);
           lyricPaints[i].layout();
         } else if (isDragging &&
             i ==
@@ -77,7 +77,7 @@ class LyricWidget extends CustomPainter with ChangeNotifier {
                     1) {
           // 如果是拖动状态中的当前行
           lyricPaints[i].text =
-              TextSpan(text: lyric[i].text, style: commonWhite70TextStyle);
+              TextSpan(text: lyric[i].text, style: commonGrayTextStyle);
           lyricPaints[i].layout();
         } else {
           lyricPaints[i].text =

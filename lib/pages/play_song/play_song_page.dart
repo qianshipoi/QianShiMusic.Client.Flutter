@@ -69,12 +69,25 @@ class _PlaySongPageState extends State<PlaySongPage> {
                 },
                 onTap: () => setState(() => _pageController
                     .jumpToPage(_pageController.page == 1 ? 0 : 1)),
-                child: PageView(
-                  controller: _pageController,
-                  children: [
-                    _buildMainView(context, track),
-                    _buildLyricView(context, track),
-                  ],
+                child: Container(
+                  margin: const EdgeInsets.only(top: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(48),
+                      topRight: Radius.circular(48),
+                    ),
+                  ),
+                  child: PageView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    controller: _pageController,
+                    children: [
+                      _buildMainView(context, track),
+                      _buildLyricView(context, track),
+                    ],
+                  ),
                 ),
               );
             }
@@ -85,23 +98,13 @@ class _PlaySongPageState extends State<PlaySongPage> {
 
   Widget _buildMainView(BuildContext context, Track track) {
     return KeepAliveWrapper(
-      child: Container(
-        margin: const EdgeInsets.only(top: 20),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-        decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onPrimary,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(48),
-              topRight: Radius.circular(48),
-            )),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildImageView(context, track),
-            _buildCenterView(context, track),
-            _buildBottomView(context, track),
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildImageView(context, track),
+          _buildCenterView(context, track),
+          _buildBottomView(context, track),
+        ],
       ),
     );
   }

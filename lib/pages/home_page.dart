@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage>
                       size: 24, color: Theme.of(context).colorScheme.onPrimary),
                 ],
                 index: _currentPage,
-                backgroundColor: Colors.transparent,
+                backgroundColor: const Color.fromARGB(255, 187, 230, 243),
                 color: Theme.of(context).colorScheme.primary,
                 height: 60,
                 onTap: (index) {
@@ -172,14 +172,49 @@ class _HomePageState extends State<HomePage>
                     _pageController.jumpToPage(index);
                   });
                 }),
-            body: PageView(
-              controller: _pageController,
-              children: pages.map((e) => KeepAliveWrapper(child: e)).toList(),
-              onPageChanged: (value) {
-                setState(() {
-                  _currentPage = value;
-                });
-              },
+            backgroundColor: Colors.transparent,
+            body: Column(
+              children: [
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    children:
+                        pages.map((e) => KeepAliveWrapper(child: e)).toList(),
+                    onPageChanged: (value) {
+                      setState(() {
+                        _currentPage = value;
+                      });
+                    },
+                  ),
+                ),
+                Container(
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 187, 230, 243),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
+                    ),
+                    child: ListTile(
+                      leading: ClipOval(
+                        child: Image.network(
+                          AssetsContants.defaultAvatar,
+                          width: 40,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      title: Text(
+                        '用户名',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                      onTap: () => {},
+                      trailing: IconButton(
+                        onPressed: () => {},
+                        icon: const Icon(Icons.brightness_4),
+                      ),
+                    ))
+              ],
             ),
           ),
           _buildImageFromBytes()

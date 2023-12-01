@@ -9,7 +9,6 @@ import 'package:qianshi_music/models/responses/lyric_response.dart';
 import 'package:qianshi_music/provider/track_provider.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/logger.dart';
-import 'package:qianshi_music/widgets/common_text_style.dart';
 import 'package:qianshi_music/widgets/lyric_widget.dart';
 
 class LyricPage extends StatefulWidget {
@@ -43,7 +42,7 @@ class _LyricPageState extends State<LyricPage> with TickerProviderStateMixin {
     });
 
     dragEndFunc = () {
-      if (_lyricWidget.isDragging) {
+      if (_lyricWidget.isDragging && mounted) {
         setState(() {
           _lyricWidget.isDragging = false;
         });
@@ -62,81 +61,72 @@ class _LyricPageState extends State<LyricPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // if (curSongId != _playingController.currentTrack!.id) {
-    //   lyrics = null;
-    //   curSongId = _playingController.currentTrack!.id;
-    //   _request();
-    // }
+    if (lyrics == null) {
+      return Container(
+        alignment: Alignment.center,
+        child: const Text('歌词加载中...'),
+      );
+    }
 
-    return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        body: lyrics == null
-            ? Container(
-                alignment: Alignment.center,
-                child: const Text(
-                  '歌词加载中...',
-                  style: commonWhiteTextStyle,
-                ),
-              )
-            : GestureDetector(
-                onTapDown: _lyricWidget.isDragging
-                    ? (e) {
-                        if (e.localPosition.dx > 0 &&
-                            e.localPosition.dx < ScreenUtil().setWidth(100) &&
-                            e.localPosition.dy >
-                                _lyricWidget.canvasSize.height / 2 -
-                                    ScreenUtil().setWidth(100) &&
-                            e.localPosition.dy <
-                                _lyricWidget.canvasSize.height / 2 +
-                                    ScreenUtil().setWidth(100)) {
-                          logger.i(_lyricWidget.dragLineTime);
-                          _playingController.seekTo(_lyricWidget.dragLineTime);
-                        }
-                      }
-                    : null,
-                onVerticalDragUpdate: (e) {
-                  if (!_lyricWidget.isDragging) {
-                    setState(() {
-                      _lyricWidget.isDragging = true;
-                    });
-                  }
-                  _lyricWidget.offsetY += e.delta.dy;
-                },
-                onVerticalDragEnd: (e) {
-                  // 拖动防抖
-                  cancelDragTimer();
-                },
-                child: StreamBuilder<String>(
-                  initialData: "0-0",
-                  stream: _playingController.curPositionStream,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      var curTime = double.parse(snapshot.data!
-                          .substring(0, snapshot.data!.indexOf('-')));
-                      // 获取当前在哪一行
-                      int curLine = LyricItem.findLyricIndex(curTime, lyrics!);
-                      if (!_lyricWidget.isDragging) {
-                        startLineAnim(curLine);
-                      }
-                      // 给 customPaint 赋值当前行
-                      _lyricWidget.curLine = curLine;
-                      return CustomPaint(
-                        size: Size(
-                            MediaQuery.of(context).size.width,
-                            MediaQuery.of(context).size.height -
-                                kToolbarHeight -
-                                ScreenUtil().setWidth(150) -
-                                ScreenUtil().setWidth(50) -
-                                MediaQuery.of(context).padding.top -
-                                ScreenUtil().setWidth(120)),
-                        painter: _lyricWidget,
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
-              ));
+    return GestureDetector(
+      onTapDown: _lyricWidget.isDragging
+          ? (e) {
+              if (e.localPosition.dx > 0 &&
+                  e.localPosition.dx < ScreenUtil().setWidth(100) &&
+                  e.localPosition.dy >
+                      _lyricWidget.canvasSize.height / 2 -
+                          ScreenUtil().setWidth(100) &&
+                  e.localPosition.dy <
+                      _lyricWidget.canvasSize.height / 2 +
+                          ScreenUtil().setWidth(100)) {
+                logger.i(_lyricWidget.dragLineTime);
+                _playingController.seekTo(_lyricWidget.dragLineTime);
+              }
+            }
+          : null,
+      onVerticalDragUpdate: (e) {
+        if (!_lyricWidget.isDragging) {
+          setState(() {
+            _lyricWidget.isDragging = true;
+          });
+        }
+        _lyricWidget.offsetY += e.delta.dy;
+      },
+      onVerticalDragEnd: (e) {
+        // 拖动防抖
+        cancelDragTimer();
+      },
+      child: StreamBuilder<String>(
+        initialData: "0-0",
+        stream: _playingController.curPositionStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var curTime = double.parse(
+                snapshot.data!.substring(0, snapshot.data!.indexOf('-')));
+            // 获取当前在哪一行
+            int curLine = LyricItem.findLyricIndex(curTime, lyrics!);
+            if (!_lyricWidget.isDragging) {
+              startLineAnim(curLine);
+            }
+            // 给 customPaint 赋值当前行
+            _lyricWidget.curLine = curLine;
+            return CustomPaint(
+              size: Size(
+                  MediaQuery.of(context).size.width,
+                  MediaQuery.of(context).size.height -
+                      kToolbarHeight -
+                      ScreenUtil().setWidth(150) -
+                      ScreenUtil().setWidth(50) -
+                      MediaQuery.of(context).padding.top -
+                      ScreenUtil().setWidth(120)),
+              painter: _lyricWidget,
+            );
+          } else {
+            return Container();
+          }
+        },
+      ),
+    );
   }
 
   void cancelDragTimer() {
