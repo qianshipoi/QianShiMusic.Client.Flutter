@@ -50,6 +50,8 @@ Future<void> initStore() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -60,6 +62,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      navigatorKey: navigatorKey,
       builder: EasyLoading.init(),
       translations: LocaleMessage(),
       locale: Get.find<IndexController>().currentLocale.value,
@@ -68,7 +71,10 @@ class MyApp extends StatelessWidget {
         RouterContants.settings: (context) => const SettingsPage(),
         RouterContants.search: (context) => const SearchPage(),
         RouterContants.login: (context) => const LoginPage(),
-        RouterContants.playlistDetail: (context) => const PlaylistDetailPage(),
+        RouterContants.playlistDetail: (context) => PlaylistDetailPage(
+              heroTag: Get.arguments['heroTag'] as String?,
+              playlistId: Get.arguments['playlistId'] as int,
+            ),
         RouterContants.searchResult: (context) =>
             SearchResultPage(keyword: Get.arguments),
       },

@@ -20,7 +20,11 @@ class AssetsContants {
       "https://chat-api.kuriyama.top/Raw/DefaultAvatar/1.jpg";
 }
 
-String formatMusicImageUrl(String url, {int? size}) {
+String formatMusicImageUrl(String? url, {int? size}) {
+  if (url == null) {
+    return AssetsContants.defaultAvatar;
+  }
+
   return url + (size == null ? "" : "?param=$size");
 }
 

@@ -1,8 +1,11 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:qianshi_music/models/playlist.dart';
+import 'package:qianshi_music/pages/base_playing_state.dart';
 import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
@@ -10,18 +13,24 @@ import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/track_tile.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
-  const PlaylistDetailPage({super.key});
+  final String? heroTag;
+  final int playlistId;
+  const PlaylistDetailPage({
+    Key? key,
+    this.heroTag,
+    required this.playlistId,
+  }) : super(key: key);
 
   @override
   State<PlaylistDetailPage> createState() => _PlaylistDetailPageState();
 }
 
-class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
-  final int playlistId = Get.arguments;
+class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
   final PlayingController _playingController = Get.find();
 
   Future<Playlist> getPlaylistDetail() async {
-    final response = await HttpUtils.get('playlist/detail?id=$playlistId');
+    final response =
+        await HttpUtils.get('playlist/detail?id=${widget.playlistId}');
     final playlist = Playlist.fromMap(response.data['playlist']);
     return playlist;
   }
@@ -33,7 +42,10 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  String get heroTag => widget.heroTag ?? "playlist_detail_page_playing_bar";
+
+  @override
+  Widget buildPageBody(BuildContext context) {
     return FutureBuilder(
       future: getPlaylistDetail(),
       builder: (context, snapshot) {

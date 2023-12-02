@@ -88,11 +88,19 @@ class PlayingController extends GetxController {
   }
 
   Future<void> pause() async {
+    if (!_mPlayer.isPlaying) return;
     await _mPlayer.pausePlayer();
     isPlaying.value = false;
   }
 
   Future<void> resume() async {
+    if (_currentTrack.value == null) {
+      return;
+    }
+    if (!_mPlayer.isPaused) {
+      await play();
+      return;
+    }
     await _mPlayer.resumePlayer();
     isPlaying.value = true;
   }

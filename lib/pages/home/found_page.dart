@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:qianshi_music/constants.dart';
+import 'package:qianshi_music/pages/base_playing_state.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/widgets/cat_playlist.dart';
 import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
@@ -10,7 +13,8 @@ class FoundPage extends StatefulWidget {
   State<FoundPage> createState() => _FoundPageState();
 }
 
-class _FoundPageState extends State<FoundPage> with TickerProviderStateMixin {
+class _FoundPageState extends BasePlayingState<FoundPage>
+    with TickerProviderStateMixin {
   final List<String> tabs = [];
   late TabController _controller;
 
@@ -34,7 +38,17 @@ class _FoundPageState extends State<FoundPage> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Color get backgroundColor => Colors.grey.withOpacity(0.3);
+
+  @override
+  BorderRadius get borderRadius => const BorderRadius.only(
+      topLeft: Radius.circular(16), topRight: Radius.circular(16));
+
+  @override
+  String get heroTag => "found_page_playing_bar";
+
+  @override
+  Widget buildPageBody(BuildContext context) {
     return Column(
       children: [
         PreferredSize(
@@ -56,9 +70,7 @@ class _FoundPageState extends State<FoundPage> with TickerProviderStateMixin {
         borderSide: BorderSide(color: Color(0xff2fcfbb), width: 3),
         insets: EdgeInsets.fromLTRB(0, 0, 0, 10),
       ),
-      tabs: tabs.map<Tab>((e) {
-        return Tab(text: e);
-      }).toList(),
+      tabs: tabs.map<Tab>((e) => Tab(text: e)).toList(),
     );
   }
 
@@ -73,8 +85,16 @@ class _FoundPageState extends State<FoundPage> with TickerProviderStateMixin {
   }
 
   List<Widget> _buildItems() {
-    return tabs
-        .map<Widget>((e) => KeepAliveWrapper(child: CatPlaylist(cat: e)))
-        .toList();
+    return tabs.map<Widget>((e) {
+      return KeepAliveWrapper(
+          child: CatPlaylist(
+              cat: e,
+              onTap: (playlistId) {
+                Get.toNamed(RouterContants.playlistDetail, arguments: {
+                  "playlistId": playlistId,
+                  "heroTag": heroTag,
+                });
+              }));
+    }).toList();
   }
 }

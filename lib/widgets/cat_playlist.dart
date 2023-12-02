@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
@@ -8,9 +8,11 @@ import 'package:qianshi_music/widgets/fix_image.dart';
 
 class CatPlaylist extends StatefulWidget {
   final String cat;
+  final void Function(int playlistId)? onTap;
   const CatPlaylist({
     Key? key,
     required this.cat,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -81,8 +83,11 @@ class _CatPlaylistState extends State<CatPlaylist> {
         ),
         physics: const ClampingScrollPhysics(),
         itemBuilder: (c, i) => GestureDetector(
-          onTap: () => Get.toNamed(RouterContants.playlistDetail,
-              arguments: playlist[i].id),
+          onTap: () {
+            if (widget.onTap != null) {
+              widget.onTap!(playlist[i].id);
+            }
+          },
           child: Column(
             children: [
               Card(

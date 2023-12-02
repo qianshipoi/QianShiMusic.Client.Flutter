@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:qianshi_music/constants.dart';
 
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 
 class PlaylistTile extends StatelessWidget {
   final Playlist playlist;
+  final GestureTapCallback? onTap;
   const PlaylistTile({
     Key? key,
     required this.playlist,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -31,9 +31,7 @@ class PlaylistTile extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       trailing: Text(formatPlayCount(playlist.playCount)),
-      onTap: () {
-        Get.toNamed(RouterContants.playlistDetail, arguments: playlist.id);
-      },
+      onTap: onTap,
     );
   }
 

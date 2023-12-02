@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:qianshi_music/constants.dart';
 
 import 'package:qianshi_music/models/playlist.dart';
+import 'package:qianshi_music/pages/base_playing_state.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/widgets/playlist_tile.dart';
 
@@ -11,7 +14,7 @@ class IndexPage extends StatefulWidget {
   State<IndexPage> createState() => _IndexPageState();
 }
 
-class _IndexPageState extends State<IndexPage> {
+class _IndexPageState extends BasePlayingState<IndexPage> {
   List<Playlist> _playlists = [];
 
   Future<void> loadData() async {
@@ -34,12 +37,27 @@ class _IndexPageState extends State<IndexPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  BorderRadius get borderRadius => const BorderRadius.only(
+      topLeft: Radius.circular(16), topRight: Radius.circular(16));
+
+  @override
+  String get heroTag => "index_page_playing_bar";
+
+  @override
+  Widget buildPageBody(BuildContext context) {
     return ListView.builder(
       itemCount: _playlists.length,
       itemBuilder: (context, index) {
         final playlist = _playlists[index];
-        return PlaylistTile(playlist: playlist);
+        return PlaylistTile(
+          playlist: playlist,
+          onTap: () {
+            Get.toNamed(RouterContants.playlistDetail, arguments: {
+              "playlistId": playlist.id,
+              "heroTag": heroTag,
+            });
+          },
+        );
       },
     );
   }
