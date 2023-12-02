@@ -28,14 +28,10 @@ abstract class BasePlayingState<T extends StatefulWidget> extends State<T> {
       child: Column(
         children: [
           Expanded(child: buildPageBody(context)),
-          Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: PlayingBar(
-                borderRadius: borderRadius,
-                tag: heroTag,
-              )),
+          PlayingBar(
+            borderRadius: borderRadius,
+            tag: heroTag,
+          ),
         ],
       ),
     );

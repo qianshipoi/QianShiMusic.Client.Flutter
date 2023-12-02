@@ -25,7 +25,7 @@ String formatMusicImageUrl(String? url, {int? size}) {
     return AssetsContants.defaultAvatar;
   }
 
-  return url + (size == null ? "" : "?param=$size");
+  return url + (size == null ? "" : "?param=${size}y$size");
 }
 
 class Global {
