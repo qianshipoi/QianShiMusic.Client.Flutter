@@ -9,10 +9,14 @@ import 'package:qianshi_music/main.dart';
 import 'package:qianshi_music/pages/home/found_page.dart';
 import 'package:qianshi_music/pages/home/index_page.dart';
 import 'package:qianshi_music/pages/home/my_page.dart';
+import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/stores/index_controller.dart';
+import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/capture_util.dart';
 import 'package:qianshi_music/utils/circle_image_painter.dart';
 import 'package:qianshi_music/utils/sputils.dart';
+import 'package:qianshi_music/widgets/common_text_style.dart';
+import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
 
 class HomePage extends StatefulWidget {
@@ -31,7 +35,7 @@ class _HomePageState extends State<HomePage>
     const Icon(Icons.person, size: 30),
   ];
   final List<Text> bottomLabels = [
-    Text(Globalization.message.tr),
+    const Text("推荐"),
     Text(Globalization.found.tr),
     Text(Globalization.my.tr)
   ];
@@ -43,6 +47,7 @@ class _HomePageState extends State<HomePage>
   final GlobalKey _keyGreen = GlobalKey();
   late Offset _startOffset;
   final _indexController = Get.find<IndexController>();
+  final PlayingController _playingController = Get.find();
 
   @override
   void initState() {
@@ -187,33 +192,50 @@ class _HomePageState extends State<HomePage>
                     },
                   ),
                 ),
-                Container(
-                    height: 60,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 187, 230, 243),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(24),
-                        topRight: Radius.circular(24),
-                      ),
-                    ),
-                    child: ListTile(
-                      leading: ClipOval(
-                        child: Image.network(
-                          AssetsContants.defaultAvatar,
-                          width: 40,
-                          fit: BoxFit.cover,
+                _playingController.currentTrack != null
+                    ? Container(
+                        height: 60,
+                        decoration: const BoxDecoration(
+                          color: Color.fromARGB(255, 187, 230, 243),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(24),
+                            topRight: Radius.circular(24),
+                          ),
                         ),
-                      ),
-                      title: Text(
-                        '用户名',
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                      onTap: () => {},
-                      trailing: IconButton(
-                        onPressed: () => {},
-                        icon: const Icon(Icons.brightness_4),
-                      ),
-                    ))
+                        child: ListTile(
+                          leading: ClipOval(
+                            child: FixImage(
+                              imageUrl: _playingController
+                                      .currentTrack!.album.picUrl ??
+                                  AssetsContants.defaultAvatar,
+                              width: 40,
+                              height: 40,
+                            ),
+                          ),
+                          title: Text(
+                            _playingController.currentTrack!.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: common13TextStyle,
+                          ),
+                          onTap: () async {
+                            await Get.to(() => const PlaySongPage(),
+                                arguments: _playingController.currentTrack!.id);
+                          },
+                          trailing: IconButton(
+                            onPressed: () {
+                              if (_playingController.isPlaying.value) {
+                                _playingController.pause();
+                              } else {
+                                _playingController.play();
+                              }
+                            },
+                            icon: Obx(() => Icon(
+                                _playingController.isPlaying.value
+                                    ? Icons.pause
+                                    : Icons.play_arrow)),
+                          ),
+                        ))
+                    : const SizedBox.shrink(),
               ],
             ),
           ),

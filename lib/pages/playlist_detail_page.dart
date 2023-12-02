@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/pages/play_song/play_song_page.dart';
+import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/track_tile.dart';
@@ -17,6 +18,7 @@ class PlaylistDetailPage extends StatefulWidget {
 
 class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   final int playlistId = Get.arguments;
+  final PlayingController _playingController = Get.find();
 
   Future<Playlist> getPlaylistDetail() async {
     final response = await HttpUtils.get('playlist/detail?id=$playlistId');
@@ -75,8 +77,12 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                   return TrackTile(
                       track: track,
                       index: index,
-                      onTap: () => Get.to(() => const PlaySongPage(),
-                          arguments: track.id));
+                      onTap: () async {
+                        await _playingController.load(track);
+                        await _playingController.play();
+                        await Get.to(() => const PlaySongPage(),
+                            arguments: track.id);
+                      });
                 }, childCount: playlist.tracks!.length),
               ),
             ],

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:qianshi_music/models/responses/search_collect_response.dart';
 import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
+import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/playlist_tile.dart';
 import 'package:qianshi_music/widgets/track_tile.dart';
@@ -19,10 +20,7 @@ class SearchCollectView extends StatefulWidget {
 }
 
 class _SearchCollectViewState extends State<SearchCollectView> {
-  @override
-  void initState() {
-    super.initState();
-  }
+  final PlayingController _playingController = Get.find();
 
   Future<SearchCollectResult> _onLoading() async {
     final response =
@@ -59,8 +57,12 @@ class _SearchCollectViewState extends State<SearchCollectView> {
               itemBuilder: (context, index) => TrackTile(
                   track: songs[index],
                   index: index,
-                  onTap: () => Get.to(() => const PlaySongPage(),
-                      arguments: songs[index].id)),
+                  onTap: () async {
+                    await _playingController.load(songs[index]);
+                    await _playingController.play();
+                    await Get.to(() => const PlaySongPage(),
+                        arguments: songs[index].id);
+                  }),
             ));
             children.add(ListTile(
               title: Center(child: Text(result.song!.moreText)),

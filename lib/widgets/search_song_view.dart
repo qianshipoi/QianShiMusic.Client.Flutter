@@ -5,6 +5,7 @@ import 'package:qianshi_music/models/responses/search_collect_response.dart';
 import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
+import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/widgets/track_tile.dart';
 
 class SearchSongView extends StatefulWidget {
@@ -21,6 +22,7 @@ class SearchSongView extends StatefulWidget {
 class _SearchSongViewState extends State<SearchSongView> {
   final List<Track> _songs = [];
   final _refreshController = RefreshController(initialRefresh: false);
+  final PlayingController _playingController = Get.find();
   bool more = true;
   int limit = 20;
   int page = 1;
@@ -66,8 +68,12 @@ class _SearchSongViewState extends State<SearchSongView> {
         itemBuilder: (context, index) => TrackTile(
           track: _songs[index],
           index: index,
-          onTap: () =>
-              Get.to(() => const PlaySongPage(), arguments: _songs[index].id),
+          onTap: () async {
+            await _playingController.load(_songs[index]);
+            await _playingController.play();
+            await Get.to(() => const PlaySongPage(),
+                arguments: _songs[index].id);
+          },
         ),
       ),
     );
