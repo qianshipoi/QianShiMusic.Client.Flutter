@@ -6,10 +6,11 @@ enum MusicSearchType {
   song(1),
   artist(100),
   album(10),
-  video(1014),
   playlist(1000),
+  mv(1004),
   djRadios(1009),
   userProfile(1002),
+  video(1014),
   collect(1018);
 
   const MusicSearchType(this.number);
@@ -50,6 +51,8 @@ class SearchProvider {
         return SearchUserProfileResponse.fromMap(data);
       case MusicSearchType.collect:
         return SearchCollectResponse.fromMap(data);
+      case MusicSearchType.mv:
+        return SearchMvResponse.fromMap(data);
     }
   }
 

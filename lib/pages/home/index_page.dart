@@ -5,7 +5,7 @@ import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
-import 'package:qianshi_music/widgets/playlist_tile.dart';
+import 'package:qianshi_music/widgets/tiles/playlist_tile.dart';
 
 class IndexPage extends StatefulWidget {
   const IndexPage({super.key});

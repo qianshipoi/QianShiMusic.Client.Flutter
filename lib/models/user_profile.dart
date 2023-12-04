@@ -1,11 +1,13 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
+
 class UserProfile {
   final int userId;
   final String avatarUrl;
   final String nickname;
   final bool defaultAvatar;
-  final bool followed;
+  late RxBool followed;
   final int gender;
   final int birthday;
   final String description;
@@ -14,12 +16,13 @@ class UserProfile {
   final int city;
   final int userType;
   final int vipType;
+
   UserProfile({
     required this.userId,
     required this.avatarUrl,
     required this.nickname,
     required this.defaultAvatar,
-    required this.followed,
+    required bool followed,
     required this.gender,
     required this.birthday,
     required this.description,
@@ -28,7 +31,9 @@ class UserProfile {
     required this.city,
     required this.userType,
     required this.vipType,
-  });
+  }) {
+    this.followed = followed.obs;
+  }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -36,7 +41,7 @@ class UserProfile {
       'avatarUrl': avatarUrl,
       'nickname': nickname,
       'defaultAvatar': defaultAvatar,
-      'followed': followed,
+      'followed': followed.value,
       'gender': gender,
       'birthday': birthday,
       'description': description,

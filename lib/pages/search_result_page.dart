@@ -3,9 +3,13 @@ import 'package:get/get.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
 import 'package:qianshi_music/widgets/app_bar_search.dart';
 import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
-import 'package:qianshi_music/widgets/search_collect_view.dart';
-import 'package:qianshi_music/widgets/search_playlist_view.dart';
-import 'package:qianshi_music/widgets/search_song_view.dart';
+import 'package:qianshi_music/widgets/search/search_album_view.dart';
+import 'package:qianshi_music/widgets/search/search_artist_view.dart';
+import 'package:qianshi_music/widgets/search/search_collect_view.dart';
+import 'package:qianshi_music/widgets/search/search_mv_view.dart';
+import 'package:qianshi_music/widgets/search/search_playlist_view.dart';
+import 'package:qianshi_music/widgets/search/search_song_view.dart';
+import 'package:qianshi_music/widgets/search/search_video_view.dart';
 
 class SearchResultPage extends StatefulWidget {
   final String keyword;
@@ -27,6 +31,10 @@ class _SearchResultPageState extends State<SearchResultPage>
     const _ResultTab("综合", MusicSearchType.collect),
     const _ResultTab("歌曲", MusicSearchType.song),
     const _ResultTab("歌单", MusicSearchType.playlist),
+    const _ResultTab("歌手", MusicSearchType.artist),
+    const _ResultTab("专辑", MusicSearchType.album),
+    const _ResultTab("MV", MusicSearchType.mv),
+    const _ResultTab("视频", MusicSearchType.video),
   ];
   late TabController _controller;
 
@@ -92,6 +100,26 @@ class _SearchResultPageState extends State<SearchResultPage>
         case MusicSearchType.playlist:
           return KeepAliveWrapper(
               child: SearchPlaylistView(
+            keyword: widget.keyword,
+          ));
+        case MusicSearchType.artist:
+          return KeepAliveWrapper(
+              child: SearchArtistView(
+            keyword: widget.keyword,
+          ));
+        case MusicSearchType.album:
+          return KeepAliveWrapper(
+              child: SearchAlbumtView(
+            keyword: widget.keyword,
+          ));
+        case MusicSearchType.video:
+          return KeepAliveWrapper(
+              child: SearchVideoView(
+            keyword: widget.keyword,
+          ));
+        case MusicSearchType.mv:
+          return KeepAliveWrapper(
+              child: SearchMvView(
             keyword: widget.keyword,
           ));
         default:

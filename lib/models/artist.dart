@@ -1,20 +1,25 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
+
 class Artist {
   final int id;
   final String name;
   final String? picUrl;
   final int? albumSize;
   final int? mvSize;
-  final bool? followed;
+  late Rx<bool?> followed;
+
   Artist({
     required this.id,
     required this.name,
     this.picUrl,
     this.albumSize,
     this.mvSize,
-    this.followed,
-  });
+    bool? followed,
+  }) {
+    this.followed = followed.obs;
+  }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -23,7 +28,7 @@ class Artist {
       'picUrl': picUrl,
       'albumSize': albumSize,
       'mvSize': mvSize,
-      'followed': followed,
+      'followed': followed.value,
     };
   }
 

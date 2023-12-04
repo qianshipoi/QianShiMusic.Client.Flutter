@@ -9,6 +9,8 @@ import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/models/user_profile.dart';
 import 'package:qianshi_music/models/video.dart';
 
+import '../mv.dart';
+
 class SearchCollectResponse {
   final int code;
   final String? msg;
@@ -717,6 +719,70 @@ class SearchVideoResult {
 
   factory SearchVideoResult.fromJson(String source) =>
       SearchVideoResult.fromMap(json.decode(source) as Map<String, dynamic>);
+}
+
+class SearchMvResponse extends BaseResponse {
+  final SearchMvResult? result;
+  SearchMvResponse({
+    required int code,
+    String? msg,
+    this.result,
+  }) : super(code: code, msg: msg);
+
+  @override
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'result': result?.toMap(),
+    };
+  }
+
+  factory SearchMvResponse.fromMap(Map<String, dynamic> map) {
+    return SearchMvResponse(
+      code: map['code'] as int,
+      msg: map['msg'] != null ? map['msg'] as String : null,
+      result: map['result'] != null
+          ? SearchMvResult.fromMap(map['result'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+
+  @override
+  String toJson() => json.encode(toMap());
+
+  factory SearchMvResponse.fromJson(String source) =>
+      SearchMvResponse.fromMap(json.decode(source) as Map<String, dynamic>);
+}
+
+class SearchMvResult {
+  final int mvCount;
+  final List<Mv> mvs;
+  SearchMvResult({
+    required this.mvCount,
+    required this.mvs,
+  });
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'mvCount': mvCount,
+      'mvs': mvs.map((x) => x.toMap()).toList(),
+    };
+  }
+
+  factory SearchMvResult.fromMap(Map<String, dynamic> map) {
+    return SearchMvResult(
+      mvCount: map['mvCount'] as int,
+      mvs: List<Mv>.from(
+        (map['mvs'] as List<dynamic>).map<Mv>(
+          (x) => Mv.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory SearchMvResult.fromJson(String source) =>
+      SearchMvResult.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
 class SearchUserProfileResponse extends BaseResponse {

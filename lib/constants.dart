@@ -20,12 +20,37 @@ class AssetsContants {
       "https://chat-api.kuriyama.top/Raw/DefaultAvatar/1.jpg";
 }
 
-String formatMusicImageUrl(String? url, {int? size}) {
+String formatPlaycount(int? count) {
+  if (count == null) {
+    return "0";
+  }
+
+  if (count < 10000) {
+    return count.toString();
+  }
+
+  return "${(count / 10000).toStringAsFixed(1)}万";
+}
+
+String formatMusicImageUrl(String? url, {int? size, int? width, int? height}) {
   if (url == null) {
     return AssetsContants.defaultAvatar;
   }
 
-  return url + (size == null ? "" : "?param=${size}y$size");
+  if (size != null) {
+    width = size;
+    height = size;
+  } else if (width != null && height == null) {
+    height = width;
+  } else if (width == null && height != null) {
+    width = height;
+  }
+
+  if (width != null && height != null) {
+    return "$url?param=${width}y$height";
+  }
+
+  return url;
 }
 
 class Global {

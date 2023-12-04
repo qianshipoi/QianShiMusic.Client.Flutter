@@ -5,8 +5,8 @@ import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/logger.dart';
-import 'package:qianshi_music/widgets/playlist_tile.dart';
-import 'package:qianshi_music/widgets/track_tile.dart';
+import 'package:qianshi_music/widgets/tiles/playlist_tile.dart';
+import 'package:qianshi_music/widgets/tiles/track_tile.dart';
 
 class SearchCollectView extends StatefulWidget {
   final String keyword;

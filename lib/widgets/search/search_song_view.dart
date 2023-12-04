@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/models/responses/search_collect_response.dart';
+import 'package:qianshi_music/models/track.dart';
+import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
-import 'package:qianshi_music/widgets/playlist_tile.dart';
+import 'package:qianshi_music/stores/playing_controller.dart';
+import 'package:qianshi_music/widgets/tiles/track_tile.dart';
 
-class SearchPlaylistView extends StatefulWidget {
+class SearchSongView extends StatefulWidget {
   final String keyword;
-  const SearchPlaylistView({
+  const SearchSongView({
     Key? key,
     required this.keyword,
   }) : super(key: key);
 
   @override
-  State<SearchPlaylistView> createState() => _SearchPlaylistViewState();
+  State<SearchSongView> createState() => _SearchSongViewState();
 }
 
-class _SearchPlaylistViewState extends State<SearchPlaylistView> {
-  final List<Playlist> _playlsist = [];
+class _SearchSongViewState extends State<SearchSongView> {
+  final List<Track> _songs = [];
   final _refreshController = RefreshController(initialRefresh: false);
+  final PlayingController _playingController = Get.find();
   bool more = true;
   int limit = 20;
   int page = 1;
@@ -37,14 +41,13 @@ class _SearchPlaylistViewState extends State<SearchPlaylistView> {
       return;
     }
     final response = await SearchProvider.search(
-        widget.keyword, MusicSearchType.playlist,
+        widget.keyword, MusicSearchType.song,
         limit: limit, offset: page * limit);
-    final result = response as SearchPlaylistResponse;
+    final result = response as SearchSongResponse;
     if (result.code != 200) {
       return;
     }
-
-    _playlsist.addAll(result.result!.playlists);
+    _songs.addAll(result.result!.songs);
     more = response.result!.hasMore;
     page++;
     _refreshController.loadComplete();
@@ -61,9 +64,17 @@ class _SearchPlaylistViewState extends State<SearchPlaylistView> {
       controller: _refreshController,
       onLoading: _onLoading,
       child: ListView.builder(
-        itemCount: _playlsist.length,
-        itemBuilder: (context, index) =>
-            PlaylistTile(playlist: _playlsist[index]),
+        itemCount: _songs.length,
+        itemBuilder: (context, index) => TrackTile(
+          track: _songs[index],
+          index: index,
+          onTap: () async {
+            await _playingController.load(_songs[index]);
+            await _playingController.play();
+            await Get.to(() => const PlaySongPage(),
+                arguments: _songs[index].id);
+          },
+        ),
       ),
     );
   }

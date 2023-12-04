@@ -10,7 +10,7 @@ import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
-import 'package:qianshi_music/widgets/track_tile.dart';
+import 'package:qianshi_music/widgets/tiles/track_tile.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
   final String? heroTag;
