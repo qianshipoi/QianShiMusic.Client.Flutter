@@ -3,6 +3,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qianshi_music/models/artist.dart';
 import 'package:qianshi_music/models/responses/search_collect_response.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
+import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/tiles/search_artist_tile.dart';
 
 class SearchArtistView extends StatefulWidget {
@@ -37,8 +38,8 @@ class _SearchArtistViewState extends State<SearchArtistView> {
       return;
     }
     final response = await SearchProvider.search(
-        widget.keyword, MusicSearchType.playlist,
-        limit: limit, offset: page * limit);
+        widget.keyword, MusicSearchType.artist,
+        limit: limit, offset: (page - 1) * limit);
     final result = response as SearchArtistResponse;
     if (result.code != 200) {
       return;
@@ -62,6 +63,7 @@ class _SearchArtistViewState extends State<SearchArtistView> {
       onLoading: _onLoading,
       child: ListView.builder(
         itemCount: _items.length,
+        itemExtent: 72,
         itemBuilder: (context, index) =>
             SearchArtistTile(artist: _items[index]),
       ),

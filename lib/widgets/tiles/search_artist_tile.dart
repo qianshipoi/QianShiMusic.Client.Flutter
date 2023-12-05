@@ -13,7 +13,7 @@ class SearchArtistTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(999),
         child: FixImage(
           imageUrl: formatMusicImageUrl(artist.picUrl, width: 64, height: 64),
           width: 64,
@@ -27,14 +27,19 @@ class SearchArtistTile extends StatelessWidget {
         maxLines: 1,
       ),
       trailing: Obx(() => (artist.followed.value ?? false)
-          ? ElevatedButton.icon(
+          ? const Text('已关注')
+          : ElevatedButton.icon(
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(const Size(48, 32)),
+                padding: MaterialStateProperty.all(
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4)),
+              ),
               onPressed: () {
                 artist.followed.value = true;
               },
               icon: const Icon(Icons.add),
               label: const Text('关注'),
-            )
-          : const Text('已关注')),
+            )),
       onTap: onTap,
     );
   }

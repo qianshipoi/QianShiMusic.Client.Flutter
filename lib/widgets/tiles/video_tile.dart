@@ -15,33 +15,49 @@ class VideoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: ClipRRect(
-        borderRadius: BorderRadius.circular(4),
-        child: FixImage(
-          imageUrl:
-              formatMusicImageUrl(video.coverUrl, width: 200, height: 112),
-          width: 200,
-          height: 112,
-          fit: BoxFit.cover,
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: FixImage(
+                imageUrl: formatMusicImageUrl(video.coverUrl),
+                width: 160,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      video.title,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
+                      maxLines: 1,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      video.creator.map((e) => e.userName).join("/"),
+                      style: Theme.of(context).textTheme.bodySmall,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
+                      maxLines: 2,
+                    ),
+                    Text("${formatPlaycount(video.playTime)}播放"),
+                  ],
+                ),
+              ),
+            )
+          ],
         ),
       ),
-      title: Text(
-        video.title,
-        overflow: TextOverflow.ellipsis,
-        maxLines: 2,
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            video.creator.map((e) => e.userName).join("/"),
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          Text("${formatPlaycount(video.playTime)}播放"),
-        ],
-      ),
-      onTap: onTap,
     );
   }
 }

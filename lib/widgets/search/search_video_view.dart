@@ -37,8 +37,8 @@ class _SearchVideoViewState extends State<SearchVideoView> {
       return;
     }
     final response = await SearchProvider.search(
-        widget.keyword, MusicSearchType.playlist,
-        limit: limit, offset: page * limit);
+        widget.keyword, MusicSearchType.video,
+        limit: limit, offset: (page - 1) * limit);
     final result = response as SearchVideoResponse;
     if (result.code != 200) {
       return;
@@ -62,7 +62,8 @@ class _SearchVideoViewState extends State<SearchVideoView> {
       onLoading: _onLoading,
       child: ListView.builder(
         itemCount: _items.length,
-        itemBuilder: (context, index) => VideoTile(video: _items[index]),
+        itemBuilder: (context, index) =>
+            VideoTile(video: _items[index], onTap: () {}),
       ),
     );
   }

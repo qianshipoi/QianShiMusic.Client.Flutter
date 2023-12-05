@@ -35,6 +35,7 @@ class _SearchResultPageState extends State<SearchResultPage>
     const _ResultTab("专辑", MusicSearchType.album),
     const _ResultTab("MV", MusicSearchType.mv),
     const _ResultTab("视频", MusicSearchType.video),
+    const _ResultTab("用户", MusicSearchType.userProfile),
   ];
   late TabController _controller;
 

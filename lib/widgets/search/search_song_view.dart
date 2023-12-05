@@ -42,7 +42,7 @@ class _SearchSongViewState extends State<SearchSongView> {
     }
     final response = await SearchProvider.search(
         widget.keyword, MusicSearchType.song,
-        limit: limit, offset: page * limit);
+        limit: limit, offset: (page - 1) * limit);
     final result = response as SearchSongResponse;
     if (result.code != 200) {
       return;

@@ -37,8 +37,8 @@ class _SearchMvViewState extends State<SearchMvView> {
       return;
     }
     final response = await SearchProvider.search(
-        widget.keyword, MusicSearchType.playlist,
-        limit: limit, offset: page * limit);
+        widget.keyword, MusicSearchType.mv,
+        limit: limit, offset: (page - 1) * limit);
     final result = response as SearchMvResponse;
     if (result.code != 200) {
       return;

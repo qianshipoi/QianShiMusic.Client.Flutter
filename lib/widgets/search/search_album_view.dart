@@ -37,15 +37,15 @@ class _SearchAlbumtViewState extends State<SearchAlbumtView> {
       return;
     }
     final response = await SearchProvider.search(
-        widget.keyword, MusicSearchType.playlist,
-        limit: limit, offset: page * limit);
+        widget.keyword, MusicSearchType.album,
+        limit: limit, offset: (page - 1) * limit);
     final result = response as SearchAlbumResponse;
     if (result.code != 200) {
       return;
     }
 
     _items.addAll(result.result!.albums);
-    more = response.result!.hasMore;
+    more = _items.length < result.result!.albumCount;
     page++;
     _refreshController.loadComplete();
     if (mounted) {
