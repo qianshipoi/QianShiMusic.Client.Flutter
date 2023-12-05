@@ -3,7 +3,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qianshi_music/models/artist.dart';
 import 'package:qianshi_music/models/responses/search_collect_response.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
-import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/tiles/search_artist_tile.dart';
 
 class SearchArtistView extends StatefulWidget {

@@ -105,7 +105,7 @@ class SearchCollectResult {
 }
 
 class SearchCollectResultSong {
-  final String moreText;
+  final String? moreText;
   final bool more;
   final List<int> resourceIds;
   final List<Track> songs;
@@ -127,7 +127,7 @@ class SearchCollectResultSong {
 
   factory SearchCollectResultSong.fromMap(Map<String, dynamic> map) {
     return SearchCollectResultSong(
-      moreText: map['moreText'] as String,
+      moreText: map['moreText'] != null ? map['moreText'] as String : null,
       more: map['more'] as bool,
       resourceIds:
           (map['resourceIds'] as List<dynamic>).map((e) => e as int).toList(),

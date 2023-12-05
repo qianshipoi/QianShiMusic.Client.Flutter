@@ -64,10 +64,12 @@ class _SearchCollectViewState extends State<SearchCollectView> {
                         arguments: songs[index].id);
                   }),
             ));
-            children.add(ListTile(
-              title: Center(child: Text(result.song!.moreText)),
-              onTap: () => logger.i("more song"),
-            ));
+            if (result.song!.moreText != null) {
+              children.add(ListTile(
+                title: Center(child: Text(result.song!.moreText!)),
+                onTap: () => logger.i("more song"),
+              ));
+            }
             children.add(const Divider());
           }
 
