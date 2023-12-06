@@ -50,6 +50,10 @@ String formatMusicImageUrl(String? url, {int? size, int? width, int? height}) {
     return "$url?param=${width}y$height";
   }
 
+  if (url.startsWith('http://')) {
+    url = url.replaceFirst('http://', 'https://');
+  }
+
   return url;
 }
 

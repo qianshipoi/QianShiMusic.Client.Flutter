@@ -33,6 +33,9 @@ dependencies:
   flutter_sound: ^9.2.13
   flutter_screenutil: ^5.9.0
   common_utils: ^2.1.0
+  video_player: ^2.2.11
+  auto_orientation: ^2.2.1
+  brightness_volume: ^1.0.3
 
 dev_dependencies:
   flutter_test:
