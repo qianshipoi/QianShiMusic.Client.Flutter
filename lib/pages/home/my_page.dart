@@ -21,9 +21,6 @@ class _MyPageState extends State<MyPage> {
             const SizedBox(
               height: 16,
             ),
-            SizedBox(
-              
-            )
           ],
         ),
       ),

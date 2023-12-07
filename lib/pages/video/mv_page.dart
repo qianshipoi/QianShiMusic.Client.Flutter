@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/mv.dart';
+import 'package:qianshi_music/pages/video/mv_comment_view.dart';
 import 'package:qianshi_music/provider/video_provider.dart';
 import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/video_player/video_player_bottom.dart';
@@ -17,7 +18,7 @@ class MvPage extends StatefulWidget {
   State<MvPage> createState() => _MvPageState();
 }
 
-class _MvPageState extends State<MvPage> {
+class _MvPageState extends State<MvPage> with TickerProviderStateMixin {
   // 是否全屏
   bool get _isFullScreen =>
       MediaQuery.of(context).orientation == Orientation.landscape;
@@ -28,6 +29,7 @@ class _MvPageState extends State<MvPage> {
   VideoPlayerTop? _top;
   VideoPlayerBottom? _bottom;
   LockIcon? _lockIcon; // 控制是否沉浸式的widget
+  late TabController _controller;
 
   Future<void> _getVideoInfo() async {
     final response = await VideoProvider.url(widget.mv.id);
@@ -46,6 +48,7 @@ class _MvPageState extends State<MvPage> {
   @override
   void initState() {
     super.initState();
+    _controller = TabController(length: 2, vsync: this);
     _getVideoInfo();
     VideoPlayerUtils.initializedListener(
         key: this,
@@ -76,21 +79,50 @@ class _MvPageState extends State<MvPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: _isFullScreen
-            ? null
-            : AppBar(
-                title: const Text("视频示例"),
-              ),
-        body: _isFullScreen
-            ? safeAreaPlayerUI()
-            : Column(
-                children: [
-                  safeAreaPlayerUI(),
-                  const SizedBox(
-                    height: 100,
-                  ),
-                ],
-              ));
+      appBar: _isFullScreen
+          ? null
+          : AppBar(
+              title: const Text("视频示例"),
+            ),
+      body: _isFullScreen
+          ? safeAreaPlayerUI()
+          : Column(
+              children: [
+                safeAreaPlayerUI(),
+                PreferredSize(
+                  preferredSize: const Size.fromHeight(40),
+                  child: _buildTabBar(),
+                ),
+                Expanded(
+                  child: _buildTabBarPageView(),
+                )
+              ],
+            ),
+    );
+  }
+
+  _buildTabBarPageView() {
+    return TabBarView(
+      controller: _controller,
+      children: [
+        const Text('简介'),
+        MvCommentView(mvId: widget.mv.id),
+      ],
+    );
+  }
+
+  Widget _buildTabBar() {
+    return TabBar(
+      controller: _controller,
+      indicator: const UnderlineTabIndicator(
+        borderSide: BorderSide(color: Color(0xff2fcfbb), width: 3),
+        insets: EdgeInsets.fromLTRB(0, 0, 0, 10),
+      ),
+      tabs: const [
+        Tab(text: '简介'),
+        Tab(text: '评论'),
+      ],
+    );
   }
 
   Widget safeAreaPlayerUI() {

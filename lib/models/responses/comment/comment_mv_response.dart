@@ -31,23 +31,29 @@ class CommentMvResponse extends BaseResponse {
 
   factory CommentMvResponse.fromMap(Map<String, dynamic> map) {
     return CommentMvResponse(
-      topComments: List<Comment>.from(
-        (map['topComments'] as List<int>).map<Comment>(
-          (x) => Comment.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      hotComments: List<Comment>.from(
-        (map['hotComments'] as List<int>).map<Comment>(
-          (x) => Comment.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      comments: List<Comment>.from(
-        (map['comments'] as List<int>).map<Comment>(
-          (x) => Comment.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      more: map['more'] as bool,
-      total: map['total'] as int,
+      topComments: map['topComments'] == null
+          ? []
+          : List<Comment>.from(
+              (map['topComments'] as List<dynamic>).map<Comment>(
+                (x) => Comment.fromMap(x as Map<String, dynamic>),
+              ),
+            ),
+      hotComments: map['hotComments'] == null
+          ? []
+          : List<Comment>.from(
+              (map['hotComments'] as List<dynamic>).map<Comment>(
+                (x) => Comment.fromMap(x as Map<String, dynamic>),
+              ),
+            ),
+      comments: map['comments'] == null
+          ? []
+          : List<Comment>.from(
+              (map['comments'] as List<dynamic>).map<Comment>(
+                (x) => Comment.fromMap(x as Map<String, dynamic>),
+              ),
+            ),
+      more: (map['more'] as bool?) ?? false,
+      total: (map['total'] as int?) ?? 0,
       code: map['code'] as int,
       msg: map['msg'] as String?,
     );

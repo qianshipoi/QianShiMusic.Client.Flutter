@@ -10,6 +10,7 @@ class Comment {
   final CommentUser user;
   final List<Comment> beReplied;
   final int? beRepliedCommentId;
+  final int replyCount;
   Comment({
     required this.commentId,
     required this.content,
@@ -20,6 +21,7 @@ class Comment {
     required this.user,
     required this.beReplied,
     this.beRepliedCommentId,
+    required this.replyCount,
   });
 
   Map<String, dynamic> toMap() {
@@ -33,6 +35,7 @@ class Comment {
       'user': user.toMap(),
       'beReplied': beReplied.map((x) => x.toMap()).toList(),
       'beRepliedCommentId': beRepliedCommentId,
+      'replyCount': replyCount,
     };
   }
 
@@ -45,14 +48,17 @@ class Comment {
       likedCount: map['likedCount'] as int,
       liked: map['liked'] as bool,
       user: CommentUser.fromMap(map['user'] as Map<String, dynamic>),
-      beReplied: List<Comment>.from(
-        (map['beReplied'] as List<dynamic>).map<Comment>(
-          (x) => Comment.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      beReplied: map['beReplied'] == null
+          ? []
+          : List<Comment>.from(
+              (map['beReplied'] as List<dynamic>).map<Comment>(
+                (x) => Comment.fromMap(x as Map<String, dynamic>),
+              ),
+            ),
       beRepliedCommentId: map['beRepliedCommentId'] != null
           ? map['beRepliedCommentId'] as int
           : null,
+      replyCount: (map['replyCount'] as int?) ?? 0,
     );
   }
 
