@@ -25,7 +25,7 @@ class _MvCommentViewState extends State<MvCommentView> {
   int _page = 1;
   final _limit = 20;
   bool more = true;
-  int _sortType = 2;
+  final _sortType = 2;
 
   @override
   void initState() {
