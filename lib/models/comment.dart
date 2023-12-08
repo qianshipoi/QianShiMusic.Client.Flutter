@@ -48,13 +48,7 @@ class Comment {
       likedCount: map['likedCount'] as int,
       liked: map['liked'] as bool,
       user: CommentUser.fromMap(map['user'] as Map<String, dynamic>),
-      beReplied: map['beReplied'] == null
-          ? []
-          : List<Comment>.from(
-              (map['beReplied'] as List<dynamic>).map<Comment>(
-                (x) => Comment.fromMap(x as Map<String, dynamic>),
-              ),
-            ),
+      beReplied: [],
       beRepliedCommentId: map['beRepliedCommentId'] != null
           ? map['beRepliedCommentId'] as int
           : null,

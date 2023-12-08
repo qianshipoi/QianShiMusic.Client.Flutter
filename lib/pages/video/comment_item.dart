@@ -6,9 +6,11 @@ import 'package:qianshi_music/widgets/fix_image.dart';
 
 class CommentItem extends StatelessWidget {
   final Comment comment;
+  final Function()? replyTap;
   const CommentItem({
     super.key,
     required this.comment,
+    this.replyTap,
   });
 
   @override
@@ -78,11 +80,14 @@ class CommentItem extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(top: 4),
-      child: Text(
-        "${comment.replyCount}条回复 >",
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-            ),
+      child: GestureDetector(
+        onTap: replyTap,
+        child: Text(
+          "${comment.replyCount}条回复 >",
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+        ),
       ),
     );
   }

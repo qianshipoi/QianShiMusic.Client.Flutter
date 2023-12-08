@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:qianshi_music/models/responses/comment/comment_floor_mv_response.dart';
+import 'package:qianshi_music/models/responses/comment/comment_floor_response.dart';
 import 'package:qianshi_music/models/responses/comment/comment_mv_response.dart';
 import 'package:qianshi_music/models/responses/comment/comment_new_mv_response.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
@@ -33,16 +35,58 @@ class CommentProvider {
     }
 
     final response = await HttpUtils.get('comment/new', params: queryParams);
-    return _mapResponse<T>(response);
+    return _newResponse<T>(response);
   }
 
-  static T _mapResponse<T>(Response<dynamic> response) {
+  static T _newResponse<T>(Response<dynamic> response) {
     switch (T) {
       case CommentNewMvResponse:
         if (response.statusCode == 200) {
           return CommentNewMvResponse.fromMap(response.data) as T;
         } else {
           return CommentNewMvResponse(data: null, code: -1, msg: "获取评论失败") as T;
+        }
+      default:
+        throw Exception("未知类型");
+    }
+  }
+
+  static Future<T> floor<T extends CommentFloorResponse>(
+      int id, int parentCommentId,
+      {int limit = 20, int? time}) async {
+    int type = -1;
+
+    switch (T) {
+      case CommentFloorMvResponse:
+        type = 1;
+        break;
+      default:
+        throw Exception("未知类型");
+    }
+
+    final queryParams = {
+      "id": id.toString(),
+      "parentCommentId": parentCommentId.toString(),
+      "limit": limit.toString(),
+      "type": type.toString(),
+    };
+    if (time != null) {
+      queryParams['time'] = time.toString();
+    }
+
+    final response = await HttpUtils.get('comment/floor', params: queryParams);
+    return _floorResponse<T>(response);
+  }
+
+  static T _floorResponse<T extends CommentFloorResponse>(
+      Response<dynamic> response) {
+    switch (T) {
+      case CommentFloorMvResponse:
+        if (response.statusCode == 200) {
+          return CommentFloorMvResponse.fromMap(response.data) as T;
+        } else {
+          return CommentFloorMvResponse(data: null, code: -1, msg: "获取评论失败")
+              as T;
         }
       default:
         throw Exception("未知类型");

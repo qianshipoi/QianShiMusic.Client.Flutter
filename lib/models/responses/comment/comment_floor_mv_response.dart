@@ -35,7 +35,7 @@ class CommentFloorMvResponse extends CommentFloorResponse<CommentFloorMvData> {
 }
 
 class CommentFloorMvData {
-  final Comment ownerComment;
+  final Comment? ownerComment;
   final List<Comment> comments;
   final bool hasMore;
   final int totalCount;
@@ -52,7 +52,7 @@ class CommentFloorMvData {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'ownerComment': ownerComment.toMap(),
+      'ownerComment': ownerComment?.toMap(),
       'comments': comments.map((x) => x.toMap()).toList(),
       'hasMore': hasMore,
       'totalCount': totalCount,
@@ -63,8 +63,9 @@ class CommentFloorMvData {
 
   factory CommentFloorMvData.fromMap(Map<String, dynamic> map) {
     return CommentFloorMvData(
-      ownerComment:
-          Comment.fromMap(map['ownerComment'] as Map<String, dynamic>),
+      ownerComment: map['ownerComment'] == null
+          ? null
+          : Comment.fromMap(map['ownerComment'] as Map<String, dynamic>),
       comments: List<Comment>.from(
         (map['comments'] as List<dynamic>).map<Comment>(
           (x) => Comment.fromMap(x as Map<String, dynamic>),
