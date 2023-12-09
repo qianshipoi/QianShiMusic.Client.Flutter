@@ -3,12 +3,14 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_music/constants.dart';
 
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
 import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
+import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/tiles/track_tile.dart';
 
@@ -31,8 +33,7 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
   Future<Playlist> getPlaylistDetail() async {
     final response =
         await HttpUtils.get('playlist/detail?id=${widget.playlistId}');
-    final playlist = Playlist.fromMap(response.data['playlist']);
-    return playlist;
+    return Playlist.fromMap(response.data['playlist']);
   }
 
   @override
@@ -75,14 +76,47 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
                   ),
                 ),
               ),
-              SliverFixedExtentList(
-                  itemExtent: 40,
-                  delegate: SliverChildListDelegate(
-                    [
-                      Text(playlist.description ?? ""),
-                      Text(playlist.playCount.toString()),
-                    ],
-                  )),
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 32,
+                      child: ListTile(
+                        title: Text(
+                          playlist.description ?? "",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: const Icon(Icons.keyboard_arrow_right),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {},
+                            icon: const Icon(Icons.comment_outlined),
+                            label: Text(formatPlaycount(playlist.commentCount)),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {},
+                            icon: const Icon(Icons.add),
+                            label:
+                                Text(formatPlaycount(playlist.subscribedCount)),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
               SliverList(
                 delegate: SliverChildBuilderDelegate((content, index) {
                   final track = playlist.tracks![index];

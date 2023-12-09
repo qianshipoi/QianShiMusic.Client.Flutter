@@ -17,8 +17,8 @@ class LoginProfile {
   int province;
   bool defaultAvatar;
   String? description;
-  int? followeds;
-  int? follows;
+  int followeds;
+  int follows;
   int? playlistCount;
   int? playlistBeSubscribedCount;
   LoginProfile({
@@ -38,8 +38,8 @@ class LoginProfile {
     required this.province,
     required this.defaultAvatar,
     this.description,
-    this.followeds,
-    this.follows,
+    required this.followeds,
+    required this.follows,
     this.playlistCount,
     this.playlistBeSubscribedCount,
   });
@@ -90,8 +90,8 @@ class LoginProfile {
       defaultAvatar: map['defaultAvatar'] as bool,
       description:
           map['description'] != null ? map['description'] as String : null,
-      followeds: map['followeds'] != null ? map['followeds'] as int : null,
-      follows: map['follows'] != null ? map['follows'] as int : null,
+      followeds: (map['followeds'] as int?) ?? 0,
+      follows: (map['follows'] as int?) ?? 0,
       playlistCount:
           map['playlistCount'] != null ? map['playlistCount'] as int : null,
       playlistBeSubscribedCount: map['playlistBeSubscribedCount'] != null

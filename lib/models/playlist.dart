@@ -8,6 +8,10 @@ class Playlist {
   final String coverImgUrl;
   final String? description;
   final int playCount;
+  final int trackCount;
+  final int commentCount;
+  final int shareCount;
+  final int subscribedCount;
   final List<Track>? tracks;
   Playlist({
     required this.id,
@@ -16,8 +20,11 @@ class Playlist {
     this.description,
     required this.playCount,
     this.tracks,
+    required this.trackCount,
+    required this.commentCount,
+    required this.shareCount,
+    required this.subscribedCount,
   });
-
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -27,6 +34,10 @@ class Playlist {
       'description': description,
       'playCount': playCount,
       'tracks': tracks?.map((x) => x.toMap()).toList(),
+      'trackCount': trackCount,
+      'commentCount': commentCount,
+      'shareCount': shareCount,
+      'subscribedCount': subscribedCount,
     };
   }
 
@@ -35,9 +46,20 @@ class Playlist {
       id: map['id'] as int,
       name: map['name'] as String,
       coverImgUrl: map['coverImgUrl'] as String,
-      description: map['description'] != null ? map['description'] as String : null,
+      description:
+          map['description'] != null ? map['description'] as String : null,
       playCount: map['playCount'] as int,
-      tracks: map['tracks'] != null ? List<Track>.from((map['tracks'] as List<dynamic>).map<Track?>((x) => Track.fromMap(x as Map<String,dynamic>),),) : null,
+      trackCount: (map['trackCount'] as int?) ?? 0,
+      commentCount: (map['commentCount'] as int?) ?? 0,
+      shareCount: (map['shareCount'] as int?) ?? 0,
+      subscribedCount: (map['subscribedCount'] as int?) ?? 0,
+      tracks: map['tracks'] != null
+          ? List<Track>.from(
+              (map['tracks'] as List<dynamic>).map<Track?>(
+                (x) => Track.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : null,
     );
   }
 
