@@ -76,7 +76,12 @@ class PlayingController extends GetxController {
       fromURI: url,
       codec: codec,
       whenFinished: () {
-        isPlaying.value = false;
+        if (_currentTrackIndex.value < tracks.length - 1) {
+          _currentTrackIndex.value++;
+          play();
+        } else {
+          isPlaying.value = false;
+        }
       },
     );
     _mPlayer.setSubscriptionDuration(const Duration(milliseconds: 500));
@@ -187,5 +192,23 @@ class PlayingController extends GetxController {
       await play();
     }
     return true;
+  }
+
+  Future<void> next() async {
+    if (_currentTrackIndex.value < tracks.length - 1) {
+      _currentTrackIndex.value++;
+      await play();
+    } else {
+      isPlaying.value = false;
+    }
+  }
+
+  Future<void> prev() async {
+    if (_currentTrackIndex.value > 0) {
+      _currentTrackIndex.value--;
+      await play();
+    } else {
+      isPlaying.value = false;
+    }
   }
 }
