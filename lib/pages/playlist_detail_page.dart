@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:qianshi_music/pages/base_playing_state.dart';
 import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
-import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/tiles/track_tile.dart';
 
@@ -124,10 +122,11 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
                       track: track,
                       index: index,
                       onTap: () async {
-                        await _playingController.load(track);
-                        await _playingController.play();
-                        await Get.to(() => const PlaySongPage(),
-                            arguments: track.id);
+                        if (await _playingController.addPlaylist(playlist,
+                            playNow: true, playTrackId: track.id)) {
+                          await Get.to(() => const PlaySongPage(),
+                              arguments: track.id);
+                        }
                       });
                 }, childCount: playlist.tracks!.length),
               ),

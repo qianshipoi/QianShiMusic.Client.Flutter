@@ -24,9 +24,7 @@ class _PlaySongPageState extends State<PlaySongPage> {
   Future<Track?> _getTrack() async {
     final response = await SongProvider.detail(_trackId.toString());
     if (response.code == 200) {
-      final track = response.songs!.first;
-      _playingController.load(track);
-      return track;
+      return response.songs!.first;
     }
     return null;
   }
@@ -188,7 +186,7 @@ class _PlaySongPageState extends State<PlaySongPage> {
           if (_playingController.isPlaying.value) {
             _playingController.pause();
           } else {
-            _playingController.play(track: track);
+            _playingController.play();
           }
         },
       ),

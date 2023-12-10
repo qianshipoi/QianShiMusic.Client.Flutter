@@ -14,18 +14,18 @@ enum MusicLevel {
 }
 
 class SongProvider {
-  static Future<SongUrlResponse> url(String idOrIds) async {
+  static Future<SongUrlResponse> url(List<int> ids) async {
     final response = await HttpUtils.get<dynamic>('/song/url', params: {
-      'id': idOrIds,
+      'id': ids.join(','),
     });
     return response.statusCode == 200
         ? SongUrlResponse.fromMap(response.data)
         : SongUrlResponse(code: -1, msg: '请求失败');
   }
 
-  static Future<SongUrlResponse> urlV1(String idOrIds, MusicLevel level) async {
+  static Future<SongUrlResponse> urlV1(List<int> ids, MusicLevel level) async {
     final response = await HttpUtils.get<dynamic>('/song/url/v1', params: {
-      'id': idOrIds,
+      'id': ids.join(','),
       'level': level.toString(),
     });
     return response.statusCode == 200

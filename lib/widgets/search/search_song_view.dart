@@ -69,8 +69,7 @@ class _SearchSongViewState extends State<SearchSongView> {
           track: _songs[index],
           index: index,
           onTap: () async {
-            await _playingController.load(_songs[index]);
-            await _playingController.play();
+            await _playingController.addTrack(_songs[index], playNow: true);
             await Get.to(() => const PlaySongPage(),
                 arguments: _songs[index].id);
           },
