@@ -18,7 +18,7 @@ class BaseResponse {
   factory BaseResponse.fromMap(Map<String, dynamic> map) {
     return BaseResponse(
       code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      msg: (map['msg'] ?? map['message']) as String?,
     );
   }
 

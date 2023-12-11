@@ -35,7 +35,7 @@ class _CatPlaylistState extends State<CatPlaylist> {
   }
 
   _onRefresh() async {
-    final response = await PlaylistProvider.getPlaylistTop(cat: widget.cat);
+    final response = await PlaylistProvider.top(cat: widget.cat);
     if (response.code == 200) {
       playlist.clear();
       playlist.addAll(response.playlists!);
@@ -53,7 +53,7 @@ class _CatPlaylistState extends State<CatPlaylist> {
       _refreshController.loadNoData();
       return;
     }
-    final response = await PlaylistProvider.getPlaylistTop(
+    final response = await PlaylistProvider.top(
         cat: widget.cat, limit: limit, offset: page * limit);
     if (response.code == 200) {
       playlist.addAll(response.playlists!);

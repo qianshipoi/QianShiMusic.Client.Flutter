@@ -26,7 +26,7 @@ class _FoundPageState extends BasePlayingState<FoundPage>
   }
 
   Future getCatlist() async {
-    final response = await PlaylistProvider.getPlaylistCatlist();
+    final response = await PlaylistProvider.catlist();
     if (response.code == 200) {
       tabs.clear();
       tabs.add(response.all!.name);

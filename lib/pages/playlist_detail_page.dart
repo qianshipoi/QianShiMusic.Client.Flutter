@@ -7,8 +7,8 @@ import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
 import 'package:qianshi_music/pages/play_song/play_song_page.dart';
+import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
-import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/tiles/track_tile.dart';
 
@@ -29,9 +29,8 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
   final PlayingController _playingController = Get.find();
 
   Future<Playlist> getPlaylistDetail() async {
-    final response =
-        await HttpUtils.get('playlist/detail?id=${widget.playlistId}');
-    return Playlist.fromMap(response.data['playlist']);
+    final response = await PlaylistProvider.detail(widget.playlistId);
+    return response.playlist!;
   }
 
   @override
