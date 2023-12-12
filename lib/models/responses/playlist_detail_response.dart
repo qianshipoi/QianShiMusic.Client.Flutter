@@ -13,17 +13,17 @@ class PlaylistDetailResponse extends BaseResponse {
 
   @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'playlist': playlist?.toMap(),
-      'code': code,
-      'msg': msg,
-    };
+    return super.toMap()
+      ..addAll({
+        'playlist': playlist?.toMap(),
+      });
   }
 
   factory PlaylistDetailResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return PlaylistDetailResponse(
-      code: map['code'] as int,
-      msg: (map['msg'] ?? map['message']) as String?,
+      code: base.code,
+      msg: base.msg,
       playlist: map['playlist'] == null
           ? null
           : Playlist.fromMap(map['playlist'] as Map<String, dynamic>),

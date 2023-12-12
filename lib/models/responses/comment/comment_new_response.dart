@@ -7,4 +7,11 @@ abstract class CommentNewResponse<T> extends BaseResponse {
     super.msg,
     required this.data,
   });
+
+  @override
+  Map<String, dynamic> toMap() {
+    return super.toMap()..addAll(dataToMap());
+  }
+
+  Map<String, dynamic> dataToMap();
 }

@@ -5,21 +5,25 @@ import 'package:qianshi_music/models/responses/base_response.dart';
 class MvUrlResponse extends BaseResponse {
   final MvUrlData? data;
 
-  MvUrlResponse({this.data, required super.code, super.msg});
+  MvUrlResponse({
+    this.data,
+    required super.code,
+    super.msg,
+  });
 
   @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'code': code,
-      'msg': msg,
-      'data': data?.toMap(),
-    };
+    return super.toMap()
+      ..addAll({
+        'data': data?.toMap(),
+      });
   }
 
   factory MvUrlResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return MvUrlResponse(
-      code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      code: base.code,
+      msg: base.msg,
       data: map['data'] != null
           ? MvUrlData.fromMap(map['data'] as Map<String, dynamic>)
           : null,

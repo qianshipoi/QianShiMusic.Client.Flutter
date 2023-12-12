@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
 import 'package:qianshi_music/models/responses/login_anonimous_response.dart';
 import 'package:qianshi_music/models/responses/login_callphone_response.dart';
 import 'package:qianshi_music/models/responses/user_account_response.dart';
@@ -31,7 +30,7 @@ class AuthProvider {
     String? captcha,
     String? password,
   }) async {
-    Map<String, Object> data = {
+    final data = {
       'phone': account,
       't': DateTime.now().millisecondsSinceEpoch,
       'noCookie': true,
@@ -45,21 +44,19 @@ class AuthProvider {
     logger.i(data);
     final response =
         await HttpUtils.post<dynamic>('login/cellphone', data: data);
-    logger.i(response.data);
 
     if (response.statusCode == 200) {
-      return LoginCallphoneResponse.fromMap(response.data!);
+      return LoginCallphoneResponse.fromMap(response.data);
     } else {
-      Get.snackbar("登录失败", "账号或密码错误");
+      return LoginCallphoneResponse(code: -1, msg: "账号或密码错误");
     }
-    return LoginCallphoneResponse.fromMap(response.data!);
   }
 
   static Future<LoginAnonimousResponse> anonimous() async {
-    final response = await HttpUtils.get<dynamic>('register/anonimous');
+    final response = await HttpUtils.get('register/anonimous');
     return response.statusCode == 200
         ? LoginAnonimousResponse.fromMap(response.data!)
-        : LoginAnonimousResponse(code: -1, cookie: null);
+        : LoginAnonimousResponse(code: -1, msg: "网络异常");
   }
 
   static Future<UserAccountResponse> account() async {
@@ -70,8 +67,7 @@ class AuthProvider {
       return UserAccountResponse.fromMap(response.data);
     } on DioException catch (e) {
       final error = e.error as AppException;
-      Get.snackbar("错误", error.getMessage());
-      return UserAccountResponse(code: -406, msg: error.getMessage());
+      return UserAccountResponse(code: -1, msg: error.getMessage());
     }
   }
 }

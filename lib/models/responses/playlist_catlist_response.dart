@@ -1,32 +1,32 @@
 import 'dart:convert';
 
 import 'package:qianshi_music/models/category.dart';
+import 'package:qianshi_music/models/responses/base_response.dart';
 
-class PlaylistCatlistResponse {
-  final int code;
-  final String? msg;
+class PlaylistCatlistResponse extends BaseResponse {
   final Category? all;
-  final List<Category>? sub;
+  final List<Category> sub;
   PlaylistCatlistResponse({
-    required this.code,
-    this.msg,
+    required super.code,
+    super.msg,
     this.all,
-    this.sub,
+    this.sub = const [],
   });
 
+  @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'code': code,
-      'msg': msg,
-      'all': all?.toMap(),
-      'sub': sub?.map((x) => x.toMap()).toList(),
-    };
+    return super.toMap()
+      ..addAll({
+        'all': all?.toMap(),
+        'sub': sub.map((x) => x.toMap()).toList(),
+      });
   }
 
   factory PlaylistCatlistResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return PlaylistCatlistResponse(
-      code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      code: base.code,
+      msg: base.msg,
       all: map['all'] != null
           ? Category.fromMap(map['all'] as Map<String, dynamic>)
           : null,
@@ -36,10 +36,11 @@ class PlaylistCatlistResponse {
                 (x) => Category.fromMap(x as Map<String, dynamic>),
               ),
             )
-          : null,
+          : [],
     );
   }
 
+  @override
   String toJson() => json.encode(toMap());
 
   factory PlaylistCatlistResponse.fromJson(String source) =>

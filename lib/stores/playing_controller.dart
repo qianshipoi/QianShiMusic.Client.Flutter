@@ -53,12 +53,12 @@ class PlayingController extends GetxController {
       Get.snackbar('播放失败', response.msg ?? '未知错误');
       return;
     }
-    var url = response.data!.first.url!;
+    var url = response.data.first.url!;
     if (url.startsWith("http:")) {
       url = url.replaceFirst("http:", "https:");
     }
     Codec codec = Codec.mp3;
-    switch (response.data!.first.type) {
+    switch (response.data.first.type) {
       case "flac":
         codec = Codec.flac;
         break;
@@ -71,7 +71,7 @@ class PlayingController extends GetxController {
       default:
         break;
     }
-    logger.i(response.data!.first.url);
+    logger.i(response.data.first.url);
     await _mPlayer.startPlayer(
       fromURI: url,
       codec: codec,

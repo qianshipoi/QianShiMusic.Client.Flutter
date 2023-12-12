@@ -31,8 +31,12 @@ class SearchProvider {
       'limit': limit,
       'offset': offset
     });
-
-    final data = response.data;
+    final data = response.statusCode == 200
+        ? response.data
+        : {
+            'code': -1,
+            'msg': '网络异常',
+          };
 
     switch (type) {
       case MusicSearchType.song:

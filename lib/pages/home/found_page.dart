@@ -30,7 +30,7 @@ class _FoundPageState extends BasePlayingState<FoundPage>
     if (response.code == 200) {
       tabs.clear();
       tabs.add(response.all!.name);
-      tabs.addAll(response.sub!.map((e) => e.name).toList());
+      tabs.addAll(response.sub.map((e) => e.name).toList());
       _controller = TabController(
           length: tabs.length, initialIndex: _controller.index, vsync: this);
       setState(() {});

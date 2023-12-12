@@ -323,7 +323,7 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: Theme.of(context).primaryColor);
       return;
     }
-    Global.cookie = anonimousResponse.cookie!;
+    Global.cookie = anonimousResponse.cookie;
     final response = await AuthProvider.account();
     if (response.code != 200) {
       Get.snackbar(Globalization.error.tr, response.msg ?? "登录失败",
@@ -331,7 +331,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
     SpUtil().setBool("IsLogin", true);
-    SpUtil().setString("cookie", anonimousResponse.cookie!);
+    SpUtil().setString("cookie", anonimousResponse.cookie);
     _currentUserController.currentAccount.value = response.account;
     _currentUserController.currentProfile.value = response.profile;
     Get.off(() => const HomePage());

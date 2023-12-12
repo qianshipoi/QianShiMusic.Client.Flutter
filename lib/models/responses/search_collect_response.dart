@@ -1,45 +1,43 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:qianshi_music/models/album.dart';
 import 'package:qianshi_music/models/artist.dart';
 import 'package:qianshi_music/models/dj_radios.dart';
+import 'package:qianshi_music/models/mv.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/models/responses/base_response.dart';
 import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/models/user_profile.dart';
 import 'package:qianshi_music/models/video.dart';
 
-import '../mv.dart';
-
-class SearchCollectResponse {
-  final int code;
-  final String? msg;
+class SearchCollectResponse extends BaseResponse {
   final SearchCollectResult? result;
   SearchCollectResponse({
-    required this.code,
-    this.msg,
+    required super.code,
+    super.msg,
     this.result,
   });
 
+  @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'code': code,
-      'msg': msg,
-      'result': result?.toMap(),
-    };
+    return super.toMap()
+      ..addAll({
+        'result': result?.toMap(),
+      });
   }
 
   factory SearchCollectResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return SearchCollectResponse(
-      code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      code: base.code,
+      msg: base.msg,
       result: map['result'] != null
           ? SearchCollectResult.fromMap(map['result'] as Map<String, dynamic>)
           : null,
     );
   }
 
+  @override
   String toJson() => json.encode(toMap());
 
   factory SearchCollectResponse.fromJson(String source) =>
@@ -315,22 +313,24 @@ class SearchCollectResultAlbum {
 class SearchSongResponse extends BaseResponse {
   final SearchSongResult? result;
   SearchSongResponse({
-    required int code,
-    String? msg,
+    required super.code,
+    super.msg,
     this.result,
-  }) : super(code: code, msg: msg);
+  });
 
   @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'result': result?.toMap(),
-    };
+    return super.toMap()
+      ..addAll({
+        'result': result?.toMap(),
+      });
   }
 
   factory SearchSongResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return SearchSongResponse(
-      code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      code: base.code,
+      msg: base.msg,
       result: map['result'] != null
           ? SearchSongResult.fromMap(map['result'] as Map<String, dynamic>)
           : null,
@@ -383,22 +383,24 @@ class SearchSongResult {
 class SearchArtistResponse extends BaseResponse {
   final SearchArtistResult? result;
   SearchArtistResponse({
-    required int code,
-    String? msg,
+    required super.code,
+    super.msg,
     this.result,
-  }) : super(code: code, msg: msg);
+  });
 
   @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'result': result?.toMap(),
-    };
+    return super.toMap()
+      ..addAll({
+        'result': result?.toMap(),
+      });
   }
 
   factory SearchArtistResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return SearchArtistResponse(
-      code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      code: base.code,
+      msg: base.msg,
       result: map['result'] != null
           ? SearchArtistResult.fromMap(map['result'] as Map<String, dynamic>)
           : null,
@@ -458,22 +460,24 @@ class SearchArtistResult {
 class SearchAlbumResponse extends BaseResponse {
   final SearchAlbumResult? result;
   SearchAlbumResponse({
-    required int code,
-    String? msg,
+    required super.code,
+    super.msg,
     this.result,
-  }) : super(code: code, msg: msg);
+  });
 
   @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'result': result?.toMap(),
-    };
+    return super.toMap()
+      ..addAll({
+        'result': result?.toMap(),
+      });
   }
 
   factory SearchAlbumResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return SearchAlbumResponse(
-      code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      code: base.code,
+      msg: base.msg,
       result: map['result'] != null
           ? SearchAlbumResult.fromMap(map['result'] as Map<String, dynamic>)
           : null,
@@ -522,22 +526,24 @@ class SearchAlbumResult {
 class SearchPlaylistResponse extends BaseResponse {
   final SearchPlaylistResult? result;
   SearchPlaylistResponse({
-    required int code,
-    String? msg,
+    required super.code,
+    super.msg,
     this.result,
-  }) : super(code: code, msg: msg);
+  });
 
   @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'result': result?.toMap(),
-    };
+    return super.toMap()
+      ..addAll({
+        'result': result?.toMap(),
+      });
   }
 
   factory SearchPlaylistResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return SearchPlaylistResponse(
-      code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      code: base.code,
+      msg: base.msg,
       result: map['result'] != null
           ? SearchPlaylistResult.fromMap(map['result'] as Map<String, dynamic>)
           : null,
@@ -591,22 +597,24 @@ class SearchPlaylistResult {
 class SearchDjRadiosResponse extends BaseResponse {
   final SearchDjRadiosResult? result;
   SearchDjRadiosResponse({
-    required int code,
-    String? msg,
+    required super.code,
+    super.msg,
     this.result,
-  }) : super(code: code, msg: msg);
+  });
 
   @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'result': result?.toMap(),
-    };
+    return super.toMap()
+      ..addAll({
+        'result': result?.toMap(),
+      });
   }
 
   factory SearchDjRadiosResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return SearchDjRadiosResponse(
-      code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      code: base.code,
+      msg: base.msg,
       result: map['result'] != null
           ? SearchDjRadiosResult.fromMap(map['result'] as Map<String, dynamic>)
           : null,
@@ -660,22 +668,24 @@ class SearchDjRadiosResult {
 class SearchVideoResponse extends BaseResponse {
   final SearchVideoResult? result;
   SearchVideoResponse({
-    required int code,
-    String? msg,
+    required super.code,
+    super.msg,
     this.result,
-  }) : super(code: code, msg: msg);
+  });
 
   @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'result': result?.toMap(),
-    };
+    return super.toMap()
+      ..addAll({
+        'result': result?.toMap(),
+      });
   }
 
   factory SearchVideoResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return SearchVideoResponse(
-      code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      code: base.code,
+      msg: base.msg,
       result: map['result'] != null
           ? SearchVideoResult.fromMap(map['result'] as Map<String, dynamic>)
           : null,
@@ -728,22 +738,24 @@ class SearchVideoResult {
 class SearchMvResponse extends BaseResponse {
   final SearchMvResult? result;
   SearchMvResponse({
-    required int code,
-    String? msg,
+    required super.code,
+    super.msg,
     this.result,
-  }) : super(code: code, msg: msg);
+  });
 
   @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'result': result?.toMap(),
-    };
+    return super.toMap()
+      ..addAll({
+        'result': result?.toMap(),
+      });
   }
 
   factory SearchMvResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return SearchMvResponse(
-      code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      code: base.code,
+      msg: base.msg,
       result: map['result'] != null
           ? SearchMvResult.fromMap(map['result'] as Map<String, dynamic>)
           : null,
@@ -792,22 +804,24 @@ class SearchMvResult {
 class SearchUserProfileResponse extends BaseResponse {
   final SearchUserProfileResult? result;
   SearchUserProfileResponse({
-    required int code,
-    String? msg,
+    required super.code,
+    super.msg,
     this.result,
-  }) : super(code: code, msg: msg);
+  });
 
   @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'result': result?.toMap(),
-    };
+    return super.toMap()
+      ..addAll({
+        'result': result?.toMap(),
+      });
   }
 
   factory SearchUserProfileResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return SearchUserProfileResponse(
-      code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      code: base.code,
+      msg: base.msg,
       result: map['result'] != null
           ? SearchUserProfileResult.fromMap(
               map['result'] as Map<String, dynamic>)
