@@ -180,9 +180,6 @@ class PlayingController extends GetxController {
     final playIndex = playTrackId == null
         ? 0
         : tracks.indexWhere((element) => element.id == playTrackId);
-    logger.i('playindex:$playIndex');
-    logger.i('_currentTrackIndex:${_currentTrackIndex.value}');
-
     if (playIndex == _currentTrackIndex.value) {
       if (!isPlaying.value) {
         await resume();

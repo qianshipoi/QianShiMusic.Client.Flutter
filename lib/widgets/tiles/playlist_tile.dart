@@ -15,10 +15,13 @@ class PlaylistTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: FixImage(
-        imageUrl: "${playlist.coverImgUrl}?param=48y48",
-        progressIndicatorBuilder: (context, url, downloadProgress) =>
-            CircularProgressIndicator(value: downloadProgress.progress),
+      leading: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: FixImage(
+          imageUrl: "${playlist.coverImgUrl}?param=48y48",
+          progressIndicatorBuilder: (context, url, downloadProgress) =>
+              CircularProgressIndicator(value: downloadProgress.progress),
+        ),
       ),
       title: Text(
         playlist.name,

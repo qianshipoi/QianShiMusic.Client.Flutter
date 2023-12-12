@@ -10,6 +10,7 @@ import 'package:qianshi_music/pages/home/found_page.dart';
 import 'package:qianshi_music/pages/home/index_page.dart';
 import 'package:qianshi_music/pages/home/my_page.dart';
 import 'package:qianshi_music/stores/index_controller.dart';
+import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/capture_util.dart';
 import 'package:qianshi_music/utils/circle_image_painter.dart';
 import 'package:qianshi_music/utils/sputils.dart';
@@ -43,6 +44,7 @@ class _HomePageState extends State<HomePage>
   final GlobalKey _keyGreen = GlobalKey();
   late Offset _startOffset;
   final _indexController = Get.find<IndexController>();
+  final PlayingController _playingController = Get.find<PlayingController>();
 
   @override
   void initState() {
@@ -153,25 +155,32 @@ class _HomePageState extends State<HomePage>
                 ],
               ),
             ),
-            bottomNavigationBar: CurvedNavigationBar(
-                items: [
-                  Icon(Icons.message,
-                      size: 24, color: Theme.of(context).colorScheme.onPrimary),
-                  Icon(Icons.people,
-                      size: 24, color: Theme.of(context).colorScheme.onPrimary),
-                  Icon(Icons.person,
-                      size: 24, color: Theme.of(context).colorScheme.onPrimary),
-                ],
-                index: _currentPage,
-                backgroundColor: const Color.fromARGB(255, 187, 230, 243),
-                color: Theme.of(context).colorScheme.primary,
-                height: 60,
-                onTap: (index) {
-                  setState(() {
-                    _currentPage = index;
-                    _pageController.jumpToPage(index);
-                  });
-                }),
+            bottomNavigationBar: Obx(
+              () => CurvedNavigationBar(
+                  items: [
+                    Icon(Icons.message,
+                        size: 24,
+                        color: Theme.of(context).colorScheme.onPrimary),
+                    Icon(Icons.people,
+                        size: 24,
+                        color: Theme.of(context).colorScheme.onPrimary),
+                    Icon(Icons.person,
+                        size: 24,
+                        color: Theme.of(context).colorScheme.onPrimary),
+                  ],
+                  index: _currentPage,
+                  backgroundColor: _playingController.isPlaying.value
+                      ? const Color.fromARGB(255, 187, 230, 243)
+                      : Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.primary,
+                  height: 60,
+                  onTap: (index) {
+                    setState(() {
+                      _currentPage = index;
+                      _pageController.jumpToPage(index);
+                    });
+                  }),
+            ),
             backgroundColor: Colors.transparent,
             body: PageView(
               controller: _pageController,
