@@ -23,10 +23,11 @@ class _PlaySongPageState extends State<PlaySongPage> {
 
   Future<Track?> _getTrack() async {
     final response = await SongProvider.detail(_trackId.toString());
-    if (response.code == 200) {
-      return response.songs!.first;
+    if (response.code != 200) {
+      Get.snackbar("获取歌曲信息失败", response.msg!);
+      return null;
     }
-    return null;
+    return response.songs.first;
   }
 
   @override

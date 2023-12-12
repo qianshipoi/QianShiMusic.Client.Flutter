@@ -85,8 +85,7 @@ class CommentProvider {
         if (response.statusCode == 200) {
           return CommentFloorMvResponse.fromMap(response.data) as T;
         } else {
-          return CommentFloorMvResponse(data: null, code: -1, msg: "获取评论失败")
-              as T;
+          return CommentFloorMvResponse(code: -1, msg: "获取评论失败") as T;
         }
       default:
         throw Exception("未知类型");
@@ -108,14 +107,7 @@ class CommentProvider {
     if (response.statusCode == 200) {
       return CommentMvResponse.fromMap(response.data);
     } else {
-      return CommentMvResponse(
-          topComments: [],
-          hotComments: [],
-          comments: [],
-          more: false,
-          total: 0,
-          code: -1,
-          msg: "获取评论失败");
+      return CommentMvResponse(code: -1, msg: "获取评论失败");
     }
   }
 }

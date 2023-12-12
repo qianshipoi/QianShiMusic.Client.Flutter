@@ -9,28 +9,33 @@ class CommentMvResponse extends BaseResponse {
   final List<Comment> comments;
   final bool more;
   final int total;
-  CommentMvResponse(
-      {required this.topComments,
-      required this.hotComments,
-      required this.comments,
-      required this.more,
-      required this.total,
-      required super.code,
-      super.msg});
+  CommentMvResponse({
+    required super.code,
+    super.msg,
+    this.topComments = const [],
+    this.hotComments = const [],
+    this.comments = const [],
+    this.more = false,
+    this.total = 0,
+  });
 
   @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'topComments': topComments.map((x) => x.toMap()).toList(),
-      'hotComments': hotComments.map((x) => x.toMap()).toList(),
-      'comments': comments.map((x) => x.toMap()).toList(),
-      'more': more,
-      'total': total,
-    };
+    return super.toMap()
+      ..addAll(<String, dynamic>{
+        'topComments': topComments.map((x) => x.toMap()).toList(),
+        'hotComments': hotComments.map((x) => x.toMap()).toList(),
+        'comments': comments.map((x) => x.toMap()).toList(),
+        'more': more,
+        'total': total,
+      });
   }
 
   factory CommentMvResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return CommentMvResponse(
+      code: base.code,
+      msg: base.msg,
       topComments: map['topComments'] == null
           ? []
           : List<Comment>.from(
@@ -54,8 +59,6 @@ class CommentMvResponse extends BaseResponse {
             ),
       more: (map['more'] as bool?) ?? false,
       total: (map['total'] as int?) ?? 0,
-      code: map['code'] as int,
-      msg: map['msg'] as String?,
     );
   }
 

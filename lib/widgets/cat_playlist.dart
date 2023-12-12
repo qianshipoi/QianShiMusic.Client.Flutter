@@ -38,8 +38,8 @@ class _CatPlaylistState extends State<CatPlaylist> {
     final response = await PlaylistProvider.top(cat: widget.cat);
     if (response.code == 200) {
       playlist.clear();
-      playlist.addAll(response.playlists!);
-      more = response.more!;
+      playlist.addAll(response.playlists);
+      more = response.more;
       page = 1;
       _refreshController.refreshCompleted();
       if (mounted) {
@@ -56,8 +56,8 @@ class _CatPlaylistState extends State<CatPlaylist> {
     final response = await PlaylistProvider.top(
         cat: widget.cat, limit: limit, offset: page * limit);
     if (response.code == 200) {
-      playlist.addAll(response.playlists!);
-      more = response.more!;
+      playlist.addAll(response.playlists);
+      more = response.more;
       page++;
       _refreshController.loadComplete();
       if (mounted) {

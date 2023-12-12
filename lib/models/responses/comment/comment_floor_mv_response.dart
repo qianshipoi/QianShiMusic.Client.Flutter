@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:qianshi_music/models/comment.dart';
+import 'package:qianshi_music/models/responses/base_response.dart';
 import 'package:qianshi_music/models/responses/comment/comment_floor_response.dart';
 
 class CommentFloorMvResponse extends CommentFloorResponse<CommentFloorMvData> {
@@ -10,18 +11,17 @@ class CommentFloorMvResponse extends CommentFloorResponse<CommentFloorMvData> {
   });
 
   @override
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'code': code,
-      'msg': msg,
+  Map<String, dynamic> dataToMap() {
+    return Map.from({
       'data': data?.toMap(),
-    };
+    });
   }
 
   factory CommentFloorMvResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return CommentFloorMvResponse(
-      code: (map['code'] as int?) ?? 0,
-      msg: ((map['msg'] ?? map['message']) as String?) ?? '',
+      code: base.code,
+      msg: base.msg,
       data: CommentFloorMvData.fromMap(map['data'] as Map<String, dynamic>),
     );
   }

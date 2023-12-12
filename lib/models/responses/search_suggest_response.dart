@@ -1,33 +1,35 @@
 import 'dart:convert';
 
-class SearchSuggestResponse {
-  final int code;
-  final String? msg;
+import 'package:qianshi_music/models/responses/base_response.dart';
+
+class SearchSuggestResponse extends BaseResponse {
   final SearchSuggestResult? result;
   SearchSuggestResponse({
-    required this.code,
-    this.msg,
+    required super.code,
+    super.msg,
     this.result,
   });
 
+  @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'code': code,
-      'msg': msg,
-      'result': result?.toMap(),
-    };
+    return super.toMap()
+      ..addAll({
+        'result': result?.toMap(),
+      });
   }
 
   factory SearchSuggestResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return SearchSuggestResponse(
-      code: map['code'] as int,
-      msg: map['msg'] != null ? map['msg'] as String : null,
+      code: base.code,
+      msg: base.msg,
       result: map['result'] != null
           ? SearchSuggestResult.fromMap(map['result'] as Map<String, dynamic>)
           : null,
     );
   }
 
+  @override
   String toJson() => json.encode(toMap());
 
   factory SearchSuggestResponse.fromJson(String source) =>

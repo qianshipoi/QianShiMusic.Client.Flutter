@@ -6,24 +6,24 @@ import 'package:qianshi_music/models/track.dart';
 class PlaylistTrackAllResponse extends BaseResponse {
   final List<Track> songs;
   PlaylistTrackAllResponse({
-    required this.songs,
+    this.songs = const [],
     required super.code,
     super.msg,
   });
 
   @override
   Map<String, dynamic> toMap() {
-    final map = <String, dynamic>{
-      'songs': songs.map((x) => x.toMap()).toList(),
-    };
-    map.addAll(super.toMap());
-    return map;
+    return super.toMap()
+      ..addAll({
+        'songs': songs.map((x) => x.toMap()).toList(),
+      });
   }
 
   factory PlaylistTrackAllResponse.fromMap(Map<String, dynamic> map) {
+    final base = BaseResponse.fromMap(map);
     return PlaylistTrackAllResponse(
-      msg: (map['msg'] ?? map['message']) as String?,
-      code: map['code'] as int,
+      code: base.code,
+      msg: base.msg,
       songs: List<Track>.from(
         (map['songs'] as List<dynamic>).map<Track>(
           (x) => Track.fromMap(x as Map<String, dynamic>),
