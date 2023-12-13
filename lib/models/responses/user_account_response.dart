@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:qianshi_music/models/login_account.dart';
-import 'package:qianshi_music/models/login_profile.dart';
 import 'package:qianshi_music/models/responses/base_response.dart';
+import 'package:qianshi_music/models/user_profile.dart';
 
 class UserAccountResponse extends BaseResponse {
   LoginAccount? account;
-  LoginProfile? profile;
+  UserProfile? profile;
   UserAccountResponse({
     required super.code,
     super.msg,
@@ -32,7 +32,7 @@ class UserAccountResponse extends BaseResponse {
           ? LoginAccount.fromMap(map['account'] as Map<String, dynamic>)
           : null,
       profile: map['profile'] != null
-          ? LoginProfile.fromMap(map['profile'] as Map<String, dynamic>)
+          ? UserProfile.fromMap(map['profile'] as Map<String, dynamic>)
           : null,
     );
   }

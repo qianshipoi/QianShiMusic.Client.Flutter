@@ -16,6 +16,12 @@ class UserProfile {
   final int city;
   final int userType;
   final int vipType;
+  final int playlistCount;
+  final int playlistBeSubscribedCount;
+  final int allSubscribedCount;
+  final int newFollows;
+  final int follows;
+  final int followeds;
 
   UserProfile({
     required this.userId,
@@ -31,6 +37,12 @@ class UserProfile {
     required this.city,
     required this.userType,
     required this.vipType,
+    this.playlistCount = 0,
+    this.playlistBeSubscribedCount = 0,
+    this.allSubscribedCount = 0,
+    this.newFollows = 0,
+    this.follows = 0,
+    this.followeds = 0,
   }) {
     this.followed = followed.obs;
   }
@@ -50,6 +62,12 @@ class UserProfile {
       'city': city,
       'userType': userType,
       'vipType': vipType,
+      'playlistCount': playlistCount,
+      'playlistBeSubscribedCount': playlistBeSubscribedCount,
+      'allSubscribedCount': allSubscribedCount,
+      'newFollows': newFollows,
+      'follows': follows,
+      'followeds': followeds,
     };
   }
 
@@ -68,6 +86,13 @@ class UserProfile {
       city: map['city'] as int,
       userType: map['userType'] as int,
       vipType: map['vipType'] as int,
+      playlistCount: (map['playlistCount'] as int?) ?? 0,
+      playlistBeSubscribedCount:
+          (map['playlistBeSubscribedCount'] as int?) ?? 0,
+      allSubscribedCount: (map['allSubscribedCount'] as int?) ?? 0,
+      newFollows: (map['newFollows'] as int?) ?? 0,
+      follows: (map['follows'] as int?) ?? 0,
+      followeds: (map['followeds'] as int?) ?? 0,
     );
   }
 

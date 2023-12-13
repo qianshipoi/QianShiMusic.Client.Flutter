@@ -1,14 +1,14 @@
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/login_account.dart';
-import 'package:qianshi_music/models/login_profile.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/models/track.dart';
+import 'package:qianshi_music/models/user_profile.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/provider/user_provider.dart';
 
 class CurrentUserController extends GetxController {
   final Rx<LoginAccount?> currentAccount = Rx<LoginAccount?>(null);
-  final Rx<LoginProfile?> currentProfile = Rx<LoginProfile?>(null);
+  final Rx<UserProfile?> currentProfile = Rx<UserProfile?>(null);
 
   final RxList<Playlist> userPlaylist = <Playlist>[].obs;
   final RxList<Track> userFavorite = <Track>[].obs;
@@ -23,8 +23,18 @@ class CurrentUserController extends GetxController {
         userFavorite.clear();
       } else {
         _loadMyPlaylist();
+        _loadProfile(callback.id);
       }
     });
+  }
+
+  Future<void> _loadProfile(int uid) async {
+    final response = await UserProvider.detail(uid);
+    if (response.code != 200) {
+      Get.snackbar('获取用户信息失败', response.msg!);
+      return;
+    }
+    currentProfile.value = response.profile!;
   }
 
   Future<void> _loadMyPlaylist() async {

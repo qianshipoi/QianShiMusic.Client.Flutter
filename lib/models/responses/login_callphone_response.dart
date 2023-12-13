@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:qianshi_music/models/login_account.dart';
-import 'package:qianshi_music/models/login_profile.dart';
 import 'package:qianshi_music/models/responses/base_response.dart';
+import 'package:qianshi_music/models/user_profile.dart';
 
 class LoginCallphoneResponse extends BaseResponse {
   final int? loginType;
   final LoginAccount? account;
   final String? token;
-  final LoginProfile? profile;
+  final UserProfile? profile;
   final String? cookie;
   LoginCallphoneResponse({
     required super.code,
@@ -43,7 +43,7 @@ class LoginCallphoneResponse extends BaseResponse {
           : null,
       token: map['token'] != null ? map['token'] as String : null,
       profile: map['profile'] != null
-          ? LoginProfile.fromMap(map['profile'] as Map<String, dynamic>)
+          ? UserProfile.fromMap(map['profile'] as Map<String, dynamic>)
           : null,
       cookie: map['cookie'] != null ? map['cookie'] as String : null,
     );

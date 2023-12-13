@@ -1,13 +1,15 @@
 import 'package:qianshi_music/models/responses/user_playlist_response.dart';
-import 'package:qianshi_music/utils/http/http_util.dart';
+import 'package:qianshi_music/provider/index.dart';
+
+import '../models/responses/user_detail_respinse.dart';
 
 class UserProvider {
   static Future<UserPlaylistResponse> playlist(int uid) async {
-    final response = await HttpUtils.get<dynamic>('user/playlist?uid=$uid');
-    if (response.statusCode == 200) {
-      return UserPlaylistResponse.fromMap(response.data);
-    } else {
-      return UserPlaylistResponse(code: -1, msg: "网络异常");
-    }
+    return UserPlaylistResponse.fromMap(
+        await requestGet('user/playlist?uid=$uid'));
+  }
+  
+  static Future<UserDetailRespinse> detail(int uid) async {
+    return UserDetailRespinse.fromMap(await requestGet('user/detail?uid=$uid'));
   }
 }
