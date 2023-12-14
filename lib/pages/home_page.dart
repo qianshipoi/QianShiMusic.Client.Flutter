@@ -158,38 +158,32 @@ class _HomePageState extends State<HomePage>
             bottomNavigationBar: Obx(
               () => SizedBox(
                 height: _playingController.currentTrack == null ? 60 : 50,
-                child: Column(
-                  children: [
-                    _playingController.currentTrack == null
-                        ? Container(
-                            color: const Color.fromARGB(255, 187, 230, 243),
-                            height: 10,
-                          )
-                        : const SizedBox.shrink(),
-                    CurvedNavigationBar(
-                        items: [
-                          Icon(Icons.message,
-                              size: 24,
-                              color: Theme.of(context).colorScheme.onPrimary),
-                          Icon(Icons.people,
-                              size: 24,
-                              color: Theme.of(context).colorScheme.onPrimary),
-                          Icon(Icons.person,
-                              size: 24,
-                              color: Theme.of(context).colorScheme.onPrimary),
-                        ],
-                        index: _currentPage,
-                        backgroundColor:
-                            const Color.fromARGB(255, 187, 230, 243),
-                        color: Theme.of(context).colorScheme.primary,
-                        height: 50,
-                        onTap: (index) {
-                          setState(() {
-                            _currentPage = index;
-                            _pageController.jumpToPage(index);
-                          });
-                        }),
-                  ],
+                child: Container(
+                  color: const Color.fromARGB(255, 187, 230, 243),
+                  padding: EdgeInsets.only(
+                      top: _playingController.currentTrack == null ? 10 : 0),
+                  child: CurvedNavigationBar(
+                      items: [
+                        Icon(Icons.message,
+                            size: 24,
+                            color: Theme.of(context).colorScheme.onPrimary),
+                        Icon(Icons.people,
+                            size: 24,
+                            color: Theme.of(context).colorScheme.onPrimary),
+                        Icon(Icons.person,
+                            size: 24,
+                            color: Theme.of(context).colorScheme.onPrimary),
+                      ],
+                      index: _currentPage,
+                      backgroundColor: const Color.fromARGB(255, 187, 230, 243),
+                      color: Theme.of(context).colorScheme.primary,
+                      height: 50,
+                      onTap: (index) {
+                        setState(() {
+                          _currentPage = index;
+                          _pageController.jumpToPage(index);
+                        });
+                      }),
                 ),
               ),
             ),

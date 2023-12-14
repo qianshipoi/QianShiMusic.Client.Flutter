@@ -12,14 +12,14 @@ class Playlist {
   final int commentCount;
   final int shareCount;
   final int subscribedCount;
-  final List<Track>? tracks;
+  final List<Track> tracks;
   Playlist({
     required this.id,
     required this.name,
     required this.coverImgUrl,
     this.description,
     required this.playCount,
-    this.tracks,
+    this.tracks = const [],
     required this.trackCount,
     required this.commentCount,
     required this.shareCount,
@@ -33,7 +33,7 @@ class Playlist {
       'coverImgUrl': coverImgUrl,
       'description': description,
       'playCount': playCount,
-      'tracks': tracks?.map((x) => x.toMap()).toList(),
+      'tracks': tracks.map((x) => x.toMap()).toList(),
       'trackCount': trackCount,
       'commentCount': commentCount,
       'shareCount': shareCount,
@@ -59,7 +59,7 @@ class Playlist {
                 (x) => Track.fromMap(x as Map<String, dynamic>),
               ),
             )
-          : null,
+          : [],
     );
   }
 

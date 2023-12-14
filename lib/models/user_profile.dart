@@ -80,7 +80,7 @@ class UserProfile {
       followed: map['followed'] as bool,
       gender: map['gender'] as int,
       birthday: map['birthday'] as int,
-      description: map['description'] as String,
+      description: (map['description'] as String?) ?? "",
       backgroundUrl: map['backgroundUrl'] as String,
       province: map['province'] as int,
       city: map['city'] as int,

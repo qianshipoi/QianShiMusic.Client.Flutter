@@ -21,8 +21,18 @@ class PlaylistProvider {
         query: {'cat': cat, 'limit': limit, 'offset': offset, 'order': order}));
   }
 
-  static Future<PlaylistTrackAllResponse> trackAll(int id) async {
-    return PlaylistTrackAllResponse.fromMap(
-        await requestGet('playlist/track/all?id=$id'));
+  static Future<PlaylistTrackAllResponse> trackAll(
+    int id, {
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    return PlaylistTrackAllResponse.fromMap(await requestGet(
+      'playlist/track/all',
+      query: {
+        'id': id,
+        'limit': limit,
+        'offset': offset,
+      },
+    ));
   }
 }
