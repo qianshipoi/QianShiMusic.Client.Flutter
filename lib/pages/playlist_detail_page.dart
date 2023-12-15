@@ -13,6 +13,7 @@ import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/stores/current_user_controller.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/logger.dart';
+import 'package:qianshi_music/widgets/comment/comment_view.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/tiles/track_tile.dart';
 
@@ -154,7 +155,15 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
               const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.bottomSheet(
+                      CommentView(
+                        id: playlist.id,
+                        type: 2,
+                      ),
+                      backgroundColor: Theme.of(context).colorScheme.background,
+                    );
+                  },
                   icon: const Icon(Icons.comment_outlined),
                   label: Text(formatPlaycount(playlist.commentCount)),
                 ),

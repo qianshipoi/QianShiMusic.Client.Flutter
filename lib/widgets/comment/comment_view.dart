@@ -3,26 +3,27 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:qianshi_music/models/comment.dart';
-import 'package:qianshi_music/models/responses/comment/comment_floor_mv_response.dart';
-import 'package:qianshi_music/models/responses/comment/comment_new_mv_response.dart';
-import 'package:qianshi_music/pages/video/comment_item.dart';
 import 'package:qianshi_music/provider/comment_provider.dart';
+import 'package:qianshi_music/widgets/comment/comment_item.dart';
 
-class MvCommentView extends StatefulWidget {
-  final int mvId;
-  const MvCommentView({
+class CommentView extends StatefulWidget {
+  final int id;
+  final int type;
+  const CommentView({
     Key? key,
-    required this.mvId,
+    required this.type,
+    required this.id,
   }) : super(key: key);
 
   @override
-  State<MvCommentView> createState() => _MvCommentViewState();
+  State<CommentView> createState() => _CommentViewState();
 }
 
-class _MvCommentViewState extends State<MvCommentView> {
+class _CommentViewState extends State<CommentView> {
   final List<Comment> _comments = [];
   final _refreshController = RefreshController(initialRefresh: false);
-  int get id => widget.mvId;
+  int get id => widget.id;
+  int get type => widget.type;
   int _page = 1;
   final _limit = 20;
   bool more = true;
@@ -41,8 +42,13 @@ class _MvCommentViewState extends State<MvCommentView> {
       _refreshController.loadNoData();
       return;
     }
-    final response = await CommentProvider.new_<CommentNewMvResponse>(id,
-        pageNo: _page, pageSize: _limit, sortType: _sortType);
+    final response = await CommentProvider.new_(
+      id,
+      type,
+      pageNo: _page,
+      pageSize: _limit,
+      sortType: _sortType,
+    );
 
     if (response.code != 200) {
       Get.snackbar('Error', response.msg!);
@@ -70,9 +76,11 @@ class _MvCommentViewState extends State<MvCommentView> {
           comment: _comments[index],
           replyTap: () {
             Get.bottomSheet(
-              MvCommentFloorView(
-                  mvId: widget.mvId,
-                  parentCommentId: _comments[index].commentId),
+              CommentFloorView(
+                id: id,
+                parentCommentId: _comments[index].commentId,
+                type: type,
+              ),
               backgroundColor: Theme.of(context).colorScheme.background,
             );
           },
@@ -82,24 +90,27 @@ class _MvCommentViewState extends State<MvCommentView> {
   }
 }
 
-class MvCommentFloorView extends StatefulWidget {
-  final int mvId;
+class CommentFloorView extends StatefulWidget {
+  final int id;
   final int parentCommentId;
-  const MvCommentFloorView({
+  final int type;
+  const CommentFloorView({
     super.key,
-    required this.mvId,
+    required this.id,
     required this.parentCommentId,
+    required this.type,
   });
 
   @override
-  State<MvCommentFloorView> createState() => _MvCommentFloorViewState();
+  State<CommentFloorView> createState() => _CommentFloorViewState();
 }
 
-class _MvCommentFloorViewState extends State<MvCommentFloorView> {
+class _CommentFloorViewState extends State<CommentFloorView> {
   final List<Comment> _comments = [];
   final _refreshController = RefreshController(initialRefresh: false);
-  int get id => widget.mvId;
+  int get id => widget.id;
   int get parentCommentId => widget.parentCommentId;
+  int get type => widget.type;
   final _limit = 20;
   int _time = 0;
   bool _more = true;
@@ -113,13 +124,14 @@ class _MvCommentFloorViewState extends State<MvCommentFloorView> {
   }
 
   Future _onLoading() async {
-    if (!_more) {
-      _refreshController.loadNoData();
-      return;
-    }
-    final response = await CommentProvider.floor<CommentFloorMvResponse>(
-        id, parentCommentId,
-        limit: _limit, time: _time == 0 ? null : _time);
+    if (!_more) return;
+    final response = await CommentProvider.floor(
+      id,
+      type,
+      parentCommentId,
+      limit: _limit,
+      time: _time == 0 ? null : _time,
+    );
 
     if (response.code != 200) {
       Get.snackbar('Error', response.msg!);
@@ -129,6 +141,9 @@ class _MvCommentFloorViewState extends State<MvCommentFloorView> {
     _more = response.data!.hasMore;
     _time = response.data!.time;
     _refreshController.loadComplete();
+    if (!_more) {
+      _refreshController.loadNoData();
+    }
     if (mounted) {
       setState(() {});
     }

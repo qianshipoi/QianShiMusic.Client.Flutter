@@ -1,28 +1,14 @@
-import 'package:dio/dio.dart';
-import 'package:qianshi_music/models/responses/comment/comment_floor_mv_response.dart';
 import 'package:qianshi_music/models/responses/comment/comment_floor_response.dart';
 import 'package:qianshi_music/models/responses/comment/comment_mv_response.dart';
-import 'package:qianshi_music/models/responses/comment/comment_new_mv_response.dart';
+import 'package:qianshi_music/models/responses/comment/comment_new_response.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 
-import '../models/responses/comment/comment_new_response.dart';
-
 class CommentProvider {
-  static Future<T> new_<T extends CommentNewResponse>(int id,
+  static Future<CommentNewResponse> new_(int id, int type,
       {int sortType = 1,
       int pageNo = 1,
       int pageSize = 20,
       int? cursor}) async {
-    int type = -1;
-
-    switch (T) {
-      case CommentNewMvResponse:
-        type = 1;
-        break;
-      default:
-        throw Exception("未知类型");
-    }
-
     final queryParams = {
       "id": id.toString(),
       "type": type.toString(),
@@ -35,35 +21,20 @@ class CommentProvider {
     }
 
     final response = await HttpUtils.get('comment/new', params: queryParams);
-    return _newResponse<T>(response);
-  }
-
-  static T _newResponse<T>(Response<dynamic> response) {
-    switch (T) {
-      case CommentNewMvResponse:
-        if (response.statusCode == 200) {
-          return CommentNewMvResponse.fromMap(response.data) as T;
-        } else {
-          return CommentNewMvResponse(data: null, code: -1, msg: "获取评论失败") as T;
-        }
-      default:
-        throw Exception("未知类型");
+    if (response.statusCode == 200) {
+      return CommentNewResponse.fromMap(response.data);
+    } else {
+      return CommentNewResponse(code: -1, msg: "获取评论失败");
     }
   }
 
-  static Future<T> floor<T extends CommentFloorResponse>(
-      int id, int parentCommentId,
-      {int limit = 20, int? time}) async {
-    int type = -1;
-
-    switch (T) {
-      case CommentFloorMvResponse:
-        type = 1;
-        break;
-      default:
-        throw Exception("未知类型");
-    }
-
+  static Future<CommentFloorResponse> floor(
+    int id,
+    int type,
+    int parentCommentId, {
+    int limit = 20,
+    int? time,
+  }) async {
     final queryParams = {
       "id": id.toString(),
       "parentCommentId": parentCommentId.toString(),
@@ -75,20 +46,10 @@ class CommentProvider {
     }
 
     final response = await HttpUtils.get('comment/floor', params: queryParams);
-    return _floorResponse<T>(response);
-  }
-
-  static T _floorResponse<T extends CommentFloorResponse>(
-      Response<dynamic> response) {
-    switch (T) {
-      case CommentFloorMvResponse:
-        if (response.statusCode == 200) {
-          return CommentFloorMvResponse.fromMap(response.data) as T;
-        } else {
-          return CommentFloorMvResponse(code: -1, msg: "获取评论失败") as T;
-        }
-      default:
-        throw Exception("未知类型");
+    if (response.statusCode == 200) {
+      return CommentFloorResponse.fromMap(response.data);
+    } else {
+      return CommentFloorResponse(code: -1, msg: "获取评论失败");
     }
   }
 

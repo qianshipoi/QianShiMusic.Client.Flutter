@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/mv.dart';
-import 'package:qianshi_music/pages/video/mv_comment_view.dart';
 import 'package:qianshi_music/provider/video_provider.dart';
 import 'package:qianshi_music/utils/logger.dart';
+import 'package:qianshi_music/widgets/comment/comment_view.dart';
 import 'package:qianshi_music/widgets/video_player/video_player_bottom.dart';
 import 'package:qianshi_music/widgets/video_player/video_player_center.dart';
 import 'package:qianshi_music/widgets/video_player/video_player_gestures.dart';
@@ -106,7 +106,10 @@ class _MvPageState extends State<MvPage> with TickerProviderStateMixin {
       controller: _controller,
       children: [
         const Text('简介'),
-        MvCommentView(mvId: widget.mv.id),
+        CommentView(
+          id: widget.mv.id,
+          type: 1,
+        ),
       ],
     );
   }
