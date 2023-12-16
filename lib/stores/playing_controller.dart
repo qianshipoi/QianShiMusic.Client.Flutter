@@ -28,7 +28,7 @@ class PlayingController extends GetxController {
       StreamController<String>.broadcast();
 
   Stream<String> get curPositionStream => _curPositionController.stream;
-  Track? get currentTrack => _currentTrack.value;
+  Rx<Track?> get currentTrack => _currentTrack;
 
   @override
   void onInit() {
@@ -48,7 +48,7 @@ class PlayingController extends GetxController {
       return;
     }
 
-    final response = await SongProvider.url([currentTrack!.id]);
+    final response = await SongProvider.url([currentTrack.value!.id]);
     if (response.code != 200) {
       Get.snackbar('播放失败', response.msg ?? '未知错误');
       return;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
+import 'package:qianshi_music/pages/playlist_detail_page.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/widgets/cat_playlist.dart';
 import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
@@ -90,10 +90,10 @@ class _FoundPageState extends BasePlayingState<FoundPage>
           child: CatPlaylist(
               cat: e,
               onTap: (playlistId) {
-                Get.toNamed(RouterContants.playlistDetail, arguments: {
-                  "playlistId": playlistId,
-                  "heroTag": heroTag,
-                });
+                Get.to(() => PlaylistDetailPage(
+                      playlistId: playlistId,
+                      heroTag: heroTag,
+                    ));
               }));
     }).toList();
   }

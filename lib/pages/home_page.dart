@@ -31,11 +31,6 @@ class _HomePageState extends State<HomePage>
     const Icon(Icons.people, size: 30),
     const Icon(Icons.person, size: 30),
   ];
-  final List<Text> bottomLabels = [
-    const Text("推荐"),
-    Text(Globalization.found.tr),
-    Text(Globalization.my.tr)
-  ];
   int _currentPage = 0;
   final _boundaryKey = GlobalKey();
   ui.Image? _image;
@@ -109,29 +104,7 @@ class _HomePageState extends State<HomePage>
       child: Stack(
         children: [
           Scaffold(
-            appBar: AppBar(
-              title: bottomLabels[_currentPage],
-              centerTitle: true,
-              actions: [
-                PopupMenuButton(itemBuilder: (context) {
-                  return [
-                    PopupMenuItem<int>(
-                      value: 0,
-                      child: Row(
-                        children: [
-                          const Icon(Icons.search),
-                          Text(Globalization.search.tr),
-                        ],
-                      ),
-                    ),
-                  ];
-                }, onSelected: (value) {
-                  if (value == 0) {
-                    Get.toNamed(RouterContants.search);
-                  }
-                }),
-              ],
-            ),
+            appBar: _buildAppBar(),
             drawer: Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -157,11 +130,11 @@ class _HomePageState extends State<HomePage>
             ),
             bottomNavigationBar: Obx(
               () => SizedBox(
-                height: _playingController.currentTrack == null ? 60 : 50,
+                height: _playingController.currentTrack.value == null ? 60 : 50,
                 child: Container(
                   color: const Color.fromARGB(255, 187, 230, 243),
                   padding: EdgeInsets.only(
-                      top: _playingController.currentTrack == null ? 10 : 0),
+                      top: _playingController.currentTrack.value == null ? 10 : 0),
                   child: CurvedNavigationBar(
                       items: [
                         Icon(Icons.message,
@@ -202,6 +175,57 @@ class _HomePageState extends State<HomePage>
         ],
       ),
     );
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      title: _buildAppBarTitle(),
+      actions: [
+        PopupMenuButton(itemBuilder: (context) {
+          return [
+            PopupMenuItem<int>(
+              value: 0,
+              child: Row(
+                children: [
+                  const Icon(Icons.search),
+                  Text(Globalization.search.tr),
+                ],
+              ),
+            ),
+          ];
+        }, onSelected: (value) {
+          if (value == 0) {
+            Get.toNamed(RouterContants.search);
+          }
+        }),
+      ],
+    );
+  }
+
+  Widget _buildAppBarTitle() {
+    switch (_currentPage) {
+      case 0:
+        return GestureDetector(
+          onTap: () {
+            Get.toNamed(RouterContants.search);
+          },
+          child: Container(
+            width: double.infinity,
+            height: 32,
+            decoration: BoxDecoration(
+                color:
+                    Theme.of(context).colorScheme.onBackground.withOpacity(.1),
+                borderRadius: BorderRadius.circular(5)),
+            child: Center(
+                child: Text(
+              "搜索",
+              style: Theme.of(context).textTheme.titleMedium,
+            )),
+          ),
+        );
+      default:
+        return const Text("Music");
+    }
   }
 
   DrawerHeader _buildDrawerHeader() {

@@ -57,11 +57,9 @@ class _SearchCollectViewState extends State<SearchCollectView> {
               itemBuilder: (context, index) => TrackTile(
                   track: songs[index],
                   index: index,
-                  onTap: () async {
-                    await _playingController.addTrack(songs[index],
-                        playNow: true);
-                    await Get.to(() => const PlaySongPage(),
-                        arguments: songs[index].id);
+                  onTap: () {
+                    _playingController.addTrack(songs[index], playNow: true);
+                    Get.to(() => PlaySongPage.instance);
                   }),
             ));
             if (result.song!.moreText != null) {

@@ -19,7 +19,7 @@ class PlayingBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetX<PlayingController>(
-      builder: (controller) => controller.currentTrack != null
+      builder: (controller) => controller.currentTrack.value != null
           ? Hero(
               tag: tag ?? DateTime.timestamp(),
               child: Container(
@@ -37,20 +37,19 @@ class PlayingBar extends StatelessWidget {
                     leading: ClipOval(
                       child: FixImage(
                         imageUrl: formatMusicImageUrl(
-                            controller.currentTrack!.album.picUrl,
+                            controller.currentTrack.value!.album.picUrl,
                             size: 40),
                         width: 40,
                         height: 40,
                       ),
                     ),
                     title: Text(
-                      controller.currentTrack!.name,
+                      controller.currentTrack.value!.name,
                       overflow: TextOverflow.ellipsis,
                       style: common13TextStyle,
                     ),
                     onTap: () async {
-                      await Get.to(() => const PlaySongPage(),
-                          arguments: controller.currentTrack!.id);
+                      await Get.to(() => PlaySongPage.instance);
                     },
                     trailing: IconButton(
                       onPressed: () {

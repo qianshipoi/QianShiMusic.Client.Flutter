@@ -5,6 +5,7 @@ import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/models/user_profile.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/provider/user_provider.dart';
+import 'package:qianshi_music/utils/logger.dart';
 
 class CurrentUserController extends GetxController {
   final Rx<LoginAccount?> currentAccount = Rx<LoginAccount?>(null);
@@ -12,6 +13,9 @@ class CurrentUserController extends GetxController {
 
   final RxList<Playlist> userPlaylist = <Playlist>[].obs;
   final RxList<Track> userFavorite = <Track>[].obs;
+  final RxList<Playlist> createdPlaylist = <Playlist>[].obs;
+  final RxList<Playlist> favoritePlaylist = <Playlist>[].obs;
+  final Rx<Playlist?> likedPlaylist = Rx<Playlist?>(null);
 
   @override
   void onInit() {
@@ -34,15 +38,36 @@ class CurrentUserController extends GetxController {
       Get.snackbar('获取用户信息失败', response.msg!);
       return;
     }
-    currentProfile.value = response.profile!;
+    currentProfile.value = response.profile;
+  }
+
+  refreshMyPlaylist() {
+    _loadMyPlaylist();
+    logger.i('refreshMyPlaylist');
   }
 
   Future<void> _loadMyPlaylist() async {
-    final response = await UserProvider.playlist(currentAccount.value!.id);
+    final response =
+        await UserProvider.playlist(currentAccount.value!.id, noCache: true);
     if (response.code != 200) {
       Get.snackbar('获取歌单失败', response.msg ?? '未知错误');
       return;
     }
+
+    final playlists = response.playlist;
+    if (playlists.isEmpty) {
+      return;
+    }
+    createdPlaylist.clear();
+    createdPlaylist.addAll(response.playlist.skip(1).where((element) =>
+        element.creator != null &&
+        element.creator!.userId == currentAccount.value!.id));
+    favoritePlaylist.clear();
+    favoritePlaylist.addAll(response.playlist.where((element) =>
+        element.creator != null &&
+        element.creator!.userId != currentAccount.value!.id));
+    likedPlaylist.value = response.playlist.firstOrNull;
+
     userPlaylist.assignAll(response.playlist);
     await _loadMyLikeTracks();
   }

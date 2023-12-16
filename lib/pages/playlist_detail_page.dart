@@ -13,6 +13,7 @@ import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/stores/current_user_controller.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/logger.dart';
+import 'package:qianshi_music/widgets/description/description_dialog.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/tiles/track_tile.dart';
 
@@ -139,6 +140,12 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
           SizedBox(
             height: 32,
             child: ListTile(
+              onTap: () {
+                Get.bottomSheet(
+                  Description(descrition: playlist.description ?? ""),
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                );
+              },
               title: Text(
                 playlist.description ?? "",
                 maxLines: 1,
@@ -162,8 +169,18 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
               const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.add),
+                  onPressed: () async {
+                    await PlaylistProvider.subscribe(
+                        playlist.id, !playlist.subscribed.value);
+                  },
+                  icon: Obx(() => Icon(
+                        playlist.subscribed.value
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: playlist.subscribed.value
+                            ? Colors.red
+                            : Theme.of(context).colorScheme.onBackground,
+                      )),
                   label: Text(formatPlaycount(playlist.subscribedCount)),
                 ),
               ),
@@ -189,10 +206,9 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
             track: track,
             index: index,
             onTap: () async {
-              if (await _playingController.addPlaylist(playlist,
-                  playNow: true, playTrackId: track.id)) {
-                await Get.to(() => const PlaySongPage(), arguments: track.id);
-              }
+              _playingController.addPlaylist(playlist,
+                  playNow: true, playTrackId: track.id);
+              Get.to(() => PlaySongPage.instance);
             },
           );
         },

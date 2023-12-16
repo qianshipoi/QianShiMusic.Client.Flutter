@@ -7,7 +7,6 @@ import 'package:lottie/lottie.dart';
 import 'package:qianshi_music/pages/login_page.dart';
 import 'package:qianshi_music/provider/auth_provider.dart';
 import 'package:qianshi_music/stores/current_user_controller.dart';
-import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/utils/sputils.dart';
 
 class SplahScreenPage extends StatefulWidget {
@@ -51,7 +50,6 @@ class _SplahScreenPageState extends State<SplahScreenPage>
       return;
     }
     Global.cookie = SpUtil().getString("cookie") ?? "";
-    logger.i("cookie: ${Global.cookie}");
     final response = await AuthProvider.account();
     if (response.code == 200) {
       final currentUserController = Get.find<CurrentUserController>();

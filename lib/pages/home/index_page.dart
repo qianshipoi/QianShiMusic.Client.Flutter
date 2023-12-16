@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qianshi_music/constants.dart';
 
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
+import 'package:qianshi_music/pages/playlist_detail_page.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/widgets/tiles/playlist_tile.dart';
 
@@ -52,10 +52,10 @@ class _IndexPageState extends BasePlayingState<IndexPage> {
         return PlaylistTile(
           playlist: playlist,
           onTap: () {
-            Get.toNamed(RouterContants.playlistDetail, arguments: {
-              "playlistId": playlist.id,
-              "heroTag": heroTag,
-            });
+            Get.to(() => PlaylistDetailPage(
+                  playlistId: playlist.id,
+                  heroTag: heroTag,
+                ));
           },
         );
       },

@@ -68,10 +68,9 @@ class _SearchSongViewState extends State<SearchSongView> {
         itemBuilder: (context, index) => TrackTile(
           track: _songs[index],
           index: index,
-          onTap: () async {
-            await _playingController.addTrack(_songs[index], playNow: true);
-            await Get.to(() => const PlaySongPage(),
-                arguments: _songs[index].id);
+          onTap: () {
+            _playingController.addTrack(_songs[index], playNow: true);
+            Get.to(() => PlaySongPage.instance);
           },
         ),
       ),

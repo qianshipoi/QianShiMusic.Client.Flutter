@@ -10,7 +10,6 @@ class RouterContants {
   static const settings = "/settings";
   static const login = "/login";
   static const search = "/search";
-  static const playlistDetail = "/playlistDetail";
   static const searchResult = "/search_result";
 }
 

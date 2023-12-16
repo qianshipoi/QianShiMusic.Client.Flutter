@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
 import 'package:qianshi_music/models/track.dart';
+import 'package:qianshi_music/models/user_profile.dart';
 
 class Playlist {
   final int id;
@@ -12,7 +14,10 @@ class Playlist {
   final int commentCount;
   final int shareCount;
   final int subscribedCount;
+  final RxBool subscribed = false.obs;
   final List<Track> tracks;
+  final UserProfile? creator;
+
   Playlist({
     required this.id,
     required this.name,
@@ -24,7 +29,11 @@ class Playlist {
     required this.commentCount,
     required this.shareCount,
     required this.subscribedCount,
-  });
+    this.creator,
+    bool subscribed = false,
+  }) {
+    this.subscribed.value = subscribed;
+  }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -38,6 +47,8 @@ class Playlist {
       'commentCount': commentCount,
       'shareCount': shareCount,
       'subscribedCount': subscribedCount,
+      'creator': creator?.toMap(),
+      'subscribed': subscribed.value,
     };
   }
 
@@ -60,6 +71,10 @@ class Playlist {
               ),
             )
           : [],
+      creator: map['creator'] != null
+          ? UserProfile.fromMap(map['creator'] as Map<String, dynamic>)
+          : null,
+      subscribed: (map['subscribed'] as bool?) ?? false,
     );
   }
 

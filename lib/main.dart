@@ -8,7 +8,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/locale/locale_message.dart';
 import 'package:qianshi_music/pages/login_page.dart';
-import 'package:qianshi_music/pages/playlist_detail_page.dart';
 import 'package:qianshi_music/pages/search_page.dart';
 import 'package:qianshi_music/pages/search_result_page.dart';
 import 'package:qianshi_music/pages/settings_page.dart';
@@ -71,10 +70,6 @@ class MyApp extends StatelessWidget {
         RouterContants.settings: (context) => const SettingsPage(),
         RouterContants.search: (context) => const SearchPage(),
         RouterContants.login: (context) => const LoginPage(),
-        RouterContants.playlistDetail: (context) => PlaylistDetailPage(
-              heroTag: Get.arguments['heroTag'] as String?,
-              playlistId: Get.arguments['playlistId'] as int,
-            ),
         RouterContants.searchResult: (context) =>
             SearchResultPage(keyword: Get.arguments),
       },

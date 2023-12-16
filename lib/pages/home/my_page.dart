@@ -1,9 +1,13 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
+import 'package:qianshi_music/pages/home/playlist_manage_page.dart';
+import 'package:qianshi_music/pages/playlist_detail_page.dart';
+import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/stores/current_user_controller.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
@@ -26,6 +30,108 @@ class _MyPageState extends BasePlayingState<MyPage> {
 
   @override
   String get heroTag => "my_page_playing_bar";
+
+  Future<bool> _createNewPlaylist(String name) async {
+    await EasyLoading.show(status: "创建中");
+    try {
+      final response = await PlaylistProvider.create(name);
+      if (response.code != 200) {
+        Get.snackbar("创建失败", response.msg!);
+        return false;
+      }
+      Get.snackbar("创建成功", "歌单名称：$name");
+      _currentUserController.createdPlaylist.insert(0, response.playlist!);
+      return true;
+    } finally {
+      await EasyLoading.dismiss();
+    }
+  }
+
+  final _textEditingController = TextEditingController();
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _createNewPlaylistDialog() async {
+    _textEditingController.clear();
+    final result = await Get.dialog<String>(AlertDialog(
+      title: const Text("创建歌单"),
+      content: TextField(
+        controller: _textEditingController,
+        decoration: const InputDecoration(
+          hintText: "请输入歌单名称",
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Get.back(result: null);
+          },
+          child: const Text("取消"),
+        ),
+        TextButton(
+          onPressed: () async {
+            if (_textEditingController.value.text.isEmpty) {
+              Get.snackbar("创建失败", "歌单名称不能为空");
+              return;
+            }
+
+            final result =
+                await _createNewPlaylist(_textEditingController.value.text);
+            if (result) {
+              Get.back(result: null);
+            }
+            Get.back(result: "歌单名称");
+          },
+          child: const Text("确定"),
+        ),
+      ],
+    ));
+    if (result != null) {
+      Get.snackbar("创建成功", "歌单名称：$result");
+    }
+  }
+
+  _playlistManage() {
+    Get.bottomSheet(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "歌单管理",
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: const Text("创建新歌单"),
+              onTap: () {
+                Get.back();
+                _createNewPlaylistDialog();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.list),
+              title: const Text("歌单管理"),
+              onTap: () {
+                Get.back();
+                Get.to(() => PlaylistManagePage(
+                      playlists:
+                          _currentUserController.createdPlaylist.toList(),
+                    ));
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget buildPageBody(BuildContext context) {
@@ -127,9 +233,7 @@ class _MyPageState extends BasePlayingState<MyPage> {
   }
 
   Widget _buildLikePlaylist(BuildContext context) {
-    final likePlaylist = _currentUserController.userPlaylist.isEmpty
-        ? null
-        : _currentUserController.userPlaylist[0];
+    final likePlaylist = _currentUserController.likedPlaylist.value;
     if (likePlaylist == null) {
       return Container();
     }
@@ -142,10 +246,10 @@ class _MyPageState extends BasePlayingState<MyPage> {
       ),
       child: InkWell(
         onTap: () {
-          Get.toNamed(RouterContants.playlistDetail, arguments: {
-            'heroTag': heroTag,
-            'playlistId': likePlaylist.id,
-          });
+          Get.to(() => PlaylistDetailPage(
+                playlistId: likePlaylist.id,
+                heroTag: heroTag,
+              ));
         },
         child: Row(
           children: [
@@ -201,29 +305,37 @@ class _MyPageState extends BasePlayingState<MyPage> {
           Padding(
             padding:
                 const EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 16),
-            child: Text(
-              "创建的歌单",
-              style: Theme.of(context).textTheme.titleSmall,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "创建的歌单",
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                IconButton(
+                    onPressed: _playlistManage,
+                    icon: const Icon(Icons.more_vert))
+              ],
             ),
           ),
-          ListView.builder(
+          Obx(() {
+            return ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: _currentUserController.userPlaylist.length - 1,
+              itemCount: _currentUserController.createdPlaylist.length,
               itemBuilder: (context, index) {
                 return PlaylistTile(
-                    playlist: _currentUserController.userPlaylist[index + 1],
+                    playlist: _currentUserController.createdPlaylist[index],
                     onTap: () {
-                      Get.toNamed(
-                        RouterContants.playlistDetail,
-                        arguments: {
-                          'heroTag': heroTag,
-                          'playlistId':
-                              _currentUserController.userPlaylist[index + 1].id,
-                        },
-                      );
+                      Get.to(() => PlaylistDetailPage(
+                            playlistId: _currentUserController
+                                .createdPlaylist[index].id,
+                            heroTag: heroTag,
+                          ));
                     });
-              }),
+              },
+            );
+          }),
         ],
       ),
     );
