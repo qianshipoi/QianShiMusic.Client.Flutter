@@ -6,10 +6,12 @@ import 'package:qianshi_music/widgets/fix_image.dart';
 class PlaylistTile extends StatelessWidget {
   final Playlist playlist;
   final GestureTapCallback? onTap;
+  final GestureTapCallback? onMoreTap;
   const PlaylistTile({
     Key? key,
     required this.playlist,
     this.onTap,
+    this.onMoreTap,
   }) : super(key: key);
 
   @override
@@ -24,16 +26,30 @@ class PlaylistTile extends StatelessWidget {
         ),
       ),
       title: Text(
-        playlist.name,
+        playlist.name.value,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle: Text(
-        playlist.description ?? "",
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+      subtitle: Row(
+        children: [
+          Text("${playlist.trackCount}首"),
+          if (playlist.playCount != 0)
+            Text(' · ${formatPlayCount(playlist.playCount)}次播放'),
+          if (playlist.creator != null)
+            Expanded(
+                child: Text(
+              ' · ${playlist.creator!.nickname}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            )),
+        ],
       ),
-      trailing: Text(formatPlayCount(playlist.playCount)),
+      trailing: onMoreTap == null
+          ? null
+          : IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: onMoreTap,
+            ),
       onTap: onTap,
     );
   }

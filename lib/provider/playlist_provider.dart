@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:get/get.dart';
 import 'package:qianshi_music/models/responses/base_response.dart';
 import 'package:qianshi_music/models/responses/playlist_catlist_response.dart';
 import 'package:qianshi_music/models/responses/playlist_create_resppnse.dart';
@@ -5,6 +8,8 @@ import 'package:qianshi_music/models/responses/playlist_detail_response.dart';
 import 'package:qianshi_music/models/responses/playlist_top_response.dart';
 import 'package:qianshi_music/models/responses/playlist_track_all_response.dart';
 import 'package:qianshi_music/provider/index.dart';
+import 'package:qianshi_music/utils/http/http_util.dart';
+import 'package:dio/dio.dart' as dio;
 
 class PlaylistProvider {
   static Future<PlaylistDetailResponse> detail(int id) async {
@@ -67,5 +72,31 @@ class PlaylistProvider {
       "id": id,
       "t": subscribe ? 1 : 2,
     }));
+  }
+
+  static Future<BaseResponse> update(int id,
+      {String? name, String? desc, List<String>? tags}) async {
+    final Map<String, dynamic> query = {
+      'id': id,
+    }
+      ..addIf(name != null, 'name', name)
+      ..addIf(desc != null, 'desc', desc)
+      ..addIf(tags != null, 'tags', tags?.join(';'));
+    return BaseResponse.fromMap(
+        await requestGet('playlist/update', query: query));
+  }
+
+  static Future<BaseResponse> coverUpdate(int id, File imageFile,
+      {int imageSize = 300}) async {
+    final response = await HttpUtils.post("playlist/cover/update",
+        data: dio.FormData.fromMap({
+          'imgFile': dio.MultipartFile.fromString(imageFile.path),
+          'imgSize': imageSize,
+        }),
+        params: {
+          'id': id,
+        });
+
+    return BaseResponse.fromMap(formatResponse(response));
   }
 }

@@ -6,9 +6,9 @@ import 'package:qianshi_music/models/user_profile.dart';
 
 class Playlist {
   final int id;
-  final String name;
-  final String coverImgUrl;
-  final String? description;
+  final RxString name = ''.obs;
+  final RxString coverImgUrl = ''.obs;
+  final Rx<String?> description = Rx<String?>(null);
   final int playCount;
   final int trackCount;
   final int commentCount;
@@ -17,12 +17,13 @@ class Playlist {
   final RxBool subscribed = false.obs;
   final List<Track> tracks;
   final UserProfile? creator;
+  final RxList<String> tags = <String>[].obs;
 
   Playlist({
     required this.id,
-    required this.name,
-    required this.coverImgUrl,
-    this.description,
+    required String name,
+    required String coverImgUrl,
+    String? description,
     required this.playCount,
     this.tracks = const [],
     required this.trackCount,
@@ -31,16 +32,21 @@ class Playlist {
     required this.subscribedCount,
     this.creator,
     bool subscribed = false,
+    List<String> tags = const [],
   }) {
     this.subscribed.value = subscribed;
+    this.name.value = name;
+    this.coverImgUrl.value = coverImgUrl;
+    this.description.value = description;
+    this.tags.value = tags;
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'name': name,
-      'coverImgUrl': coverImgUrl,
-      'description': description,
+      'name': name.value,
+      'coverImgUrl': coverImgUrl.value,
+      'description': description.value,
       'playCount': playCount,
       'tracks': tracks.map((x) => x.toMap()).toList(),
       'trackCount': trackCount,
@@ -49,6 +55,7 @@ class Playlist {
       'subscribedCount': subscribedCount,
       'creator': creator?.toMap(),
       'subscribed': subscribed.value,
+      'tags': tags.toList(),
     };
   }
 
@@ -75,6 +82,10 @@ class Playlist {
           ? UserProfile.fromMap(map['creator'] as Map<String, dynamic>)
           : null,
       subscribed: (map['subscribed'] as bool?) ?? false,
+      tags: map['tags'] != null
+          ? List<String>.from(
+              (map['tags'] as List<dynamic>).map((e) => e.toString()))
+          : [],
     );
   }
 

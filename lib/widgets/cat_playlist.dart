@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:qianshi_music/constants.dart';
@@ -94,15 +95,18 @@ class _CatPlaylistState extends State<CatPlaylist> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadiusDirectional.circular(12)),
                 clipBehavior: Clip.antiAlias,
-                child: FixImage(
-                    imageUrl: formatMusicImageUrl(playlist[i].coverImgUrl,
-                        size: 200)),
+                child: Obx(
+                  () => FixImage(
+                    imageUrl: formatMusicImageUrl(playlist[i].coverImgUrl.value,
+                        size: 200),
+                  ),
+                ),
               ),
-              Text(
-                playlist[i].name,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
+              Obx(() => Text(
+                    playlist[i].name.value,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  )),
             ],
           ),
         ),

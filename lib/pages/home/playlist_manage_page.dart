@@ -86,7 +86,7 @@ class _PlaylistManagePageState extends State<PlaylistManagePage> {
                     onTap: () {
                       group.isCheck.value = !group.isCheck.value;
                     },
-                    title: Text(group.playlist.name),
+                    title: Obx(() => Text(group.playlist.name.value)),
                     leading: IgnorePointer(
                       child: Obx(() => Checkbox(
                           value: group.isCheck.value, onChanged: (v) {})),

@@ -5,12 +5,15 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
+import 'package:qianshi_music/pages/home/edit_playlist_page.dart';
 import 'package:qianshi_music/pages/home/playlist_manage_page.dart';
 import 'package:qianshi_music/pages/playlist_detail_page.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/stores/current_user_controller.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
+import 'package:qianshi_music/utils/common_sliver_header_delegate.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
+import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
 import 'package:qianshi_music/widgets/tiles/playlist_tile.dart';
 
 class MyPage extends StatefulWidget {
@@ -20,9 +23,18 @@ class MyPage extends StatefulWidget {
   BasePlayingState<MyPage> createState() => _MyPageState();
 }
 
-class _MyPageState extends BasePlayingState<MyPage> {
+class _MyPageState extends BasePlayingState<MyPage>
+    with SingleTickerProviderStateMixin {
   final CurrentUserController _currentUserController = Get.find();
   final PlayingController _playingController = Get.find();
+  final _textEditingController = TextEditingController();
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
 
   @override
   BorderRadius get borderRadius => const BorderRadius.only(
@@ -47,8 +59,6 @@ class _MyPageState extends BasePlayingState<MyPage> {
     }
   }
 
-  final _textEditingController = TextEditingController();
-
   @override
   void dispose() {
     _textEditingController.dispose();
@@ -57,7 +67,7 @@ class _MyPageState extends BasePlayingState<MyPage> {
 
   Future<void> _createNewPlaylistDialog() async {
     _textEditingController.clear();
-    final result = await Get.dialog<String>(AlertDialog(
+    await Get.dialog<String>(AlertDialog(
       title: const Text("创建歌单"),
       content: TextField(
         controller: _textEditingController,
@@ -84,15 +94,11 @@ class _MyPageState extends BasePlayingState<MyPage> {
             if (result) {
               Get.back(result: null);
             }
-            Get.back(result: "歌单名称");
           },
           child: const Text("确定"),
         ),
       ],
     ));
-    if (result != null) {
-      Get.snackbar("创建成功", "歌单名称：$result");
-    }
   }
 
   _playlistManage() {
@@ -135,15 +141,80 @@ class _MyPageState extends BasePlayingState<MyPage> {
 
   @override
   Widget buildPageBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildBaseInfo(),
-          const SizedBox(height: 16),
-          _buildLikePlaylist(context),
-          const SizedBox(height: 16),
-          _buildCreatePlaylist(),
-        ],
+    return NestedScrollView(
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return <Widget>[
+          _buildHeader(context),
+          _buildTabsBar(),
+        ];
+      },
+      body: _buildPlaylistPageView(),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return SliverPersistentHeader(
+      delegate: CommonSliverHeaderDelegate(
+        islucency: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        child: PreferredSize(
+          preferredSize: const Size.fromHeight(320),
+          child: Column(children: [
+            _buildBaseInfo(),
+            _buildLikePlaylist(context),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  SliverPersistentHeader _buildTabsBar() {
+    return SliverPersistentHeader(
+      floating: true,
+      pinned: true,
+      delegate: CommonSliverHeaderDelegate(
+        islucency: false,
+        child: PreferredSize(
+          preferredSize: const Size(double.infinity, 30),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Theme(
+                data: Theme.of(context).copyWith(
+                    tabBarTheme: Theme.of(context)
+                        .tabBarTheme
+                        .copyWith(dividerColor: Colors.transparent)),
+                child: TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  indicator: UnderlineTabIndicator(
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary, width: 3),
+                    insets: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  ),
+                  tabs: <Widget>[
+                    Tab(
+                      child: Text(
+                        "创建",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                    Tab(
+                      child: Text(
+                        "收藏",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: _playlistManage,
+                icon: const Icon(Icons.more_vert),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -167,7 +238,7 @@ class _MyPageState extends BasePlayingState<MyPage> {
             left: 16,
             right: 16,
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+              filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
               child: Container(
                 height: 120,
                 width: double.infinity,
@@ -183,10 +254,11 @@ class _MyPageState extends BasePlayingState<MyPage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.all(Radius.circular(32)),
                           child: FixImage(
-                              imageUrl: AssetsContants.defaultAvatar,
-                              width: 64,
-                              height: 64,
-                              fit: BoxFit.cover),
+                            imageUrl: AssetsContants.defaultAvatar,
+                            width: 64,
+                            height: 64,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
@@ -255,22 +327,22 @@ class _MyPageState extends BasePlayingState<MyPage> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: FixImage(
-                imageUrl: likePlaylist.coverImgUrl,
-                width: 64,
-                height: 64,
-                fit: BoxFit.cover,
-              ),
+              child: Obx(() => FixImage(
+                    imageUrl: likePlaylist.coverImgUrl.value,
+                    width: 64,
+                    height: 64,
+                    fit: BoxFit.cover,
+                  )),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    likePlaylist.name,
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
+                  Obx(() => Text(
+                        likePlaylist.name.value,
+                        style: Theme.of(context).textTheme.titleSmall,
+                      )),
                   const SizedBox(height: 8),
                   Text(
                     "${likePlaylist.trackCount} 首",
@@ -292,52 +364,86 @@ class _MyPageState extends BasePlayingState<MyPage> {
     );
   }
 
-  Widget _buildCreatePlaylist() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).hintColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding:
-                const EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "创建的歌单",
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                IconButton(
-                    onPressed: _playlistManage,
-                    icon: const Icon(Icons.more_vert))
-              ],
-            ),
-          ),
-          Obx(() {
-            return ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _currentUserController.createdPlaylist.length,
-              itemBuilder: (context, index) {
-                return PlaylistTile(
-                    playlist: _currentUserController.createdPlaylist[index],
-                    onTap: () {
-                      Get.to(() => PlaylistDetailPage(
-                            playlistId: _currentUserController
-                                .createdPlaylist[index].id,
-                            heroTag: heroTag,
-                          ));
-                    });
-              },
-            );
-          }),
-        ],
-      ),
+  TabBarView _buildPlaylistPageView() {
+    return TabBarView(
+      controller: _tabController,
+      children: [
+        KeepAliveWrapper(child: _buildCreatePlaylist()),
+        KeepAliveWrapper(child: _buildFavoritePlaylist()),
+      ],
     );
+  }
+
+  Widget _buildCreatePlaylist() {
+    return Obx(() {
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: _currentUserController.createdPlaylist.length,
+        itemBuilder: (context, index) {
+          final playlist = _currentUserController.createdPlaylist[index];
+          return PlaylistTile(
+            playlist: playlist,
+            onTap: () {
+              Get.to(() => PlaylistDetailPage(
+                    playlistId: playlist.id,
+                    heroTag: heroTag,
+                  ));
+            },
+            onMoreTap: () {
+              Get.bottomSheet(
+                backgroundColor: Theme.of(context).colorScheme.background,
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const ListTile(
+                        leading: Icon(Icons.arrow_upward),
+                        title: Text('置顶歌单'),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.edit),
+                        title: const Text('编辑歌单'),
+                        onTap: () {
+                          Get.back();
+                          Get.to(() => EditPlaylistPage(playlist: playlist));
+                        },
+                      ),
+                      const ListTile(
+                        leading: Icon(Icons.delete),
+                        title: Text('删除歌单'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      );
+    });
+  }
+
+  Widget _buildFavoritePlaylist() {
+    return Obx(() {
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: _currentUserController.favoritePlaylist.length,
+        itemBuilder: (context, index) {
+          return PlaylistTile(
+            playlist: _currentUserController.favoritePlaylist[index],
+            onTap: () {
+              Get.to(() => PlaylistDetailPage(
+                    playlistId:
+                        _currentUserController.favoritePlaylist[index].id,
+                    heroTag: heroTag,
+                  ));
+            },
+          );
+        },
+      );
+    });
   }
 }

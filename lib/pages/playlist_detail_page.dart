@@ -114,20 +114,20 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
       pinned: true,
       expandedHeight: 230.0,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(
-          playlist.name,
-          style: TextStyle(
-              overflow: TextOverflow.ellipsis,
-              color: Theme.of(context).colorScheme.onBackground),
-        ),
+        title: Obx(() => Text(
+              playlist.name.value,
+              style: TextStyle(
+                  overflow: TextOverflow.ellipsis,
+                  color: Theme.of(context).colorScheme.onBackground),
+            )),
         background: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 0.0),
           child: Opacity(
             opacity: 0.5,
-            child: FixImage(
-              imageUrl: playlist.coverImgUrl,
-              fit: BoxFit.fitWidth,
-            ),
+            child: Obx(() => FixImage(
+                  imageUrl: playlist.coverImgUrl.value,
+                  fit: BoxFit.fitWidth,
+                )),
           ),
         ),
       ),
@@ -143,12 +143,12 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
             child: ListTile(
               onTap: () {
                 Get.bottomSheet(
-                  Description(descrition: playlist.description ?? ""),
+                  Description(descrition: playlist.description.value ?? ""),
                   backgroundColor: Theme.of(context).colorScheme.background,
                 );
               },
               title: Text(
-                playlist.description ?? "",
+                playlist.description.value ?? "",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
