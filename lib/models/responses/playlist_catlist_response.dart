@@ -6,11 +6,13 @@ import 'package:qianshi_music/models/responses/base_response.dart';
 class PlaylistCatlistResponse extends BaseResponse {
   final Category? all;
   final List<Category> sub;
+  final Map<String, String>? categories;
   PlaylistCatlistResponse({
     required super.code,
     super.msg,
     this.all,
     this.sub = const [],
+    this.categories,
   });
 
   @override
@@ -19,6 +21,7 @@ class PlaylistCatlistResponse extends BaseResponse {
       ..addAll({
         'all': all?.toMap(),
         'sub': sub.map((x) => x.toMap()).toList(),
+        'categories': categories
       });
   }
 
@@ -37,6 +40,9 @@ class PlaylistCatlistResponse extends BaseResponse {
               ),
             )
           : [],
+      categories: map['categories'] != null
+          ? Map<String, String>.from(map['categories'])
+          : null,
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/playlist.dart';
+import 'package:qianshi_music/pages/home/selection_tags_page.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 
@@ -20,6 +21,42 @@ class EditPlaylistPage extends StatefulWidget {
 
 class _EditPlaylistPageState extends State<EditPlaylistPage> {
   TextEditingController? _textController;
+  final RxList<String> _tags = <String>[].obs;
+  final List<String> _allTags = [];
+
+  _getAllTags() async {
+    final response = await PlaylistProvider.catlist();
+    if (response.code != 200) {
+      Get.snackbar("获取标签失败", response.msg!);
+      return;
+    }
+    _allTags.addAll(response.sub.map((e) => e.name));
+  }
+
+  _updateTags() async {
+    _tags.clear();
+    _tags.addAll(widget.playlist.tags.toList());
+    if (_allTags.isEmpty) {
+      await _getAllTags();
+    }
+
+    Get.to(() => SelectionTagsPage(
+          tags: _allTags,
+          selectedTags: widget.playlist.tags.toList(),
+        ))?.then((value) async {
+      if (value == null) {
+        return;
+      }
+      final response =
+          await PlaylistProvider.tagsUpdate(widget.playlist.id, value);
+      if (response.code != 200) {
+        Get.snackbar("保存标签失败", response.msg!);
+        return;
+      }
+      widget.playlist.tags.clear();
+      widget.playlist.tags.addAll(value);
+    });
+  }
 
   _updateName() async {
     _textController?.dispose();
@@ -41,9 +78,8 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
 
                     try {
                       await EasyLoading.show(status: "保存中");
-                      final response = await PlaylistProvider.update(
-                          widget.playlist.id,
-                          name: name);
+                      final response = await PlaylistProvider.nameUpdate(
+                          widget.playlist.id, name);
                       if (response.code != 200) {
                         Get.snackbar("更新歌单名称失败", response.msg!);
                         return;
@@ -62,6 +98,71 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
             child: TextField(
               controller: _textController,
               autofocus: true,
+            ),
+          ),
+        ),
+      ),
+      ignoreSafeArea: false,
+      isScrollControlled: true,
+    );
+  }
+
+  _updateDesc() async {
+    _textController?.dispose();
+    _textController =
+        TextEditingController(text: widget.playlist.description.value);
+
+    Get.bottomSheet(
+      SafeArea(
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            title: const Text("更新歌单描述"),
+            actions: [
+              TextButton(
+                  onPressed: () async {
+                    final desc = _textController?.text ?? '';
+                    try {
+                      await EasyLoading.show(status: "保存中");
+                      final response = await PlaylistProvider.descUpdate(
+                          widget.playlist.id, desc);
+                      if (response.code != 200) {
+                        Get.snackbar("更新歌单描述失败", response.msg!);
+                        return;
+                      }
+                      widget.playlist.description.value = desc;
+                      Get.back();
+                    } finally {
+                      await EasyLoading.dismiss();
+                    }
+                  },
+                  child: const Text("保存"))
+            ],
+          ),
+          body: Padding(
+            padding:
+                const EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 16),
+            child: TextField(
+              controller: _textController,
+              keyboardType: TextInputType.multiline,
+              maxLength: 1000,
+              maxLines: 50,
+              autofocus: true,
+              decoration: const InputDecoration(
+                hintText: '输入歌单描述',
+                filled: true,
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                isDense: true,
+                border: OutlineInputBorder(
+                  gapPadding: 0,
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  borderSide: BorderSide(
+                    width: 1,
+                    style: BorderStyle.none,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -114,10 +215,12 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                         )
                         .toList(),
                   )),
+              onTap: _updateTags,
             ),
             _buildItem(
               '描述',
               Obx(() => Text(widget.playlist.description.value ?? '')),
+              onTap: _updateDesc,
             ),
           ],
         ),
@@ -136,8 +239,9 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
         color: Colors.transparent,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label),
+            SizedBox(height: 48, child: Text(label)),
             child,
           ],
         ),

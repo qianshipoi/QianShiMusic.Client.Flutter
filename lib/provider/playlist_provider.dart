@@ -74,16 +74,39 @@ class PlaylistProvider {
     }));
   }
 
-  static Future<BaseResponse> update(int id,
-      {String? name, String? desc, List<String>? tags}) async {
+  static Future<BaseResponse> update(int id, String name,
+      {String? desc, List<String>? tags}) async {
     final Map<String, dynamic> query = {
       'id': id,
+      'name': name,
     }
-      ..addIf(name != null, 'name', name)
       ..addIf(desc != null, 'desc', desc)
       ..addIf(tags != null, 'tags', tags?.join(';'));
     return BaseResponse.fromMap(
         await requestGet('playlist/update', query: query));
+  }
+
+  static Future<BaseResponse> nameUpdate(int id, String name) async {
+    return BaseResponse.fromMap(
+        await requestGet('playlist/name/update', query: {
+      'id': id,
+      'name': name,
+    }));
+  }
+
+  static Future<BaseResponse> descUpdate(int id, String? desc) async {
+    return BaseResponse.fromMap(await requestGet('playlist/name/update',
+        query: {
+          'id': id,
+        }..addIf(desc != null, 'desc', desc)));
+  }
+
+  static Future<BaseResponse> tagsUpdate(int id, List<String> tags) async {
+    return BaseResponse.fromMap(
+        await requestGet('playlist/tags/update', query: {
+      'id': id,
+      'tags': tags.join(';'),
+    }));
   }
 
   static Future<BaseResponse> coverUpdate(int id, File imageFile,
