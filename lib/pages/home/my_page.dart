@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
+import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
 import 'package:qianshi_music/pages/home/edit_playlist_page.dart';
 import 'package:qianshi_music/pages/home/playlist_manage_page.dart';
@@ -63,6 +64,46 @@ class _MyPageState extends BasePlayingState<MyPage>
   void dispose() {
     _textEditingController.dispose();
     super.dispose();
+  }
+
+  Future<void> _deletePlaylistDialog(Playlist playlist) async {
+    final result = await Get.dialog<bool>(AlertDialog(
+      title: const Text("删除歌单"),
+      content: Text("确认是否删除歌单:[${playlist.name}]"),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Get.back(result: false);
+          },
+          child: const Text("取消"),
+        ),
+        TextButton(
+          onPressed: () async {
+            Get.back(result: true);
+          },
+          child: const Text("确定"),
+        ),
+      ],
+    ));
+
+    if (!(result ?? false)) {
+      Get.back();
+      return;
+    }
+
+    try {
+      await EasyLoading.show();
+      final response = await PlaylistProvider.delete([playlist.id]);
+      if (response.code != 200) {
+        Get.snackbar("歌单删除失败", response.msg!);
+        return;
+      }
+      _currentUserController.createdPlaylist
+          .removeWhere((element) => element.id == playlist.id);
+    } finally {
+      await EasyLoading.dismiss();
+    }
+    Get.back();
   }
 
   Future<void> _createNewPlaylistDialog() async {
@@ -398,9 +439,27 @@ class _MyPageState extends BasePlayingState<MyPage>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const ListTile(
-                        leading: Icon(Icons.arrow_upward),
-                        title: Text('置顶歌单'),
+                      ListTile(
+                        leading: const Icon(Icons.arrow_upward),
+                        title: const Text('置顶歌单'),
+                        onTap: () async {
+                          try {
+                            await EasyLoading.show();
+                            final response = await PlaylistProvider.orderUpdate(
+                                [playlist.id]);
+                            if (response.code != 200) {
+                              Get.snackbar("置顶歌单失败", response.msg!);
+                              return;
+                            }
+                            _currentUserController.createdPlaylist.removeWhere(
+                                (element) => element.id == playlist.id);
+                            _currentUserController.createdPlaylist
+                                .insert(0, playlist);
+                          } finally {
+                            await EasyLoading.dismiss();
+                          }
+                          Get.back();
+                        },
                       ),
                       ListTile(
                         leading: const Icon(Icons.edit),
@@ -410,9 +469,10 @@ class _MyPageState extends BasePlayingState<MyPage>
                           Get.to(() => EditPlaylistPage(playlist: playlist));
                         },
                       ),
-                      const ListTile(
-                        leading: Icon(Icons.delete),
-                        title: Text('删除歌单'),
+                      ListTile(
+                        leading: const Icon(Icons.delete),
+                        title: const Text('删除歌单'),
+                        onTap: () => _deletePlaylistDialog(playlist),
                       ),
                     ],
                   ),
