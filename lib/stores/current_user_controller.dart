@@ -84,4 +84,17 @@ class CurrentUserController extends GetxController {
     }
     userFavorite.assignAll(response.songs);
   }
+
+  bool isMyCreated(Playlist playlist) {
+    return playlist.creator != null &&
+        playlist.creator!.userId == currentAccount.value!.id;
+  }
+
+  bool isMyFavorite(Playlist playlist) {
+    return favoritePlaylist.any((element) => playlist.id == element.id);
+  }
+
+  bool isMyLiked(Track track) {
+    return userFavorite.any((element) => element.id == track.id);
+  }
 }

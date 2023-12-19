@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
@@ -25,11 +26,11 @@ class PlaylistTile extends StatelessWidget {
               CircularProgressIndicator(value: downloadProgress.progress),
         ),
       ),
-      title: Text(
-        playlist.name.value,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
+      title: Obx(() => Text(
+            playlist.name.value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          )),
       subtitle: Row(
         children: [
           Text("${playlist.trackCount}首"),

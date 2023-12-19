@@ -63,10 +63,10 @@ class Playlist {
     return Playlist(
       id: map['id'] as int,
       name: map['name'] as String,
-      coverImgUrl: map['coverImgUrl'] as String,
+      coverImgUrl: (map['coverImgUrl'] ?? map['picUrl']) as String,
       description:
           map['description'] != null ? map['description'] as String : null,
-      playCount: map['playCount'] as int,
+      playCount: (map['playCount'] ?? map['playcount']) as int,
       trackCount: (map['trackCount'] as int?) ?? 0,
       commentCount: (map['commentCount'] as int?) ?? 0,
       shareCount: (map['shareCount'] as int?) ?? 0,

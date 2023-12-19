@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
 import 'package:qianshi_music/pages/playlist_detail_page.dart';
-import 'package:qianshi_music/utils/http/http_util.dart';
+import 'package:qianshi_music/provider/recommend_provider.dart';
 import 'package:qianshi_music/widgets/tiles/playlist_tile.dart';
 
 class IndexPage extends StatefulWidget {
@@ -18,16 +18,13 @@ class _IndexPageState extends BasePlayingState<IndexPage> {
   List<Playlist> _playlists = [];
 
   Future<void> loadData() async {
-    final response = await HttpUtils.get('top/playlist/highquality');
-    final result = response.data as Map<String, dynamic>;
-
-    if (result['code'] == 200) {
-      final List<dynamic> playlists = result['playlists'] as List<dynamic>;
-      _playlists = playlists
-          .map((e) => Playlist.fromMap(e as Map<String, dynamic>))
-          .toList();
-      setState(() {});
+    final response = await RecommendProvider.resource();
+    if (response.code != 200) {
+      Get.snackbar('获取推荐歌单失败', response.msg!);
+      return;
     }
+    _playlists = response.recommend;
+    setState(() {});
   }
 
   @override

@@ -178,10 +178,48 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
               const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () async {
-                    await PlaylistProvider.subscribe(
-                        playlist.id, !playlist.subscribed.value);
-                  },
+                  onPressed: _currentUserController.isMyCreated(playlist)
+                      ? null
+                      : () async {
+                          bool result = true;
+
+                          if (playlist.subscribed.value) {
+                            // cancel subscribe
+                            result = (await Get.dialog<bool>(AlertDialog(
+                                  title: const Text("确定不再收藏此歌单吗？"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Get.back();
+                                      },
+                                      child: const Text("取消"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Get.back(result: true);
+                                      },
+                                      child: const Text("确定"),
+                                    ),
+                                  ],
+                                ))) ??
+                                false;
+                          } 
+                          if (!result) {
+                            return;
+                          }
+
+                          final response = await PlaylistProvider.subscribe(
+                              playlist.id, !playlist.subscribed.value);
+                          if (response.code == 200) {
+                            playlist.subscribed.value =
+                                !playlist.subscribed.value;
+                            if (!playlist.subscribed.value) {
+                              _currentUserController.favoritePlaylist
+                                  .removeWhere(
+                                      (element) => element.id == playlist.id);
+                            }
+                          }
+                        },
                   icon: Obx(() => Icon(
                         playlist.subscribed.value
                             ? Icons.favorite
