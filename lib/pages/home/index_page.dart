@@ -58,11 +58,4 @@ class _IndexPageState extends BasePlayingState<IndexPage> {
       },
     );
   }
-
-  String formatPlayCount(int playcount) {
-    if (playcount > 10000) {
-      return "${(playcount / 10000).toStringAsFixed(1)}万";
-    }
-    return playcount.toString();
-  }
 }

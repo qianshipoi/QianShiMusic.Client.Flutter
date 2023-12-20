@@ -7,7 +7,6 @@ import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/provider/track_provider.dart';
-import 'package:qianshi_music/utils/logger.dart';
 
 class PlayingController extends GetxController {
   bool _showLyric = false;
@@ -71,7 +70,7 @@ class PlayingController extends GetxController {
       default:
         break;
     }
-    logger.i(response.data.first.url);
+    currentPosition.value = 0;
     await _mPlayer.startPlayer(
       fromURI: url,
       codec: codec,
