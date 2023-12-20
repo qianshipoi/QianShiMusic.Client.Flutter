@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/playlist.dart';
@@ -23,6 +27,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
   TextEditingController? _textController;
   final RxList<String> _tags = <String>[].obs;
   final List<String> _allTags = [];
+  final ImagePicker _imagePicker = ImagePicker();
 
   _getAllTags() async {
     final response = await PlaylistProvider.catlist();
@@ -172,6 +177,51 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
     );
   }
 
+  _updateCover() async {
+    final file = await _imagePicker.pickImage(source: ImageSource.gallery);
+    if (file == null) return;
+    final filePath = await _cropImage(file.path);
+    try {
+      await EasyLoading.show(status: "上传中");
+      final response = await PlaylistProvider.coverUpdate(
+          widget.playlist.id, File(filePath));
+      if (response.code != 200) {
+        Get.snackbar("更新歌单封面失败", response.msg!);
+        return;
+      }
+      widget.playlist.coverImgUrl.value = response.data!.url;
+    } finally {
+      await EasyLoading.dismiss();
+    }
+  }
+
+  Future<String> _cropImage(String imagePath) async {
+    final croppedFile = await ImageCropper().cropImage(
+      sourcePath: imagePath,
+      compressFormat: ImageCompressFormat.jpg,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9
+      ],
+      uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        IOSUiSettings(
+          title: 'Cropper',
+        ),
+      ],
+    );
+
+    return croppedFile?.path ?? imagePath;
+  }
+
   @override
   void dispose() {
     _textController?.dispose();
@@ -196,6 +246,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                     width: 48,
                     height: 48,
                   )),
+              onTap: _updateCover,
             ),
             _buildItem(
               '名称',

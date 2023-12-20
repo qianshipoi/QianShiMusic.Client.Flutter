@@ -1,15 +1,16 @@
 import 'dart:io';
 
 import 'package:get/get.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:qianshi_music/models/responses/base_response.dart';
 import 'package:qianshi_music/models/responses/playlist_catlist_response.dart';
+import 'package:qianshi_music/models/responses/playlist_cover_update_response.dart';
 import 'package:qianshi_music/models/responses/playlist_create_resppnse.dart';
 import 'package:qianshi_music/models/responses/playlist_detail_response.dart';
 import 'package:qianshi_music/models/responses/playlist_top_response.dart';
 import 'package:qianshi_music/models/responses/playlist_track_all_response.dart';
 import 'package:qianshi_music/provider/index.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
-import 'package:dio/dio.dart' as dio;
 
 class PlaylistProvider {
   static Future<PlaylistDetailResponse> detail(int id) async {
@@ -109,7 +110,7 @@ class PlaylistProvider {
     }));
   }
 
-  static Future<BaseResponse> coverUpdate(int id, File imageFile,
+  static Future<PlaylistCoverUpdateResponse> coverUpdate(int id, File imageFile,
       {int imageSize = 300}) async {
     final response = await HttpUtils.post("playlist/cover/update",
         data: dio.FormData.fromMap({
@@ -120,6 +121,6 @@ class PlaylistProvider {
           'id': id,
         });
 
-    return BaseResponse.fromMap(formatResponse(response));
+    return PlaylistCoverUpdateResponse.fromMap(formatResponse(response));
   }
 }
