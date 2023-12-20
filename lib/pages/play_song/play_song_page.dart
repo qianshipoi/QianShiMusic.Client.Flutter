@@ -64,70 +64,24 @@ class _PlaySongPageState extends State<PlaySongPage>
         body: Obx(
           () => track.value == null
               ? const Center(child: Text("No Track"))
-              : GestureDetector(
-                  onHorizontalDragStart: (details) {
-                    // logger.d("onHorizontalDragStart: ${details.globalPosition}");
-                  },
-                  onHorizontalDragUpdate: (details) {
-                    // logger.d("onHorizontalDragUpdate: ${details.delta.dx}");
-                    coverX += details.delta.dx;
-                    setState(() {});
-                  },
-                  onHorizontalDragEnd: (details) {
-                    // 计算是否切换歌曲
-                    final screenWidth = ScreenUtil().screenWidth;
-                    final offsetX = coverX.abs();
-
-                    logger.i('screenWidth: $screenWidth, offsetX: $offsetX');
-
-                    if (screenWidth / 2 > offsetX + screenWidth / 4) {
-                      // 不切换 图片回到原位
-                      _animation = Tween(begin: coverX, end: 0.0).animate(
-                          CurvedAnimation(
-                              parent: _animationController,
-                              curve: Curves.bounceOut))
-                        ..addListener(() {
-                          coverX = _animation.value;
-                          setState(() {});
-                        });
-
-                      _animationController.reset();
-                      _animationController.forward();
-                      return;
-                    }
-
-                    logger.i('切换到：${coverX > 0 ? '下一曲' : '上一曲'}');
-
-                    if (details.primaryVelocity == null) {
-                      return;
-                    }
-                    if (details.primaryVelocity! > 200) {
-                      logger.i('上一曲');
-                    } else if (details.primaryVelocity! < -200) {
-                      logger.i('下一曲');
-                    }
-                  },
-                  onTap: () => setState(() => _pageController
-                      .jumpToPage(_pageController.page == 1 ? 0 : 1)),
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 20),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 40),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(48),
-                        topRight: Radius.circular(48),
-                      ),
+              : Container(
+                  margin: const EdgeInsets.only(top: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(48),
+                      topRight: Radius.circular(48),
                     ),
-                    child: PageView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      controller: _pageController,
-                      children: [
-                        _buildMainView(context, track.value!),
-                        _buildLyricView(context, track.value!),
-                      ],
-                    ),
+                  ),
+                  child: PageView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    controller: _pageController,
+                    children: [
+                      _buildMainView(context, track.value!),
+                      _buildLyricView(context, track.value!),
+                    ],
                   ),
                 ),
         ));
@@ -135,19 +89,81 @@ class _PlaySongPageState extends State<PlaySongPage>
 
   Widget _buildMainView(BuildContext context, Track track) {
     return KeepAliveWrapper(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildImageView(context, track),
-          _buildCenterView(context, track),
-          _buildBottomView(context, track),
-        ],
+      child: GestureDetector(
+        onHorizontalDragUpdate: (details) {
+          coverX += details.delta.dx;
+          setState(() {});
+        },
+        onHorizontalDragEnd: (details) {
+          // 计算是否切换歌曲
+          final screenWidth = ScreenUtil().screenWidth;
+          final offsetX = coverX.abs();
+
+          logger.i('screenWidth: $screenWidth, offsetX: $offsetX');
+
+          if (screenWidth / 2 > offsetX + screenWidth / 4) {
+            // 不切换 图片回到原位
+            _animation = Tween(begin: coverX, end: 0.0).animate(CurvedAnimation(
+                parent: _animationController, curve: Curves.bounceOut))
+              ..addListener(() {
+                coverX = _animation.value;
+                setState(() {});
+              });
+
+            _animationController.reset();
+            _animationController.forward();
+            return;
+          }
+
+          if (coverX < 0) {
+            _playingController.next();
+          } else {
+            _playingController.prev();
+          }
+
+          _animation = Tween(begin: coverX, end: 0.0).animate(CurvedAnimation(
+              parent: _animationController, curve: Curves.bounceOut))
+            ..addListener(() {
+              coverX = _animation.value;
+              setState(() {});
+            });
+
+          _animationController.reset();
+          _animationController.forward();
+
+          logger.i('切换到：${coverX < 0 ? '下一曲' : '上一曲'}');
+
+          if (details.primaryVelocity == null) {
+            return;
+          }
+          if (details.primaryVelocity! > 200) {
+            logger.i('上一曲');
+          } else if (details.primaryVelocity! < -200) {
+            logger.i('下一曲');
+          }
+        },
+        onTap: () => _pageController.jumpToPage(1),
+        child: Container(
+          color: Colors.transparent,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildImageView(context, track),
+              _buildCenterView(context, track),
+              _buildBottomView(context, track),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildLyricView(BuildContext context, Track track) {
-    return KeepAliveWrapper(child: LyricPage(trackId: track.id));
+    return KeepAliveWrapper(
+        child: GestureDetector(
+      onTap: () => _pageController.jumpToPage(0),
+      child: LyricPage(trackId: track.id),
+    ));
   }
 
   Widget _buildImageView(BuildContext context, Track track) {
