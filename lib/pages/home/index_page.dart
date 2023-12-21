@@ -34,6 +34,9 @@ class _IndexPageState extends BasePlayingState<IndexPage> {
   }
 
   @override
+  bool get show => false;
+
+  @override
   BorderRadius get borderRadius => const BorderRadius.only(
       topLeft: Radius.circular(16), topRight: Radius.circular(16));
 

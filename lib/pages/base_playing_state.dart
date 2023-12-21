@@ -8,6 +8,8 @@ abstract class BasePlayingState<T extends StatefulWidget> extends State<T> {
 
   String get heroTag => DateTime.timestamp().toString();
 
+  bool get show => true;
+
   @override
   @mustCallSuper
   void setState(VoidCallback fn) {
@@ -28,10 +30,11 @@ abstract class BasePlayingState<T extends StatefulWidget> extends State<T> {
       child: Column(
         children: [
           Expanded(child: buildPageBody(context)),
-          PlayingBar(
-            borderRadius: borderRadius,
-            tag: heroTag,
-          ),
+          if (show)
+            PlayingBar(
+              borderRadius: borderRadius,
+              tag: heroTag,
+            ),
         ],
       ),
     );

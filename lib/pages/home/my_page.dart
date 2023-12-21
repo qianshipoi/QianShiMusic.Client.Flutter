@@ -38,6 +38,9 @@ class _MyPageState extends BasePlayingState<MyPage>
   }
 
   @override
+  bool get show => false;
+
+  @override
   BorderRadius get borderRadius => const BorderRadius.only(
       topLeft: Radius.circular(16), topRight: Radius.circular(16));
 

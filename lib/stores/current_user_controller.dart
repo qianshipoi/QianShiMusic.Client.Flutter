@@ -5,7 +5,6 @@ import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/models/user_profile.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/provider/user_provider.dart';
-import 'package:qianshi_music/utils/logger.dart';
 
 class CurrentUserController extends GetxController {
   final Rx<LoginAccount?> currentAccount = Rx<LoginAccount?>(null);
@@ -43,7 +42,6 @@ class CurrentUserController extends GetxController {
 
   refreshMyPlaylist() {
     _loadMyPlaylist();
-    logger.i('refreshMyPlaylist');
   }
 
   Future<void> _loadMyPlaylist() async {
@@ -62,6 +60,7 @@ class CurrentUserController extends GetxController {
     createdPlaylist.addAll(response.playlist.skip(1).where((element) =>
         element.creator != null &&
         element.creator!.userId == currentAccount.value!.id));
+
     favoritePlaylist.clear();
     favoritePlaylist.addAll(response.playlist.where((element) =>
         element.creator != null &&
@@ -70,6 +69,7 @@ class CurrentUserController extends GetxController {
 
     userPlaylist.assignAll(response.playlist);
     await _loadMyLikeTracks();
+    await Future.wait(createdPlaylist.map((e) => _loadPlaylistTracks(e)));
   }
 
   Future<void> _loadMyLikeTracks() async {
@@ -96,5 +96,21 @@ class CurrentUserController extends GetxController {
 
   bool isMyLiked(Track track) {
     return userFavorite.any((element) => element.id == track.id);
+  }
+
+  Future<void> _loadPlaylistTracks(Playlist playlist) async {
+    final response = await PlaylistProvider.trackAll(playlist.id,
+        limit: playlist.trackCount);
+    if (response.code != 200) {
+      Get.snackbar('获取歌单音乐失败', response.msg ?? '未知错误');
+      return;
+    }
+    playlist.tracks.addAll(response.songs);
+  }
+
+  bool isInCreatedPlaylist(int index, Track track) {
+    return createdPlaylist[index]
+        .tracks
+        .any((element) => element.id == track.id);
   }
 }
