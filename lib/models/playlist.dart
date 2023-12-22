@@ -10,7 +10,7 @@ class Playlist {
   final RxString coverImgUrl = ''.obs;
   final Rx<String?> description = Rx<String?>(null);
   final int playCount;
-  final int trackCount;
+  final RxInt trackCount = 0.obs;
   final int commentCount;
   final int shareCount;
   final int subscribedCount;
@@ -26,7 +26,7 @@ class Playlist {
     String? description,
     required this.playCount,
     this.tracks = const [],
-    required this.trackCount,
+    required int trackCount,
     required this.commentCount,
     required this.shareCount,
     required this.subscribedCount,
@@ -39,6 +39,7 @@ class Playlist {
     this.coverImgUrl.value = coverImgUrl;
     this.description.value = description;
     this.tags.value = tags;
+    this.trackCount.value = trackCount;
   }
 
   Map<String, dynamic> toMap() {
@@ -49,7 +50,7 @@ class Playlist {
       'description': description.value,
       'playCount': playCount,
       'tracks': tracks.map((x) => x.toMap()).toList(),
-      'trackCount': trackCount,
+      'trackCount': trackCount.value,
       'commentCount': commentCount,
       'shareCount': shareCount,
       'subscribedCount': subscribedCount,

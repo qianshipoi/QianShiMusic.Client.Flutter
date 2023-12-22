@@ -33,7 +33,7 @@ class PlaylistTile extends StatelessWidget {
           )),
       subtitle: Row(
         children: [
-          Text("${playlist.trackCount}首"),
+          Obx(() => Text("${playlist.trackCount.value}首")),
           if (playlist.playCount != 0)
             Text(' · ${formatPlayCount(playlist.playCount)}次播放'),
           if (playlist.creator != null)

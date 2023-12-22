@@ -19,7 +19,8 @@ class PlayingController extends GetxController {
   final _mPlayer = FlutterSoundPlayer(logLevel: Level.warning);
   final RxBool isPlaying = RxBool(false);
   final Rx<Track?> _currentTrack = Rx(null);
-  final RxInt currentPosition = RxInt(0);
+  final RxDouble currentPosition = RxDouble(0);
+  final RxDouble currentDuration = RxDouble(9999999);
   final tracks = <Track>[].obs;
   final RxInt _currentTrackIndex = RxInt(-1);
 
@@ -42,7 +43,14 @@ class PlayingController extends GetxController {
     await _mPlayer.openPlayer();
   }
 
-  Future<void> play() async {
+  Future<void> play({int? index}) async {
+    if (index != null && index < tracks.length) {
+      if (index == _currentTrackIndex.value) {
+        return;
+      }
+      _currentTrackIndex.value = index;
+    }
+
     if (_currentTrackIndex.value == -1) {
       return;
     }
@@ -71,7 +79,7 @@ class PlayingController extends GetxController {
         break;
     }
     currentPosition.value = 0;
-    await _mPlayer.startPlayer(
+    final duration = await _mPlayer.startPlayer(
       fromURI: url,
       codec: codec,
       whenFinished: () {
@@ -83,9 +91,13 @@ class PlayingController extends GetxController {
         }
       },
     );
+    if (duration == null) {
+      return;
+    }
+    currentDuration.value = duration.inMilliseconds.toDouble();
     _mPlayer.setSubscriptionDuration(const Duration(milliseconds: 500));
     _mPlayer.onProgress!.listen((event) {
-      currentPosition.value = event.position.inMilliseconds;
+      currentPosition.value = event.position.inMilliseconds.toDouble();
       _curPositionController.sink.add(
           "${event.position.inMilliseconds}-${event.duration.inMilliseconds}");
     });
