@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -112,24 +110,92 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
   SliverAppBar _buildAppBar(Playlist playlist, BuildContext context) {
     return SliverAppBar(
       pinned: true,
+      title: Text(
+        playlist.name.value,
+        style: TextStyle(
+            overflow: TextOverflow.ellipsis,
+            color: Theme.of(context).colorScheme.onBackground),
+      ),
       expandedHeight: 230.0,
       flexibleSpace: FlexibleSpaceBar(
-        title: Obx(() => Text(
-              playlist.name.value,
-              style: TextStyle(
-                  overflow: TextOverflow.ellipsis,
-                  color: Theme.of(context).colorScheme.onBackground),
-            )),
-        background: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 0.0),
-          child: Opacity(
-            opacity: 0.5,
-            child: Obx(() => FixImage(
-                  imageUrl: playlist.coverImgUrl.value,
-                  fit: BoxFit.fitWidth,
-                )),
+        background: _buildProfile(),
+      ),
+    );
+  }
+
+  Widget _buildProfile() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.background,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: FixImage(
+              imageUrl: playlist!.coverImgUrl.value,
+              fit: BoxFit.fitWidth,
+            ),
           ),
-        ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.black.withOpacity(0.5),
+                    Colors.black.withOpacity(0.0),
+                  ],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                ),
+              ),
+              child: Row(
+                children: [
+                  FixImage(
+                    imageUrl: playlist!.creator!.avatarUrl,
+                    width: 40,
+                    height: 40,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          playlist!.creator!.nickname,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          formatPlaycount(playlist!.playCount),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      _playingController.addPlaylist(playlist!,
+                          playTrackId: playlist!.tracks.first.id);
+                      Get.to(() => PlaySongPage.instance);
+                    },
+                    icon: const Icon(Icons.play_arrow),
+                    label: const Text("播放全部"),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -139,7 +205,7 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
       child: Column(
         children: [
           SizedBox(
-            height: 32,
+            height: 42,
             child: ListTile(
               onTap: () {
                 Get.bottomSheet(

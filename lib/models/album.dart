@@ -7,7 +7,7 @@ class Album {
   final String name;
   final String? picUrl;
   final Artist? artist;
-  final List<Artist>? artists;
+  final List<Artist> artists;
   final String? containedSong;
   final List<String>? alias;
   Album({
@@ -15,7 +15,7 @@ class Album {
     required this.name,
     this.picUrl,
     this.artist,
-    this.artists,
+    this.artists = const [],
     this.containedSong,
     this.alias,
   });
@@ -26,7 +26,7 @@ class Album {
       'name': name,
       'picUrl': picUrl,
       'artist': artist?.toMap(),
-      'artists': artists?.map((x) => x.toMap()).toList(),
+      'artists': artists.map((x) => x.toMap()).toList(),
       'containedSong': containedSong,
       'alias': alias,
     };
@@ -46,7 +46,7 @@ class Album {
                 (x) => Artist.fromMap(x as Map<String, dynamic>),
               ),
             )
-          : null,
+          : [],
       containedSong:
           map['containedSong'] != null ? map['containedSong'] as String : null,
     );

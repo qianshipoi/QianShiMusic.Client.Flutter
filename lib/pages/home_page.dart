@@ -15,6 +15,7 @@ import 'package:qianshi_music/utils/capture_util.dart';
 import 'package:qianshi_music/utils/circle_image_painter.dart';
 import 'package:qianshi_music/utils/sputils.dart';
 import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
+import 'package:qianshi_music/widgets/playing_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -130,33 +131,47 @@ class _HomePageState extends State<HomePage>
             ),
             bottomNavigationBar: Obx(
               () => SizedBox(
-                height: _playingController.currentTrack.value == null ? 60 : 50,
+                height:
+                    _playingController.currentTrack.value == null ? 60 : 120,
                 child: Container(
                   color: const Color.fromARGB(255, 187, 230, 243),
-                  padding: EdgeInsets.only(
-                      top: _playingController.currentTrack.value == null ? 10 : 0),
-                  child: CurvedNavigationBar(
-                      items: [
-                        Icon(Icons.message,
-                            size: 24,
-                            color: Theme.of(context).colorScheme.onPrimary),
-                        Icon(Icons.people,
-                            size: 24,
-                            color: Theme.of(context).colorScheme.onPrimary),
-                        Icon(Icons.person,
-                            size: 24,
-                            color: Theme.of(context).colorScheme.onPrimary),
-                      ],
-                      index: _currentPage,
-                      backgroundColor: const Color.fromARGB(255, 187, 230, 243),
-                      color: Theme.of(context).colorScheme.primary,
-                      height: 50,
-                      onTap: (index) {
-                        setState(() {
-                          _currentPage = index;
-                          _pageController.jumpToPage(index);
-                        });
+                  child: Column(
+                    children: [
+                      Obx(() {
+                        return _playingController.currentTrack.value == null
+                            ? const SizedBox(height: 10)
+                            : const PlayingBar(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(16),
+                                  topRight: Radius.circular(16),
+                                ),
+                              );
                       }),
+                      CurvedNavigationBar(
+                          items: [
+                            Icon(Icons.message,
+                                size: 24,
+                                color: Theme.of(context).colorScheme.onPrimary),
+                            Icon(Icons.people,
+                                size: 24,
+                                color: Theme.of(context).colorScheme.onPrimary),
+                            Icon(Icons.person,
+                                size: 24,
+                                color: Theme.of(context).colorScheme.onPrimary),
+                          ],
+                          index: _currentPage,
+                          backgroundColor:
+                              const Color.fromARGB(255, 187, 230, 243),
+                          color: Theme.of(context).colorScheme.primary,
+                          height: 50,
+                          onTap: (index) {
+                            setState(() {
+                              _currentPage = index;
+                              _pageController.jumpToPage(index);
+                            });
+                          }),
+                    ],
+                  ),
                 ),
               ),
             ),

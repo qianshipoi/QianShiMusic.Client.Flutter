@@ -38,6 +38,9 @@ class _FoundPageState extends BasePlayingState<FoundPage>
   }
 
   @override
+  bool get show => false;
+
+  @override
   Color get backgroundColor => Colors.grey.withOpacity(0.3);
 
   @override

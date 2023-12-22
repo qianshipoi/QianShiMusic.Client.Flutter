@@ -34,7 +34,7 @@ class SearchAlbumTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            album.artists?.map((e) => e.name).join("/") ?? "",
+            album.artists.map((e) => e.name).join("/"),
             style: Theme.of(context).textTheme.bodySmall,
           ),
           (album.containedSong == null || album.containedSong == "")

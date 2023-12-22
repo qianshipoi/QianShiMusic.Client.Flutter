@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +8,7 @@ class FixImage extends StatelessWidget {
   final BoxFit? fit;
   final double? width;
   final double? height;
+  final String? cacheKey;
   final ProgressIndicatorBuilder? progressIndicatorBuilder;
   const FixImage({
     Key? key,
@@ -16,6 +16,7 @@ class FixImage extends StatelessWidget {
     this.fit,
     this.width,
     this.height,
+    this.cacheKey,
     this.progressIndicatorBuilder,
   }) : super(key: key);
 
@@ -28,6 +29,7 @@ class FixImage extends StatelessWidget {
       width: width,
       progressIndicatorBuilder: progressIndicatorBuilder,
       height: height,
+      cacheKey: cacheKey,
       errorWidget: (context, url, error) => const Icon(Icons.error),
     );
   }
