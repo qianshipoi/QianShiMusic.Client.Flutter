@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
+import 'package:qianshi_music/pages/follows_page.dart';
 import 'package:qianshi_music/pages/home/edit_playlist_page.dart';
 import 'package:qianshi_music/pages/home/playlist_manage_page.dart';
 import 'package:qianshi_music/pages/playlist_detail_page.dart';
@@ -320,14 +321,31 @@ class _MyPageState extends BasePlayingState<MyPage>
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              "${_currentUserController.currentProfile.value == null ? 0 : _currentUserController.currentProfile.value!.follows} 关注",
-                              style: Theme.of(context).textTheme.bodyMedium,
+                            GestureDetector(
+                              onTap: () {
+                                Get.to(() => FollowsPage(
+                                      uid: _currentUserController
+                                          .currentAccount.value!.id,
+                                    ));
+                              },
+                              child: Text(
+                                "${_currentUserController.currentProfile.value == null ? 0 : _currentUserController.currentProfile.value!.follows} 关注",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
                             ),
                             const SizedBox(width: 8),
-                            Text(
-                              "${_currentUserController.currentProfile.value == null ? 0 : _currentUserController.currentProfile.value!.followeds} 粉丝",
-                              style: Theme.of(context).textTheme.bodyMedium,
+                            GestureDetector(
+                              onTap: () {
+                                Get.to(() => FollowsPage(
+                                      uid: _currentUserController
+                                          .currentAccount.value!.id,
+                                      pageIndex: 1,
+                                    ));
+                              },
+                              child: Text(
+                                "${_currentUserController.currentProfile.value == null ? 0 : _currentUserController.currentProfile.value!.followeds} 粉丝",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
                             ),
                             const SizedBox(width: 8),
                             Text(
