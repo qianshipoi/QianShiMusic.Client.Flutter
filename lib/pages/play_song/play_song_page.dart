@@ -4,10 +4,14 @@ import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/pages/play_song/lyric_page.dart';
+import 'package:qianshi_music/provider/track_provider.dart';
+import 'package:qianshi_music/stores/current_user_controller.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/logger.dart';
+import 'package:qianshi_music/widgets/add_to_playlist_view.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
+import 'package:qianshi_music/widgets/palying_list_view.dart';
 
 class PlaySongPage extends StatefulWidget {
   static PlaySongPage? _instance;
@@ -25,6 +29,7 @@ class PlaySongPage extends StatefulWidget {
 class _PlaySongPageState extends State<PlaySongPage>
     with SingleTickerProviderStateMixin {
   final PlayingController _playingController = Get.find();
+  final CurrentUserController _currentUserController = Get.find();
   final _pageController = PageController();
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -267,20 +272,24 @@ class _PlaySongPageState extends State<PlaySongPage>
             ),
           ),
           Center(
-              child: Obx(
-            () => Slider(
-                max: track.dt.toDouble(),
-                value: _playingController.currentPosition.value.toDouble(),
-                onChanged: (value) {
-                  logger.d("onChanged: $value");
-                  _playingController.seekTo(value.toInt());
-                }),
-          )),
+            child: Obx(
+              () {
+                return Slider(
+                    max: _playingController.currentDuration.value,
+                    value: _playingController.currentPosition.value,
+                    onChanged: (value) {
+                      logger.d("onChanged: $value");
+                      _playingController.seekTo(value.toInt());
+                    });
+              },
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Obx(() => Text(
-                    _formatTrackTime(_playingController.currentPosition.value),
+                    _formatTrackTime(
+                        _playingController.currentPosition.value.toInt()),
                   )),
               const SizedBox(width: 10),
               Text(
@@ -301,15 +310,54 @@ class _PlaySongPageState extends State<PlaySongPage>
         children: [
           IconButton(
             icon: const Icon(Icons.post_add),
-            onPressed: () {},
+            onPressed: () {
+              Get.bottomSheet(
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: AddToPlaylistView(track: track),
+                ),
+                backgroundColor: Theme.of(context).cardColor,
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.list),
-            onPressed: () {},
+            onPressed: () {
+              Get.bottomSheet(
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: PlayingListView(),
+                ),
+                backgroundColor: Theme.of(context).cardColor,
+              );
+            },
           ),
           IconButton(
-            icon: const Icon(Icons.favorite_border_outlined),
-            onPressed: () {},
+            icon: Obx(() {
+              return _currentUserController.isMyLiked(track)
+                  ? const Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                    )
+                  : const Icon(Icons.favorite_border);
+            }),
+            onPressed: () async {
+              final isLiked = _currentUserController.isMyLiked(track);
+
+              final response =
+                  await SongProvider.like(track.id, like: !isLiked);
+              if (response.code != 200) {
+                Get.snackbar("错误", response.msg!);
+                return;
+              }
+
+              if (isLiked) {
+                _currentUserController.userFavorite
+                    .removeWhere((element) => element.id == track.id);
+              } else {
+                _currentUserController.userFavorite.insert(0, track);
+              }
+            },
           ),
         ],
       ),

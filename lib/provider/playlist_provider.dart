@@ -9,6 +9,7 @@ import 'package:qianshi_music/models/responses/playlist_create_resppnse.dart';
 import 'package:qianshi_music/models/responses/playlist_detail_response.dart';
 import 'package:qianshi_music/models/responses/playlist_top_response.dart';
 import 'package:qianshi_music/models/responses/playlist_track_all_response.dart';
+import 'package:qianshi_music/models/responses/playlist_tracks_response.dart';
 import 'package:qianshi_music/provider/index.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 
@@ -122,5 +123,15 @@ class PlaylistProvider {
         });
 
     return PlaylistCoverUpdateResponse.fromMap(formatResponse(response));
+  }
+
+  static Future<PlaylistTracksResponse> tracks(int pid, List<int> trackId,
+      {bool isAdd = true}) async {
+    return PlaylistTracksResponse.fromMap(
+        await requestGet('playlist/tracks', query: {
+      'pid': pid,
+      'tracks': trackId.join(','),
+      'op': isAdd ? 'add' : 'del',
+    }));
   }
 }

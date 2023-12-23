@@ -100,7 +100,7 @@ class CurrentUserController extends GetxController {
 
   Future<void> _loadPlaylistTracks(Playlist playlist) async {
     final response = await PlaylistProvider.trackAll(playlist.id,
-        limit: playlist.trackCount);
+        limit: playlist.trackCount.value);
     if (response.code != 200) {
       Get.snackbar('获取歌单音乐失败', response.msg ?? '未知错误');
       return;

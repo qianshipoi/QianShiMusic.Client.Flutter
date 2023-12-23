@@ -52,7 +52,7 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
     }
     _tracks.addAll(response.songs);
     _offset = _tracks.length;
-    _more = _tracks.length < playlist!.trackCount;
+    _more = _tracks.length < playlist!.trackCount.value;
     _refreshController.loadComplete();
     if (!_more) {
       _refreshController.loadNoData();
