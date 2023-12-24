@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
 
 import 'package:qianshi_music/models/comment.dart';
+import 'package:qianshi_music/pages/user_page.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 
 class CommentItem extends StatelessWidget {
@@ -22,13 +24,20 @@ class CommentItem extends StatelessWidget {
         children: [
           Padding(
               padding: const EdgeInsets.only(top: 12, right: 8),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: FixImage(
-                    imageUrl:
-                        formatMusicImageUrl(comment.user.avatarUrl, size: 40),
-                    width: 40,
-                    height: 40),
+              child: GestureDetector(
+                onTap: () {
+                  Get.to(() => UserPage(
+                        uid: comment.user.userId,
+                      ));
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: FixImage(
+                      imageUrl:
+                          formatMusicImageUrl(comment.user.avatarUrl, size: 40),
+                      width: 40,
+                      height: 40),
+                ),
               )),
           Expanded(
             child: Column(
