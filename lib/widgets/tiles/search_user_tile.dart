@@ -16,9 +16,9 @@ class SearchUserTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(32),
         child: FixImage(
           imageUrl:
-              formatMusicImageUrl(userProfile.avatarUrl, width: 64, height: 64),
-          width: 64,
-          height: 64,
+              formatMusicImageUrl(userProfile.avatarUrl, width: 48, height: 48),
+          width: 48,
+          height: 48,
           fit: BoxFit.cover,
         ),
       ),
