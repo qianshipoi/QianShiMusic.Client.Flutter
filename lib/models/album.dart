@@ -10,6 +10,9 @@ class Album {
   final List<Artist> artists;
   final String? containedSong;
   final List<String>? alias;
+  final String? description;
+  final int size;
+  final String company;
   Album({
     required this.id,
     required this.name,
@@ -18,6 +21,9 @@ class Album {
     this.artists = const [],
     this.containedSong,
     this.alias,
+    this.description,
+    this.size = 0,
+    this.company = '',
   });
 
   Map<String, dynamic> toMap() {
@@ -29,6 +35,9 @@ class Album {
       'artists': artists.map((x) => x.toMap()).toList(),
       'containedSong': containedSong,
       'alias': alias,
+      'description': description,
+      'size': size,
+      'company': company,
     };
   }
 
@@ -49,6 +58,10 @@ class Album {
           : [],
       containedSong:
           map['containedSong'] != null ? map['containedSong'] as String : null,
+      description:
+          map['description'] != null ? map['description'] as String : null,
+      size: map['size'] != null ? map['size'] as int : 0,
+      company: map['company'] != null ? map['company'] as String : '',
     );
   }
 

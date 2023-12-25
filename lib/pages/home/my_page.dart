@@ -5,6 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/playlist.dart';
+import 'package:qianshi_music/pages/album_page.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
 import 'package:qianshi_music/pages/follows_page.dart';
 import 'package:qianshi_music/pages/home/edit_playlist_page.dart';
@@ -16,6 +17,7 @@ import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/common_sliver_header_delegate.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
+import 'package:qianshi_music/widgets/tiles/album_tile.dart';
 import 'package:qianshi_music/widgets/tiles/playlist_tile.dart';
 
 class MyPage extends StatefulWidget {
@@ -35,7 +37,7 @@ class _MyPageState extends BasePlayingState<MyPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -250,6 +252,12 @@ class _MyPageState extends BasePlayingState<MyPage>
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
+                    Tab(
+                      child: Text(
+                        "专辑",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -380,10 +388,12 @@ class _MyPageState extends BasePlayingState<MyPage>
       ),
       child: InkWell(
         onTap: () {
-          Get.to(() => PlaylistDetailPage(
-                playlistId: likePlaylist.id,
-                heroTag: heroTag,
-              ));
+          Get.to(
+            () => PlaylistDetailPage(
+              playlistId: likePlaylist.id,
+              heroTag: heroTag,
+            ),
+          );
         },
         child: Row(
           children: [
@@ -432,6 +442,7 @@ class _MyPageState extends BasePlayingState<MyPage>
       children: [
         KeepAliveWrapper(child: _buildCreatePlaylist()),
         KeepAliveWrapper(child: _buildFavoritePlaylist()),
+        KeepAliveWrapper(child: _buildFavoriteAlbums()),
       ],
     );
   }
@@ -521,6 +532,25 @@ class _MyPageState extends BasePlayingState<MyPage>
                         _currentUserController.favoritePlaylist[index].id,
                     heroTag: heroTag,
                   ));
+            },
+          );
+        },
+      );
+    });
+  }
+
+  Widget _buildFavoriteAlbums() {
+    return Obx(() {
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: _currentUserController.favoriteAlbums.length,
+        itemBuilder: (context, index) {
+          final album = _currentUserController.favoriteAlbums[index];
+          return AlbumTile(
+            album: album,
+            onTap: () {
+              Get.to(() => AlbumPage(album: album));
             },
           );
         },

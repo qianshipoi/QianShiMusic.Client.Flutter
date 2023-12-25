@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:qianshi_music/models/album.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/models/track.dart';
+import 'package:qianshi_music/provider/album_provider.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/provider/track_provider.dart';
 
@@ -60,7 +62,11 @@ class PlayingController extends GetxController {
       Get.snackbar('播放失败', response.msg ?? '未知错误');
       return;
     }
-    var url = response.data.first.url!;
+    var url = response.data.first.url;
+    if (url == null) {
+      Get.snackbar('播放失败', "该歌曲无法播放");
+      return;
+    }
     if (url.startsWith("http:")) {
       url = url.replaceFirst("http:", "https:");
     }
@@ -166,6 +172,41 @@ class PlayingController extends GetxController {
   }
 
   int _playlistId = 0;
+  int _albumId = 0;
+
+  Future<bool> addAlbum(
+    Album album, {
+    bool playNow = true,
+    int? playTrackId,
+  }) async {
+    if (_albumId != album.id) {
+      final response = await AlbumProvider.index(album.id);
+      if (response.code != 200) {
+        Get.snackbar('Error', response.msg!);
+        return false;
+      }
+      tracks.clear();
+      tracks.addAll(response.songs);
+      _albumId = album.id;
+    }
+
+    if (!playNow) {
+      _currentTrackIndex.value = -1;
+      return true;
+    }
+    final playIndex = playTrackId == null
+        ? 0
+        : tracks.indexWhere((element) => element.id == playTrackId);
+    if (playIndex == _currentTrackIndex.value) {
+      if (!isPlaying.value) {
+        await resume();
+      }
+    } else {
+      _currentTrackIndex.value = playIndex;
+      await play();
+    }
+    return true;
+  }
 
   Future<bool> addPlaylist(
     Playlist playlist, {
