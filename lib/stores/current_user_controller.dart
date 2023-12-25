@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
+import 'package:qianshi_music/models/album.dart';
 import 'package:qianshi_music/models/login_account.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/models/user_profile.dart';
+import 'package:qianshi_music/provider/album_provider.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/provider/user_provider.dart';
 
@@ -15,6 +17,7 @@ class CurrentUserController extends GetxController {
   final RxList<Playlist> createdPlaylist = <Playlist>[].obs;
   final RxList<Playlist> favoritePlaylist = <Playlist>[].obs;
   final Rx<Playlist?> likedPlaylist = Rx<Playlist?>(null);
+  final RxList<Album> favoriteAlbums = <Album>[].obs;
 
   @override
   void onInit() {
@@ -27,6 +30,7 @@ class CurrentUserController extends GetxController {
       } else {
         _loadMyPlaylist();
         _loadProfile(callback.id);
+        _loadFavoriteAlbums();
       }
     });
   }
@@ -112,5 +116,14 @@ class CurrentUserController extends GetxController {
     return createdPlaylist[index]
         .tracks
         .any((element) => element.id == track.id);
+  }
+
+  Future<void> _loadFavoriteAlbums() async {
+    final response = await AlbumProvider.sublist(limit: 100);
+    if (response.code != 200) {
+      Get.snackbar('获取收藏的专辑失败', response.msg ?? '未知错误');
+      return;
+    }
+    favoriteAlbums.assignAll(response.data);
   }
 }
