@@ -1,6 +1,8 @@
+import 'package:qianshi_music/models/responses/base_response.dart';
 import 'package:qianshi_music/models/responses/comment/comment_floor_response.dart';
 import 'package:qianshi_music/models/responses/comment/comment_mv_response.dart';
 import 'package:qianshi_music/models/responses/comment/comment_new_response.dart';
+import 'package:qianshi_music/provider/index.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 
 class CommentProvider {
@@ -51,6 +53,16 @@ class CommentProvider {
     } else {
       return CommentFloorResponse(code: -1, msg: "获取评论失败");
     }
+  }
+
+  static Future<BaseResponse> like(int id, int cid, int type,
+      {bool isLike = true}) async {
+    return BaseResponse.fromMap(await requestGet('comment/like', query: {
+      'id': id,
+      'cid': cid,
+      'type': type,
+      't': isLike ? '1' : '0',
+    }));
   }
 
   static Future<CommentMvResponse> mv(int id,

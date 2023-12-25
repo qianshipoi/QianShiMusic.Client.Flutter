@@ -7,10 +7,12 @@ import 'package:qianshi_music/widgets/fix_image.dart';
 class CommentItem extends StatelessWidget {
   final Comment comment;
   final Function()? replyTap;
+  final Function()? likeTap;
   const CommentItem({
     super.key,
     required this.comment,
     this.replyTap,
+    this.likeTap,
   });
 
   @override
@@ -21,15 +23,20 @@ class CommentItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-              padding: const EdgeInsets.only(top: 12, right: 8),
+            padding: const EdgeInsets.only(top: 12, right: 8),
+            child: GestureDetector(
+              onTap: () {},
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: FixImage(
-                    imageUrl:
-                        formatMusicImageUrl(comment.user.avatarUrl, size: 40),
-                    width: 40,
-                    height: 40),
-              )),
+                  imageUrl:
+                      formatMusicImageUrl(comment.user.avatarUrl, size: 40),
+                  width: 40,
+                  height: 40,
+                ),
+              ),
+            ),
+          ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,10 +63,7 @@ class CommentItem extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Text(comment.likedCount.toString()),
-                      IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.favorite_border))
+                      _buildLike(context),
                     ],
                   ),
                 ),
@@ -73,8 +77,30 @@ class CommentItem extends StatelessWidget {
     );
   }
 
+  Widget _buildLike(BuildContext context) {
+    if (likeTap == null) return const SizedBox.shrink();
+    return Row(
+      children: [
+        Text(
+          comment.likedCount.toString(),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        IconButton(
+          iconSize: 18,
+          selectedIcon: const Icon(
+            Icons.favorite,
+            color: Colors.redAccent,
+          ),
+          isSelected: comment.liked,
+          onPressed: likeTap,
+          icon: const Icon(Icons.favorite_border),
+        ),
+      ],
+    );
+  }
+
   Widget _buildReply(BuildContext context) {
-    if (comment.replyCount == 0) {
+    if (comment.replyCount == 0 || replyTap == null) {
       return const SizedBox.shrink();
     }
 

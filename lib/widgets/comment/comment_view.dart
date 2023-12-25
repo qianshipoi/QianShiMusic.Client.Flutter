@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -28,6 +29,7 @@ class _CommentViewState extends State<CommentView> {
   final _limit = 20;
   bool more = true;
   final _sortType = 2;
+  int total = 0;
 
   @override
   void initState() {
@@ -56,6 +58,7 @@ class _CommentViewState extends State<CommentView> {
     }
     _comments.addAll(response.data!.comments);
     more = response.data!.hasMore;
+    total = response.data!.totalCount;
     _page++;
     _refreshController.loadComplete();
     if (mounted) {
@@ -65,27 +68,63 @@ class _CommentViewState extends State<CommentView> {
 
   @override
   Widget build(BuildContext context) {
-    return SmartRefresher(
-      enablePullUp: true,
-      enablePullDown: false,
-      controller: _refreshController,
-      onLoading: _onLoading,
-      child: ListView.builder(
-        itemCount: _comments.length,
-        itemBuilder: (context, index) => CommentItem(
-          comment: _comments[index],
-          replyTap: () {
-            Get.bottomSheet(
-              CommentFloorView(
-                id: id,
-                parentCommentId: _comments[index].commentId,
-                type: type,
-              ),
-              backgroundColor: Theme.of(context).colorScheme.background,
-            );
-          },
+    return Column(
+      children: [
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              child: Text('评论($total)'),
+            ),
+          ],
         ),
-      ),
+        Expanded(
+          child: SmartRefresher(
+            enablePullUp: true,
+            enablePullDown: false,
+            controller: _refreshController,
+            onLoading: _onLoading,
+            child: ListView.builder(
+              itemCount: _comments.length,
+              itemBuilder: (context, index) => CommentItem(
+                comment: _comments[index],
+                replyTap: () {
+                  Get.bottomSheet(
+                    CommentFloorView(
+                      id: id,
+                      parentCommentId: _comments[index].commentId,
+                      type: type,
+                      comment: _comments[index],
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.background,
+                    isScrollControlled: true,
+                  );
+                },
+                likeTap: () async {
+                  final comment = _comments[index];
+                  final isLike = !comment.liked;
+                  final response = await CommentProvider.like(
+                      id, comment.commentId, type,
+                      isLike: isLike);
+                  if (response.code != 200) {
+                    Get.snackbar("点赞评论失败", response.msg!);
+                    return;
+                  }
+                  _comments.removeAt(index);
+                  _comments.insert(
+                    index,
+                    comment.copyWith(
+                      liked: isLike,
+                      likedCount: comment.likedCount + (isLike ? 1 : -1),
+                    ),
+                  );
+                  setState(() {});
+                },
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -94,11 +133,13 @@ class CommentFloorView extends StatefulWidget {
   final int id;
   final int parentCommentId;
   final int type;
+  final Comment comment;
   const CommentFloorView({
     super.key,
     required this.id,
     required this.parentCommentId,
     required this.type,
+    required this.comment,
   });
 
   @override
@@ -151,14 +192,56 @@ class _CommentFloorViewState extends State<CommentFloorView> {
 
   @override
   Widget build(BuildContext context) {
-    return SmartRefresher(
-      enablePullUp: true,
-      enablePullDown: false,
-      controller: _refreshController,
-      onLoading: _onLoading,
-      child: ListView.builder(
-        itemCount: _comments.length,
-        itemBuilder: (context, index) => CommentItem(comment: _comments[index]),
+    return SizedBox(
+      height: ScreenUtil().screenHeight * 0.8,
+      child: Column(
+        children: [
+          CommentItem(comment: widget.comment),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 10,
+                ),
+                child: Text('全部回复(${widget.comment.replyCount})'),
+              ),
+            ],
+          ),
+          Expanded(
+            child: SmartRefresher(
+              enablePullUp: true,
+              enablePullDown: false,
+              controller: _refreshController,
+              onLoading: _onLoading,
+              child: ListView.builder(
+                itemCount: _comments.length,
+                itemBuilder: (context, index) => CommentItem(
+                  comment: _comments[index],
+                  likeTap: () async {
+                    final comment = _comments[index];
+                    final isLike = !comment.liked;
+                    final response = await CommentProvider.like(
+                        id, comment.commentId, type,
+                        isLike: isLike);
+                    if (response.code != 200) {
+                      Get.snackbar("点赞评论失败", response.msg!);
+                      return;
+                    }
+                    _comments.removeAt(index);
+                    _comments.insert(
+                        index,
+                        comment.copyWith(
+                          liked: isLike,
+                          likedCount: comment.likedCount + (isLike ? 1 : -1),
+                        ));
+                    setState(() {});
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

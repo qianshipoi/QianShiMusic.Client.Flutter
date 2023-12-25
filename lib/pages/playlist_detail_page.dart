@@ -15,6 +15,7 @@ import 'package:qianshi_music/widgets/description/description_dialog.dart';
 import 'package:qianshi_music/widgets/comment/comment_view.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/tiles/track_tile.dart';
+import 'package:qianshi_music/widgets/track_bottom_sheet.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
   final String? heroTag;
@@ -186,7 +187,6 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
                     onPressed: () async {
                       _playingController.addPlaylist(playlist!,
                           playTrackId: playlist!.tracks.first.id);
-                      Get.to(() => PlaySongPage.instance);
                     },
                     icon: const Icon(Icons.play_arrow),
                     label: const Text("播放全部"),
@@ -248,7 +248,6 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
                       ? null
                       : () async {
                           bool result = true;
-
                           if (playlist.subscribed.value) {
                             // cancel subscribe
                             result = (await Get.dialog<bool>(AlertDialog(
@@ -322,6 +321,10 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
               _playingController.addPlaylist(playlist,
                   playNow: true, playTrackId: track.id);
               Get.to(() => PlaySongPage.instance);
+            },
+            onMoreTap: () {
+              Get.bottomSheet(TrackBottomSheet(track: track),
+                  backgroundColor: Theme.of(context).colorScheme.background);
             },
           );
         },

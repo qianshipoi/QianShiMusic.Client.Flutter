@@ -5,11 +5,13 @@ import 'package:qianshi_music/models/track.dart';
 class TrackTile extends StatelessWidget {
   final Track track;
   final void Function()? onTap;
+  final void Function()? onMoreTap;
   final int? index;
   const TrackTile({
     Key? key,
     required this.track,
     this.onTap,
+    this.onMoreTap,
     this.index,
   }) : super(key: key);
 
@@ -32,10 +34,12 @@ class TrackTile extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         onTap: onTap,
-        trailing: IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.more_vert),
-        ),
+        trailing: onMoreTap == null
+            ? null
+            : IconButton(
+                onPressed: onMoreTap,
+                icon: const Icon(Icons.more_vert),
+              ),
       );
     }
 

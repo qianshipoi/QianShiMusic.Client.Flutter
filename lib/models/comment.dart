@@ -60,6 +60,32 @@ class Comment {
 
   factory Comment.fromJson(String source) =>
       Comment.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  Comment copyWith({
+    int? commentId,
+    String? content,
+    int? time,
+    String? timeStr,
+    int? likedCount,
+    bool? liked,
+    CommentUser? user,
+    List<Comment>? beReplied,
+    int? beRepliedCommentId,
+    int? replyCount,
+  }) {
+    return Comment(
+      commentId: commentId ?? this.commentId,
+      content: content ?? this.content,
+      time: time ?? this.time,
+      timeStr: timeStr ?? this.timeStr,
+      likedCount: likedCount ?? this.likedCount,
+      liked: liked ?? this.liked,
+      user: user ?? this.user,
+      beReplied: beReplied ?? this.beReplied,
+      beRepliedCommentId: beRepliedCommentId ?? this.beRepliedCommentId,
+      replyCount: replyCount ?? this.replyCount,
+    );
+  }
 }
 
 class CommentUser {

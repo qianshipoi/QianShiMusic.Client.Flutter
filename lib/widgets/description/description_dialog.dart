@@ -9,9 +9,12 @@ class Description extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
-      child: SingleChildScrollView(child: Text(descrition)),
+    return SizedBox(
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+        child: SingleChildScrollView(child: Text(descrition)),
+      ),
     );
   }
 }
