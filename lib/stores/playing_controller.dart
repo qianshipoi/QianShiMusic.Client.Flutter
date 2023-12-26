@@ -11,14 +11,7 @@ import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/provider/track_provider.dart';
 
 class PlayingController extends GetxController {
-  bool _showLyric = false;
-  bool get showLyric => _showLyric;
-  set showLyric(bool value) {
-    _showLyric = value;
-    update();
-  }
-
-  final _mPlayer = FlutterSoundPlayer(logLevel: Level.warning);
+  final _mPlayer = FlutterSoundPlayer(logLevel: Level.error);
   final RxBool isPlaying = RxBool(false);
   final Rx<Track?> _currentTrack = Rx(null);
   final RxDouble currentPosition = RxDouble(0);
@@ -240,6 +233,33 @@ class PlayingController extends GetxController {
       _currentTrackIndex.value = playIndex;
       await play();
     }
+    return true;
+  }
+
+  void nextPlay(Track track) {
+    final index = tracks.indexWhere((element) => element.id == track.id);
+    if (index != -1) {
+      // track exists
+      if (_currentTrackIndex.value == index ||
+          _currentTrackIndex.value == index + 1) return;
+      if (index < _currentTrackIndex.value) {
+        tracks.removeAt(index);
+        _currentTrackIndex.value--;
+      } else {
+        tracks.removeAt(index);
+      }
+      tracks.insert(_currentTrackIndex.value + 1, track);
+    }
+    tracks.insert(_currentTrackIndex.value + 1, track);
+  }
+
+  Future<bool> nextPlayById(int trackId) async {
+    final response = await SongProvider.detail([trackId]);
+    if (response.code != 200) {
+      Get.snackbar('Error', response.msg!);
+      return false;
+    }
+    nextPlay(response.songs.first);
     return true;
   }
 
