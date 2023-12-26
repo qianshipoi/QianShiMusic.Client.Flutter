@@ -4,6 +4,7 @@ import 'package:qianshi_music/models/mv.dart';
 import 'package:qianshi_music/provider/video_provider.dart';
 import 'package:qianshi_music/utils/logger.dart';
 import 'package:qianshi_music/widgets/comment/comment_view.dart';
+import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
 import 'package:qianshi_music/widgets/video_player/video_player_bottom.dart';
 import 'package:qianshi_music/widgets/video_player/video_player_center.dart';
 import 'package:qianshi_music/widgets/video_player/video_player_gestures.dart';
@@ -54,10 +55,12 @@ class _MvPageState extends State<MvPage> with TickerProviderStateMixin {
         key: this,
         listener: (initialize, widget) {
           if (initialize) {
-            _top ??= VideoPlayerTop();
+            _top ??= VideoPlayerTop(
+              title: this.widget.mv.name,
+            );
             _lockIcon ??= LockIcon(
               lockCallback: () {
-                _top!.opacityCallback(!TempValue.isLocked);
+                _top!.opacityCallback!(TempValue.isLocked);
                 _bottom!.opacityCallback(!TempValue.isLocked);
               },
             );
@@ -82,7 +85,10 @@ class _MvPageState extends State<MvPage> with TickerProviderStateMixin {
       appBar: _isFullScreen
           ? null
           : AppBar(
-              title: const Text("视频示例"),
+              title: Text(
+                widget.mv.name,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
             ),
       body: _isFullScreen
           ? safeAreaPlayerUI()
@@ -105,10 +111,12 @@ class _MvPageState extends State<MvPage> with TickerProviderStateMixin {
     return TabBarView(
       controller: _controller,
       children: [
-        const Text('简介'),
-        CommentView(
-          id: widget.mv.id,
-          type: 1,
+        const KeepAliveWrapper(child: Text('简介')),
+        KeepAliveWrapper(
+          child: CommentView(
+            id: widget.mv.id,
+            type: 1,
+          ),
         ),
       ],
     );
@@ -141,7 +149,7 @@ class _MvPageState extends State<MvPage> with TickerProviderStateMixin {
           child: _playerUI != null
               ? VideoPlayerGestures(
                   appearCallback: (appear) {
-                    _top!.opacityCallback(appear);
+                    _top!.opacityCallback!(appear);
                     _lockIcon!.opacityCallback(appear);
                     _bottom!.opacityCallback(appear);
                   },

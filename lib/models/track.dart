@@ -10,12 +10,16 @@ class Track {
   final Album album;
   final List<Artist> artists;
   final int dt;
+  final List<String> tns;
+  final int mv;
   Track({
     required this.id,
     required this.name,
     required this.album,
     required this.artists,
     required this.dt,
+    this.tns = const [],
+    this.mv = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,6 +29,8 @@ class Track {
       'album': album.toMap(),
       'artists': artists.map((x) => x.toMap()).toList(),
       'dt': dt,
+      'tns': tns,
+      'mv': mv,
     };
   }
 
@@ -39,6 +45,10 @@ class Track {
         ),
       ),
       dt: (map['dt'] ?? map['duration'] ?? 0) as int,
+      tns: map['tns'] == null
+          ? []
+          : List<String>.from(map['tns'] as List<dynamic>),
+      mv: (map['mv'] as int?) ?? 0,
     );
   }
 

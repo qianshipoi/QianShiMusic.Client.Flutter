@@ -30,10 +30,10 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
         key: this,
         listener: (initialize, widget) {
           if (initialize) {
-            _top ??= VideoPlayerTop();
+            _top ??= VideoPlayerTop(title: "标题",);
             _lockIcon ??= LockIcon(
               lockCallback: () {
-                _top!.opacityCallback(!TempValue.isLocked);
+                _top!.opacityCallback!(!TempValue.isLocked);
                 _bottom!.opacityCallback(!TempValue.isLocked);
               },
             );
@@ -99,7 +99,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
           child: _playerUI != null
               ? VideoPlayerGestures(
                   appearCallback: (appear) {
-                    _top!.opacityCallback(appear);
+                    _top!.opacityCallback!(appear);
                     _lockIcon!.opacityCallback(appear);
                     _bottom!.opacityCallback(appear);
                   },

@@ -1,11 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:qianshi_music/widgets/video_player/video_player_utils.dart';
 
 // ignore: must_be_immutable
 class VideoPlayerTop extends StatefulWidget {
-  VideoPlayerTop({Key? key}) : super(key: key);
-  late Function(bool) opacityCallback;
+  Function(bool)? opacityCallback;
+  final String title;
+  VideoPlayerTop({
+    Key? key,
+    this.opacityCallback,
+    required this.title,
+  }) : super(key: key);
+
   @override
   State<VideoPlayerTop> createState() => _VideoPlayerTopState();
 }
@@ -14,6 +21,7 @@ class _VideoPlayerTopState extends State<VideoPlayerTop> {
   double _opacity = TempValue.isLocked ? 0.0 : 1.0; // 不能固定值，横竖屏触发会重置
   bool get _isFullScreen =>
       MediaQuery.of(context).orientation == Orientation.landscape;
+
   @override
   void initState() {
     super.initState();
@@ -61,9 +69,9 @@ class _VideoPlayerTopState extends State<VideoPlayerTop> {
                     : const SizedBox(
                         width: 15,
                       ),
-                const Text(
-                  "这个是视频的标题",
-                  style: TextStyle(color: Colors.white, fontSize: 15),
+                Text(
+                  widget.title,
+                  style: const TextStyle(color: Colors.white, fontSize: 15),
                 ),
                 const Spacer(),
                 IconButton(
