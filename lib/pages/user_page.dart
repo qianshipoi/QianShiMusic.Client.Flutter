@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/album.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/models/user_profile.dart';
-import 'package:qianshi_music/pages/playlist_detail_page.dart';
 import 'package:qianshi_music/provider/user_provider.dart';
+import 'package:qianshi_music/widgets/card/album_card.dart';
+import 'package:qianshi_music/widgets/card/playlist_card.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
+import 'package:qianshi_music/widgets/horizontal_title_list_view.dart';
 
 class UserPage extends StatefulWidget {
   final int uid;
@@ -149,108 +149,35 @@ class _UserPageState extends State<UserPage> {
   }
 
   Widget _buildPlaylist(List<Playlist> playlists, BuildContext context) {
-    return SizedBox(
-      height: 260,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Playlists'),
-                TextButton(onPressed: () {}, child: const Text('See All')),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: playlists.length,
-              itemBuilder: (context, index) {
-                final playlist = playlists[index];
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                  child: SizedBox(
-                    width: 160,
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.to(
-                            () => PlaylistDetailPage(playlistId: playlist.id));
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          ClipRRect(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(4)),
-                            child: FixImage(
-                              imageUrl: formatMusicImageUrl(
-                                  playlist.coverImgUrl.value,
-                                  size: 160),
-                              width: 160,
-                              height: 160,
-                            ),
-                          ),
-                          Text(
-                            playlist.name.value,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+    return HorizontalTitleListView(
+      title: "Playlists",
+      listView: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: playlists.length,
+        itemBuilder: (context, index) {
+          final playlist = playlists[index];
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+            child: PlaylistCard(playlist: playlist),
+          );
+        },
       ),
     );
   }
 
   Widget _buildAlbums(List<Album> albums, BuildContext context) {
-    return SizedBox(
-      height: 260,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Albums'),
-              TextButton(onPressed: () {}, child: const Text('See All')),
-            ],
-          ),
-          Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: albums.length,
-              itemBuilder: (context, index) {
-                final album = albums[index];
-                return SizedBox(
-                  width: 200,
-                  height: 200,
-                  child: Column(
-                    children: [
-                      FixImage(
-                        imageUrl: formatMusicImageUrl(album.picUrl, size: 200),
-                        width: 200,
-                        height: 200,
-                      ),
-                      Text(
-                        album.name,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+    return HorizontalTitleListView(
+      title: "Albums",
+      listView: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: albums.length,
+        itemBuilder: (context, index) {
+          final album = albums[index];
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+            child: AlbumCard(album: album),
+          );
+        },
       ),
     );
   }
