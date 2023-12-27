@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:get/get.dart';
+import 'package:qianshi_music/models/album.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/models/track.dart';
+import 'package:qianshi_music/provider/index_provider.dart';
 
 abstract class TrackStore {
   PlayingMode get mode;
@@ -16,29 +19,45 @@ abstract class TrackStore {
 
   void order(PlayingMode mode);
 
+  bool get canPrevious;
+
   FutureOr<Track?> previous();
+
+  bool get canNext;
 
   FutureOr<Track?> next();
 }
 
-class PlaylistTrackStore implements TrackStore {
-  final Playlist playlist;
+abstract class BaseTrackStore implements TrackStore {
   final List<Track> tracks;
   final List<Track> _internalTracks = [];
   int _currentTrackIndex = -1;
+  final Function(Track?)? trackUpdated;
 
   @override
   PlayingMode mode = PlayingMode.order;
 
-  PlaylistTrackStore(this.playlist, this.tracks) {
+  BaseTrackStore(this.tracks, {this.trackUpdated}) {
     _internalTracks.addAll(tracks);
   }
+
+  PlayingSource get source;
 
   @override
   List<Track> getTracks() => _internalTracks;
 
   Track? get currentTrack =>
       _currentTrackIndex == -1 ? null : _internalTracks[_currentTrackIndex];
+
+  int get currentTrackIndex => _currentTrackIndex;
+
+  /// 设置当前播放的歌曲 <br />
+  /// 会通知trackUpdated
+  set currentTrackIndex(int index) {
+    if (index < -1 || index >= _internalTracks.length) return;
+    _currentTrackIndex = index;
+    _notifyTrackChanged();
+  }
 
   @override
   bool get canAddToNext => true;
@@ -111,7 +130,7 @@ class PlaylistTrackStore implements TrackStore {
     }
   }
 
-  Track? nextTrack() {
+  FutureOr<Track?> nextTrack() {
     if (_currentTrackIndex == _internalTracks.length - 1) {
       return null;
     } else {
@@ -119,11 +138,14 @@ class PlaylistTrackStore implements TrackStore {
     }
   }
 
-  Track? previousTrack() {
+  FutureOr<Track?> previousTrack() {
     return (_currentTrackIndex == -1 || _currentTrackIndex == 0)
         ? null
         : _internalTracks[_currentTrackIndex - 1];
   }
+
+  @override
+  bool get canNext => _internalTracks.length > _currentTrackIndex + 1;
 
   @override
   FutureOr<Track?> next() {
@@ -131,8 +153,12 @@ class PlaylistTrackStore implements TrackStore {
       return null;
     }
     _currentTrackIndex++;
-    return _internalTracks[_currentTrackIndex];
+    _notifyTrackChanged();
+    return currentTrack;
   }
+
+  @override
+  bool get canPrevious => _currentTrackIndex > 0;
 
   @override
   FutureOr<Track?> previous() {
@@ -140,10 +166,110 @@ class PlaylistTrackStore implements TrackStore {
       return null;
     }
     _currentTrackIndex--;
-    return _internalTracks[_currentTrackIndex];
+    _notifyTrackChanged();
+    return currentTrack;
+  }
+
+  void _notifyTrackChanged() {
+    if (trackUpdated != null) {
+      trackUpdated!(currentTrack);
+    }
+  }
+
+  void remove(int index) {
+    if (index < 0 || index > _internalTracks.length - 1) return;
+
+    bool needUpdate = index == _currentTrackIndex;
+    if (index < _currentTrackIndex) {
+      _currentTrackIndex--;
+    }
+
+    final track = _internalTracks.removeAt(index);
+    tracks.removeWhere((element) => element.id == track.id);
+    if (needUpdate) {
+      _notifyTrackChanged();
+    }
+  }
+
+  void clear() {
+    tracks.clear();
+    _internalTracks.clear();
+    _currentTrackIndex = -1;
+    _notifyTrackChanged();
   }
 }
 
-enum TrackStoreType { playlist, album, artist, search, favorite }
+class TracksTrackStore extends BaseTrackStore {
+  TracksTrackStore(super.tracks, {super.trackUpdated});
+
+  @override
+  PlayingSource get source => PlayingSource.tracks;
+}
+
+class PlaylistTrackStore extends BaseTrackStore {
+  final Playlist playlist;
+
+  PlaylistTrackStore(this.playlist, super.tracks, {super.trackUpdated});
+
+  @override
+  PlayingSource get source => PlayingSource.playlist;
+}
+
+class FmTrackStore extends BaseTrackStore {
+  FmTrackStore(super.tracks, {super.trackUpdated});
+
+  @override
+  bool get canAddToNext => false;
+
+  @override
+  bool get canOrder => false;
+
+  @override
+  bool get canNext => true;
+
+  @override
+  PlayingSource get source => PlayingSource.fm;
+
+  @override
+  FutureOr<Track?> nextTrack() async {
+    if (_currentTrackIndex == _internalTracks.length - 1) {
+      // 加载更多音乐
+      final response = await IndexProvider.personalFm();
+      if (response.code != 200) {
+        Get.snackbar('获取FM失败', response.msg!);
+        return null;
+      }
+      _internalTracks.addAll(response.data);
+      tracks.addAll(response.data);
+    }
+    return super.nextTrack();
+  }
+
+  @override
+  FutureOr<Track?> next() async {
+    if (_currentTrackIndex == _internalTracks.length - 1) {
+      // 加载更多音乐
+      final response = await IndexProvider.personalFm();
+      if (response.code != 200) {
+        Get.snackbar('获取FM失败', response.msg!);
+        return null;
+      }
+      _internalTracks.addAll(response.data);
+      tracks.addAll(response.data);
+    }
+    return super.next();
+  }
+}
+
+class AlbumTrackStore extends BaseTrackStore {
+  final Album album;
+
+  AlbumTrackStore(this.album, super.tracks, {super.trackUpdated});
+
+  @override
+  PlayingSource get source => PlayingSource.album;
+}
 
 enum PlayingMode { order, random, single }
+
+enum PlayingSource { tracks, playlist, fm, album }
