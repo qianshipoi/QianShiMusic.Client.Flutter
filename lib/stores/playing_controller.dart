@@ -218,6 +218,16 @@ class PlayingController extends GetxController {
     }
   }
 
+  Future<void> addTracks(List<Track> tracks, {int? palyNowIndex}) async {
+    stop();
+    trackStore.value = TracksTrackStore(tracks, trackUpdated: trackUpdated);
+
+    if (palyNowIndex != null) {
+      trackStore.value!.currentTrackIndex = palyNowIndex;
+      await play();
+    }
+  }
+
   Future<void> addTrack(Track track, {bool playNow = false}) async {
     trackStore.value ??= TracksTrackStore([track], trackUpdated: trackUpdated);
 
