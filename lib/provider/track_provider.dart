@@ -1,9 +1,12 @@
 import 'package:qianshi_music/models/responses/base_response.dart';
+import 'package:qianshi_music/models/responses/check_music_response.dart';
 import 'package:qianshi_music/models/responses/likelist_response.dart';
 import 'package:qianshi_music/models/responses/lyric_response.dart';
 import 'package:qianshi_music/models/responses/song_detail_response.dart';
 import 'package:qianshi_music/models/responses/song_url_response.dart';
+import 'package:qianshi_music/models/responses/top_song_response.dart';
 import 'package:qianshi_music/provider/index.dart';
+
 
 enum MusicLevel {
   standard,
@@ -45,5 +48,33 @@ class SongProvider {
 
   static Future<LikelistResponse> likelist() async {
     return LikelistResponse.fromMap(await requestGet('likelist'));
+  }
+
+  static Future<CheckMusicResponse> checkMusic(int id,
+      {int br = 999000}) async {
+    return CheckMusicResponse.fromMap(
+        await requestGet('check/music', query: {'id': id, 'br': br}));
+  }
+
+  static Future<TopSongResponse> topSong(TrackAddressType type) async {
+    return TopSongResponse.fromMap(await requestGet('top/song', query: {
+      'type': type.number,
+    }));
+  }
+}
+
+enum TrackAddressType {
+  all(0),
+  chinese(7),
+  europe(96),
+  japan(8),
+  korea(16);
+
+  const TrackAddressType(this.number);
+  final int number;
+
+  static TrackAddressType fromValue(int val) {
+    return TrackAddressType.values
+        .firstWhere((element) => element.number == val);
   }
 }
