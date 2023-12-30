@@ -45,7 +45,7 @@ class _RecommendSongsState extends State<RecommendSongs> {
       Get.snackbar('获取推荐歌单歌曲失败', songsResponse.msg!);
       return;
     }
-
+    songs.clear();
     songs.addAll(chunked(songsResponse.songs, 3));
 
     setState(() {});
@@ -65,12 +65,15 @@ class _RecommendSongsState extends State<RecommendSongs> {
         ? const SizedBox.shrink()
         : HorizontalTitleListView(
             title: playlist!.name.value,
+            height: 320,
             listView: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: songs.length,
               itemBuilder: (context, index) {
                 final songs = this.songs[index];
                 return ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: songs.length,
                   itemBuilder: (context, childIndex) {
                     final song = songs[childIndex];
                     return TrackTile(

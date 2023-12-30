@@ -7,8 +7,6 @@ import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
 import 'package:qianshi_music/pages/play_song/play_song_page.dart';
-import 'package:qianshi_music/pages/video/mv_page.dart';
-import 'package:qianshi_music/provider/mv_provider.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/stores/current_user_controller.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
@@ -328,16 +326,6 @@ class _PlaylistDetailPageState extends BasePlayingState<PlaylistDetailPage> {
               Get.bottomSheet(TrackBottomSheet(track: track),
                   backgroundColor: Theme.of(context).colorScheme.background);
             },
-            onVideoTap: track.mv == 0
-                ? null
-                : () async {
-                    final response = await MvProvider.detail(track.mv);
-                    if (response.code != 200) {
-                      Get.snackbar('获取MV失败', response.msg!);
-                      return;
-                    }
-                    Get.to(() => MvPage(response.data!));
-                  },
           );
         },
       ),
