@@ -10,6 +10,7 @@ import 'package:qianshi_music/provider/album_provider.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/provider/track_provider.dart';
 import 'package:qianshi_music/stores/playing/track_store.dart';
+import 'package:qianshi_music/utils/logger.dart';
 
 class PlayingController extends GetxController {
   final _mPlayer = FlutterSoundPlayer(logLevel: Level.error);
@@ -18,7 +19,6 @@ class PlayingController extends GetxController {
   final RxDouble currentPosition = RxDouble(0);
   final RxDouble currentDuration = RxDouble(9999999);
   final tracks = <Track>[].obs;
-  // final RxInt _currentTrackIndex = RxInt(-1);
 
   final Rx<BaseTrackStore?> trackStore = Rx<BaseTrackStore?>(null);
 
@@ -32,9 +32,6 @@ class PlayingController extends GetxController {
   void onInit() {
     super.onInit();
     init();
-    // ever(_currentTrackIndex, (callback) {
-    //   _currentTrack.value = callback == -1 ? null : tracks[callback];
-    // });
   }
 
   Future<void> init() async {
@@ -243,27 +240,6 @@ class PlayingController extends GetxController {
       trackStore.value!.currentTrackIndex = index;
       await play();
     }
-
-    // final trackExists = tracks.any((element) => element.id == track.id);
-    // if (trackExists) {
-    //   final index = tracks.indexWhere((element) => element.id == track.id);
-    //   if (index == _currentTrackIndex.value) {
-    //     if (playNow && !isPlaying.value) {
-    //       await resume();
-    //     }
-    //     return;
-    //   }
-    //   track = tracks[index];
-    //   tracks.removeAt(index);
-    //   if (index < _currentTrackIndex.value) {
-    //     _currentTrackIndex.value--;
-    //   }
-    // }
-    // tracks.insert(_currentTrackIndex.value + 1, track);
-    // if (playNow) {
-    //   _currentTrackIndex.value++;
-    //   await play();
-    // }
   }
 
   Future<void> removeTrack(Track track) async {
@@ -333,8 +309,16 @@ class PlayingController extends GetxController {
     bool playNow = true,
     int? playTrackId,
   }) async {
-    if (trackStore.value != null &&
-        trackStore.value!.source == PlayingSource.playlist) {
+    if (trackStore.value == null ||
+        trackStore.value!.source != PlayingSource.playlist) {
+      final response = await PlaylistProvider.trackAll(playlist.id, limit: 100);
+      if (response.code != 200) {
+        Get.snackbar('Error', response.msg!);
+        return false;
+      }
+      trackStore.value = PlaylistTrackStore(playlist, response.songs,
+          trackUpdated: trackUpdated);
+    } else if (trackStore.value!.source == PlayingSource.playlist) {
       final playlistStore = trackStore.value as PlaylistTrackStore;
       if (playlistStore.playlist.id != playlist.id) {
         final response =
@@ -358,6 +342,7 @@ class PlayingController extends GetxController {
     final playIndex = playTrackId == null
         ? 0
         : store.tracks.indexWhere((element) => element.id == playTrackId);
+    logger.i('playindex:$playIndex');
     if (playIndex == store.currentTrackIndex) {
       if (!isPlaying.value) {
         await resume();
@@ -374,21 +359,6 @@ class PlayingController extends GetxController {
       return;
     }
     trackStore.value!.addToNext(track);
-
-    // final index = tracks.indexWhere((element) => element.id == track.id);
-    // if (index != -1) {
-    //   // track exists
-    //   if (_currentTrackIndex.value == index ||
-    //       _currentTrackIndex.value == index + 1) return;
-    //   if (index < _currentTrackIndex.value) {
-    //     tracks.removeAt(index);
-    //     _currentTrackIndex.value--;
-    //   } else {
-    //     tracks.removeAt(index);
-    //   }
-    //   tracks.insert(_currentTrackIndex.value + 1, track);
-    // }
-    // tracks.insert(_currentTrackIndex.value + 1, track);
   }
 
   Future<bool> nextPlayById(int trackId) async {
@@ -406,13 +376,6 @@ class PlayingController extends GetxController {
       return;
     }
     await trackStore.value!.next();
-
-    // if (_currentTrackIndex.value < tracks.length - 1) {
-    //   _currentTrackIndex.value++;
-    //   await play();
-    // } else {
-    //   isPlaying.value = false;
-    // }
   }
 
   Future<void> prev() async {
@@ -420,12 +383,5 @@ class PlayingController extends GetxController {
       return;
     }
     await trackStore.value!.previous();
-
-    // if (_currentTrackIndex.value > 0) {
-    //   _currentTrackIndex.value--;
-    //   await play();
-    // } else {
-    //   isPlaying.value = false;
-    // }
   }
 }

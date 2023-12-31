@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/models/track.dart';
-import 'package:qianshi_music/pages/video/mv_page.dart';
 import 'package:qianshi_music/provider/index_provider.dart';
-import 'package:qianshi_music/provider/mv_provider.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
-import 'package:qianshi_music/widgets/horizontal_title_list_view.dart';
 import 'package:qianshi_music/widgets/tiles/track_tile.dart';
 
 class RecommendSongs extends StatefulWidget {
@@ -17,9 +15,12 @@ class RecommendSongs extends StatefulWidget {
   State<RecommendSongs> createState() => _RecommendSongsState();
 }
 
-class _RecommendSongsState extends State<RecommendSongs> {
+class _RecommendSongsState extends State<RecommendSongs>
+    with TickerProviderStateMixin {
   final PlayingController _playingController = Get.find();
+  final List<Track> _allTracks = [];
   final List<List<Track>> songs = [];
+  TabController? _tabController;
   Playlist? playlist;
 
   @override
@@ -28,6 +29,12 @@ class _RecommendSongsState extends State<RecommendSongs> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       loadData();
     });
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
   }
 
   Future<void> loadData() async {
@@ -39,7 +46,8 @@ class _RecommendSongsState extends State<RecommendSongs> {
     playlist = playlistResponse.result[0];
     final playlistId = playlistResponse.result[0].id;
 
-    final songsResponse = await PlaylistProvider.trackAll(playlistId, limit: 9);
+    final songsResponse =
+        await PlaylistProvider.trackAll(playlistId, limit: 12);
 
     if (songsResponse.code != 200) {
       Get.snackbar('获取推荐歌单歌曲失败', songsResponse.msg!);
@@ -47,6 +55,12 @@ class _RecommendSongsState extends State<RecommendSongs> {
     }
     songs.clear();
     songs.addAll(chunked(songsResponse.songs, 3));
+    _tabController?.dispose();
+
+    _tabController = TabController(length: songs.length, vsync: this);
+
+    _allTracks.clear();
+    _allTracks.addAll(songsResponse.songs);
 
     setState(() {});
   }
@@ -59,49 +73,84 @@ class _RecommendSongsState extends State<RecommendSongs> {
     });
   }
 
+  void play({int index = 0}) {
+    _playingController.addTracks(_allTracks, palyNowIndex: 0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return playlist == null
         ? const SizedBox.shrink()
-        : HorizontalTitleListView(
-            title: playlist!.name.value,
-            height: 320,
-            listView: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: songs.length,
-              itemBuilder: (context, index) {
-                final songs = this.songs[index];
-                return ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: songs.length,
-                  itemBuilder: (context, childIndex) {
-                    final song = songs[childIndex];
-                    return TrackTile(
-                      track: song,
-                      onTap: () {
-                        int playNowIndex = 0;
-                        for (var i = index - 1; i >= 0; i++) {
-                          playNowIndex += this.songs[i].length;
-                        }
-                        playNowIndex += childIndex;
+        : SizedBox(
+            height: 380,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: loadData,
+                      icon: const Icon(Icons.refresh),
+                    ),
+                    Expanded(
+                        child: Text(
+                      playlist!.name.value,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )),
+                    IconButton(
+                      onPressed: play,
+                      icon: const Icon(Icons.play_arrow),
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: TabBarView(
+                    viewportFraction: 0.9,
+                    controller: _tabController,
+                    children: songs.map((songs) {
+                      return SizedBox(
+                        width: ScreenUtil().screenWidth - 30,
+                        child: ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: songs.length,
+                          itemBuilder: (context, childIndex) {
+                            final song = songs[childIndex];
+                            return TrackTile(
+                              track: song,
+                              onTap: () {
+                                play(index: _allTracks.indexOf(song));
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    }).toList(),
 
-                        _playingController.addTracks(songs,
-                            palyNowIndex: playNowIndex);
-                      },
-                      onMoreTap: song.mv == 0
-                          ? null
-                          : () async {
-                              final mv = await MvProvider.detail(song.mv);
-                              if (mv.code != 200) {
-                                Get.snackbar('获取MV详情失败', mv.msg!);
-                                return;
-                              }
-                              Get.to(() => MvPage(mv.data!));
-                            },
-                    );
-                  },
-                );
-              },
+                    // scrollDirection: Axis.horizontal,
+                    // itemCount: songs.length,
+                    // itemBuilder: (context, index) {
+                    //   final songs = this.songs[index];
+                    //   return SizedBox(
+                    //     width: ScreenUtil().screenWidth - 30,
+                    //     child: ListView.builder(
+                    //       physics: const NeverScrollableScrollPhysics(),
+                    //       itemCount: songs.length,
+                    //       itemBuilder: (context, childIndex) {
+                    //         final song = songs[childIndex];
+                    //         return TrackTile(
+                    //           track: song,
+                    //           onTap: () {
+                    //             play(index: _allTracks.indexOf(song));
+                    //           },
+                    //         );
+                    //       },
+                    //     ),
+                    //   );
+                    // },
+                  ),
+                ),
+              ],
             ),
           );
   }

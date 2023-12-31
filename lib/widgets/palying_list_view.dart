@@ -15,14 +15,16 @@ class _PlayingListViewState extends State<PlayingListView> {
 
   @override
   Widget build(BuildContext context) {
+    final tracks = _playingController.trackStore.value?.getTracks() ?? [];
     return ListView.builder(
-      itemCount: _playingController.tracks.length,
+      itemCount: tracks.length,
       itemBuilder: (context, index) {
-        final track = _playingController.tracks[index];
+        final track = tracks[index];
         return TrackTile(
           track: track,
           onTap: () {
             _playingController.play(index: index);
+            Get.back();
           },
         );
       },
