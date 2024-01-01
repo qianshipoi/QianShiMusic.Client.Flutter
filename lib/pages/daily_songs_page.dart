@@ -40,6 +40,11 @@ class _DailySongsPageState extends State<DailySongsPage> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('每日推荐'),
+        actions: [
+        ElevatedButton.icon(onPressed: (){
+          
+        }, icon: const Icon(Icons.history),label: const Text('历史推荐'), )
+        ],
       ),
       body: ListView.builder(
         itemCount: _tracks.length,
@@ -50,7 +55,7 @@ class _DailySongsPageState extends State<DailySongsPage> {
             onMoreTap: () {},
             onTap: () async {
               _playingController.addTracks(_tracks, palyNowIndex: index);
-              
+
             },
           );
         },
