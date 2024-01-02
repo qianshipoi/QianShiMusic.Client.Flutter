@@ -7,6 +7,8 @@ import 'package:qianshi_music/models/album.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/provider/album_provider.dart';
+import 'package:qianshi_music/provider/comment_provider.dart';
+import 'package:qianshi_music/provider/index_provider.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/provider/track_provider.dart';
 import 'package:qianshi_music/stores/playing/track_store.dart';
@@ -262,6 +264,27 @@ class PlayingController extends GetxController {
     if (isPlaying) {
       await play();
     }
+  }
+
+  Future<bool> playFm() async {
+    if (trackStore.value == null ||
+        trackStore.value!.source != PlayingSource.fm) {
+      final isPlaying = this.isPlaying.value;
+      if (isPlaying) stop();
+      final response = await IndexProvider.personalFm();
+      if (response.code != 200) {
+        Get.snackbar('获取个人FM音乐失败', response.msg!);
+        return false;
+      }
+      trackStore.value =
+          FmTrackStore(response.data, trackUpdated: trackUpdated);
+      if (isPlaying) await play();
+      return true;
+    }
+    if (!isPlaying.value) {
+      await play();
+    }
+    return true;
   }
 
   Future<bool> addAlbum(

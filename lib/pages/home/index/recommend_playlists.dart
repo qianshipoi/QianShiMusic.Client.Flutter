@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/playlist.dart';
+import 'package:qianshi_music/pages/playlist_page.dart';
 import 'package:qianshi_music/provider/recommend_provider.dart';
 import 'package:qianshi_music/widgets/card/playlist_card.dart';
 import 'package:qianshi_music/widgets/horizontal_title_list_view.dart';
@@ -37,6 +38,7 @@ class _RecommendPlaylistsState extends State<RecommendPlaylists> {
   Widget build(BuildContext context) {
     return HorizontalTitleListView(
       title: "每日推荐",
+      onTap: () => Get.to(() => const PlaylistPage()),
       listView: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: playlists.length,
