@@ -7,7 +7,6 @@ import 'package:qianshi_music/models/album.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/provider/album_provider.dart';
-import 'package:qianshi_music/provider/comment_provider.dart';
 import 'package:qianshi_music/provider/index_provider.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/provider/track_provider.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/track.dart';
+import 'package:qianshi_music/pages/daily_songs_history_page.dart';
 import 'package:qianshi_music/provider/recommend_provider.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/widgets/tiles/track_tile.dart';
@@ -41,9 +42,11 @@ class _DailySongsPageState extends State<DailySongsPage> {
         centerTitle: true,
         title: const Text('每日推荐'),
         actions: [
-        ElevatedButton.icon(onPressed: (){
-          
-        }, icon: const Icon(Icons.history),label: const Text('历史推荐'), )
+          ElevatedButton.icon(
+            onPressed: () => Get.to(() => const DailySongsHistory()),
+            icon: const Icon(Icons.history),
+            label: const Text('历史推荐'),
+          )
         ],
       ),
       body: ListView.builder(
@@ -55,7 +58,6 @@ class _DailySongsPageState extends State<DailySongsPage> {
             onMoreTap: () {},
             onTap: () async {
               _playingController.addTracks(_tracks, palyNowIndex: index);
-
             },
           );
         },
