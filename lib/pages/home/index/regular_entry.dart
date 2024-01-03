@@ -13,11 +13,12 @@ class RegularEnter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView(
+      shrinkWrap: true,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 4,
-        crossAxisSpacing: 4,
-        childAspectRatio: 0.68,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        childAspectRatio: 1.68,
       ),
       children: [
         IconButton.filled(

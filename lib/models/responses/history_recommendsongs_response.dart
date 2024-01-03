@@ -62,8 +62,10 @@ class HistoryRecommendSongsDetail {
 
   factory HistoryRecommendSongsDetail.fromMap(Map<String, dynamic> map) {
     return HistoryRecommendSongsDetail(
-      dates: map['dates'] == null ? [] : map['dates'] as List<String>,
-      description: map['description'] as String,
+      dates: map['dates'] == null
+          ? []
+          : List<String>.from(map['dates'] as List<dynamic>),
+      description: (map['description'] as String?) ?? '',
       noHistoryMessage: map['noHistoryMessage'] as String,
       songs: map['songs'] == null
           ? []

@@ -41,16 +41,16 @@ class RecommendSongsResponse extends BaseResponse {
 
 class RecommendSongsResponseData {
   final List<Track> dailySongs;
-  final List<RecommendReason> recommend;
+  final List<RecommendReason> recommendReasons;
   RecommendSongsResponseData({
     required this.dailySongs,
-    required this.recommend,
+    required this.recommendReasons,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'dailySongs': dailySongs.map((x) => x.toMap()).toList(),
-      'recommend': recommend.map((x) => x.toMap()).toList(),
+      'recommendReasons': recommendReasons.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -63,10 +63,10 @@ class RecommendSongsResponseData {
                 (x) => Track.fromMap(x as Map<String, dynamic>),
               ),
             ),
-      recommend: map['recommend'] == null
-          ? map['recommend']
+      recommendReasons: map['recommendReasons'] == null
+          ? map['recommendReasons']
           : List<RecommendReason>.from(
-              (map['recommend'] as List<dynamic>).map<RecommendReason>(
+              (map['recommendReasons'] as List<dynamic>).map<RecommendReason>(
                 (x) => RecommendReason.fromMap(x as Map<String, dynamic>),
               ),
             ),

@@ -4,6 +4,7 @@ import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/provider/history_provider.dart';
 import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
 import 'package:qianshi_music/widgets/tiles/track_tile.dart';
+import 'package:qianshi_music/pages/base_playing_state.dart';
 
 class DailySongsHistory extends StatefulWidget {
   const DailySongsHistory({super.key});
@@ -12,70 +13,95 @@ class DailySongsHistory extends StatefulWidget {
   State<DailySongsHistory> createState() => _DailySongsHistoryState();
 }
 
-class _DailySongsHistoryState extends State<DailySongsHistory>
-    with SingleTickerProviderStateMixin {
-  TabController? _tabController;
+class _DailySongsHistoryState extends BasePlayingState<DailySongsHistory>
+    with TickerProviderStateMixin {
+  final List<String> tabs = [];
+  late TabController _controller;
 
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
-      getHistoryDate();
-    });
+    _controller = TabController(length: tabs.length, vsync: this);
+    getCatlist();
   }
 
-  Future<List<String>> getHistoryDate() async {
+  Future getCatlist() async {
     final response = await HistoryProvider.recommendSongs();
-    if (response.code != 200) {
-      throw Exception("获取日推历史失败");
+    if (response.code == 200) {
+      tabs.clear();
+      tabs.addAll(response.data!.dates);
+      _controller = TabController(
+          length: tabs.length, initialIndex: _controller.index, vsync: this);
+      setState(() {});
     }
-
-    _tabController =
-        TabController(length: response.data!.dates.length, vsync: this);
-
-    return response.data!.dates;
   }
 
   @override
-  void dispose() {
-    _tabController?.dispose();
-    super.dispose();
-  }
+  bool get show => false;
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getHistoryDate(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Center(child: Text('获取日推历史失败'));
-        }
-        if (snapshot.hasData) {
-          final dates = snapshot.data!;
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('历史日推'),
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(40),
-                child: TabBar(
-                  controller: _tabController,
-                  tabs: dates.map((e) => Tab(child: Text(e))).toList(),
-                ),
-              ),
-            ),
-            body: PageView(
-              children: dates
-                  .map(
-                      (e) => KeepAliveWrapper(child: HistorySongsView(date: e)))
-                  .toList(),
-            ),
-          );
-        }
+  Color get backgroundColor => Colors.grey.withOpacity(0.3);
 
-        return const Center(child: LinearProgressIndicator());
-      },
+  @override
+  BorderRadius get borderRadius => const BorderRadius.only(
+      topLeft: Radius.circular(16), topRight: Radius.circular(16));
+
+  @override
+  String get heroTag => "daliy_songs_history_page_playing_bar";
+
+  @override
+  Widget buildPageBody(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('历史日推'),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          PreferredSize(
+            preferredSize: const Size.fromHeight(40),
+            child: _buildTabBar(),
+          ),
+          Expanded(
+            child: _buildTabBarPageView(),
+          )
+        ],
+      ),
     );
+  }
+
+  TabBar _buildTabBar() {
+    return TabBar(
+      controller: _controller,
+      indicator: const UnderlineTabIndicator(
+        borderSide: BorderSide(color: Color(0xff2fcfbb), width: 3),
+        insets: EdgeInsets.fromLTRB(0, 0, 0, 10),
+      ),
+      tabs: tabs.map<Tab>((e) => Tab(text: _formatDate(e))).toList(),
+    );
+  }
+
+  Widget _buildTabBarPageView() {
+    return Container(
+      color: Colors.grey.withOpacity(0.2),
+      child: TabBarView(
+        controller: _controller,
+        children: _buildItems(),
+      ),
+    );
+  }
+
+  List<Widget> _buildItems() {
+    return tabs.map<Widget>((e) {
+      return KeepAliveWrapper(
+          child: HistorySongsView(
+        date: e,
+      ));
+    }).toList();
+  }
+
+  String _formatDate(String date) {
+    return date.substring(5);
   }
 }
 
