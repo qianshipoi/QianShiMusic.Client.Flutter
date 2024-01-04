@@ -7,7 +7,9 @@ import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/pages/album_page.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
+import 'package:qianshi_music/pages/cloud_page.dart';
 import 'package:qianshi_music/pages/follows_page.dart';
+import 'package:qianshi_music/pages/history_page.dart';
 import 'package:qianshi_music/pages/home/edit_playlist_page.dart';
 import 'package:qianshi_music/pages/home/playlist_manage_page.dart';
 import 'package:qianshi_music/pages/playlist_detail_page.dart';
@@ -193,6 +195,7 @@ class _MyPageState extends BasePlayingState<MyPage>
         return <Widget>[
           _buildHeader(context),
           _buildTabsBar(),
+          _buildActions(),
         ];
       },
       body: _buildPlaylistPageView(),
@@ -556,5 +559,26 @@ class _MyPageState extends BasePlayingState<MyPage>
         },
       );
     });
+  }
+
+  Widget _buildActions() {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: () => Get.to(() => const HistoryPage()),
+            icon: const Icon(Icons.history),
+            label: const Text("播放历史"),
+          ),
+        ),
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: () => Get.to(() => const CloudPage()),
+            icon: const Icon(Icons.history),
+            label: const Text("云盘"),
+          ),
+        ),
+      ],
+    );
   }
 }
