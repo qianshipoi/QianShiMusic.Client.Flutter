@@ -277,12 +277,10 @@ class PlayingController extends GetxController {
       }
       trackStore.value =
           FmTrackStore(response.data, trackUpdated: trackUpdated);
-      if (isPlaying) await play();
+      await play();
       return true;
     }
-    if (!isPlaying.value) {
-      await play();
-    }
+    if (!isPlaying.value) await play();
     return true;
   }
 

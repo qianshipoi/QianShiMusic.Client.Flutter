@@ -162,7 +162,7 @@ class RecordRecentMlog {
 }
 
 class RecordRecentMv {
-  final String id;
+  final int id;
   final String name;
   final String coverUrl;
   final int duration;
@@ -187,7 +187,7 @@ class RecordRecentMv {
 
   factory RecordRecentMv.fromMap(Map<String, dynamic> map) {
     return RecordRecentMv(
-      id: map['id'] as String,
+      id: map['id'] as int,
       name: map['name'] as String,
       coverUrl: map['coverUrl'] as String,
       duration: map['duration'] as int,

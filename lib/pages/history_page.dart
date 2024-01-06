@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
+import 'package:qianshi_music/pages/history/history_albums.dart';
+import 'package:qianshi_music/pages/history/history_playlist.dart';
+import 'package:qianshi_music/pages/history/history_songs.dart';
+import 'package:qianshi_music/pages/history/history_video.dart';
 import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
-
-import 'history/history_songs.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -67,6 +69,9 @@ class _HistoryPageState extends BasePlayingState<HistoryPage>
         controller: _controller,
         children: const [
           KeepAliveWrapper(child: HistorySongs()),
+          KeepAliveWrapper(child: HistoryVideos()),
+          KeepAliveWrapper(child: HistoryPlaylist()),
+          KeepAliveWrapper(child: HistoryAlbums()),
         ],
       ),
     );

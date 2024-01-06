@@ -74,7 +74,7 @@ class _RecommendSongsState extends State<RecommendSongs>
   }
 
   void play({int index = 0}) {
-    _playingController.addTracks(_allTracks, palyNowIndex: 0);
+    _playingController.addTracks(_allTracks, palyNowIndex: index);
   }
 
   @override

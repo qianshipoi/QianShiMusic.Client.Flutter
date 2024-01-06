@@ -4,7 +4,6 @@ import 'package:qianshi_music/pages/daily_songs_page.dart';
 import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/pages/playlist_page.dart';
 import 'package:qianshi_music/pages/toplist_page.dart';
-import 'package:qianshi_music/stores/playing/track_store.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 
 class RegularEnter extends StatelessWidget {
@@ -13,6 +12,7 @@ class RegularEnter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView(
+      physics: const BouncingScrollPhysics(),
       shrinkWrap: true,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -28,12 +28,8 @@ class RegularEnter extends StatelessWidget {
         IconButton.filled(
           onPressed: () {
             final playingController = Get.find<PlayingController>();
-            if (playingController.trackStore.value == null ||
-                playingController.trackStore.value!.source !=
-                    PlayingSource.fm) {
-              playingController.playFm();
-              Get.to(() => PlaySongPage.instance);
-            }
+            playingController.playFm();
+            Get.to(() => PlaySongPage.instance);
           },
           icon: const Icon(Icons.radio),
         ),

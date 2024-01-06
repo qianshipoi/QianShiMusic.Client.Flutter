@@ -32,7 +32,7 @@ class _DailySongsPageState extends State<DailySongsPage> {
       return;
     }
     _tracks.addAll(response.data!.dailySongs);
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   @override

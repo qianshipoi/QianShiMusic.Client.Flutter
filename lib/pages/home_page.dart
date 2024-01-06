@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/locale/globalization.dart';
 import 'package:qianshi_music/main.dart';
-import 'package:qianshi_music/pages/home/found_page.dart';
 import 'package:qianshi_music/pages/home/index_page.dart';
 import 'package:qianshi_music/pages/home/my_page.dart';
 import 'package:qianshi_music/stores/index_controller.dart';
@@ -26,10 +25,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  final pages = [const IndexPage(), const FoundPage(), const MyPage()];
+  final pages = [const IndexPage(), const MyPage()];
   final List<Widget> bottomItems = [
     const Icon(Icons.message, size: 30),
-    const Icon(Icons.people, size: 30),
     const Icon(Icons.person, size: 30),
   ];
   int _currentPage = 0;
