@@ -67,7 +67,7 @@ class Playlist {
       coverImgUrl: (map['coverImgUrl'] ?? map['picUrl']) as String,
       description:
           map['description'] != null ? map['description'] as String : null,
-      playCount: (map['playCount'] ?? map['playcount']) as int,
+      playCount: ((map['playCount'] ?? map['playcount']) as int?) ?? 0,
       trackCount: (map['trackCount'] as int?) ?? 0,
       commentCount: (map['commentCount'] as int?) ?? 0,
       shareCount: (map['shareCount'] as int?) ?? 0,

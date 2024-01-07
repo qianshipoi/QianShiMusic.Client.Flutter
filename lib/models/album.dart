@@ -44,7 +44,7 @@ class Album {
   factory Album.fromMap(Map<String, dynamic> map) {
     return Album(
       id: map['id'] as int,
-      name: map['name'] as String,
+      name: (map['name'] as String?)??'',
       picUrl: map['picUrl'] != null ? map['picUrl'] as String : null,
       artist: map['artist'] != null
           ? Artist.fromMap(map['artist'] as Map<String, dynamic>)

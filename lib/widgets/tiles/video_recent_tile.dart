@@ -26,6 +26,7 @@ class VideoRecentTile extends StatelessWidget {
               child: FixImage(
                 imageUrl: formatMusicImageUrl(video.coverUrl),
                 width: 160,
+                height: 90,
                 fit: BoxFit.cover,
               ),
             ),

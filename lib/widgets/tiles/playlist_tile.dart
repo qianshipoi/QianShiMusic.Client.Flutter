@@ -31,20 +31,7 @@ class PlaylistTile extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           )),
-      subtitle: Row(
-        children: [
-          Obx(() => Text("${playlist.trackCount.value}首")),
-          if (playlist.playCount != 0)
-            Text(' · ${formatPlayCount(playlist.playCount)}次播放'),
-          if (playlist.creator != null)
-            Expanded(
-                child: Text(
-              ' · ${playlist.creator!.nickname}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            )),
-        ],
-      ),
+      subtitle: Text(subtitle()),
       trailing: onMoreTap == null
           ? null
           : IconButton(
@@ -53,6 +40,20 @@ class PlaylistTile extends StatelessWidget {
             ),
       onTap: onTap,
     );
+  }
+
+  String subtitle() {
+    final list = <String>[];
+    if (playlist.trackCount.value != 0) {
+      list.add("${playlist.trackCount.value}首");
+    }
+    if (playlist.playCount != 0) {
+      list.add('${formatPlayCount(playlist.playCount)}次播放');
+    }
+    if (playlist.creator != null) {
+      list.add(playlist.creator!.nickname);
+    }
+    return list.join(' · ');
   }
 
   String formatPlayCount(int playcount) {

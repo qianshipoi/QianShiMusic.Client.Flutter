@@ -7,7 +7,6 @@ import 'package:qianshi_music/provider/record_provider.dart';
 import 'package:qianshi_music/widgets/tiles/mv_recent_tile.dart';
 import 'package:qianshi_music/widgets/tiles/video_recent_tile.dart';
 
-
 class HistoryVideos extends StatefulWidget {
   const HistoryVideos({super.key});
 

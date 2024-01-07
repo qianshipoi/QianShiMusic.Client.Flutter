@@ -194,8 +194,8 @@ class _MyPageState extends BasePlayingState<MyPage>
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return <Widget>[
           _buildHeader(context),
-          _buildTabsBar(),
           _buildActions(),
+          _buildTabsBar(),
         ];
       },
       body: _buildPlaylistPageView(),
@@ -562,23 +562,25 @@ class _MyPageState extends BasePlayingState<MyPage>
   }
 
   Widget _buildActions() {
-    return Row(
-      children: [
-        Expanded(
-          child: ElevatedButton.icon(
-            onPressed: () => Get.to(() => const HistoryPage()),
-            icon: const Icon(Icons.history),
-            label: const Text("播放历史"),
+    return SliverToBoxAdapter(
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton.icon(
+              onPressed: () => Get.to(() => const HistoryPage()),
+              icon: const Icon(Icons.history),
+              label: const Text("播放历史"),
+            ),
           ),
-        ),
-        Expanded(
-          child: ElevatedButton.icon(
-            onPressed: () => Get.to(() => const CloudPage()),
-            icon: const Icon(Icons.history),
-            label: const Text("云盘"),
+          Expanded(
+            child: ElevatedButton.icon(
+              onPressed: () => Get.to(() => const CloudPage()),
+              icon: const Icon(Icons.history),
+              label: const Text("云盘"),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

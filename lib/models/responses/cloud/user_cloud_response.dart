@@ -201,7 +201,7 @@ class SimpleSongArtist {
   factory SimpleSongArtist.fromMap(Map<String, dynamic> map) {
     return SimpleSongArtist(
       id: map['id'] as int,
-      name: map['name'] as String,
+      name: (map['name'] as String?) ?? '',
       tns: map['tns'] == null
           ? []
           : List<String>.from((map['tns'] as List<dynamic>)),
