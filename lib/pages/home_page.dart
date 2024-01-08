@@ -39,6 +39,7 @@ class _HomePageState extends State<HomePage>
   late Offset _startOffset;
   final _indexController = Get.find<IndexController>();
   final PlayingController _playingController = Get.find<PlayingController>();
+  final PageController _pageController = PageController();
 
   @override
   void initState() {
@@ -60,6 +61,7 @@ class _HomePageState extends State<HomePage>
   @override
   void dispose() {
     _controller.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -93,8 +95,6 @@ class _HomePageState extends State<HomePage>
           !_indexController.useDarkTheme.value;
     }
   }
-
-  final PageController _pageController = PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -148,9 +148,6 @@ class _HomePageState extends State<HomePage>
                       CurvedNavigationBar(
                           items: [
                             Icon(Icons.message,
-                                size: 24,
-                                color: Theme.of(context).colorScheme.onPrimary),
-                            Icon(Icons.people,
                                 size: 24,
                                 color: Theme.of(context).colorScheme.onPrimary),
                             Icon(Icons.person,

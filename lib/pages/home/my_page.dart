@@ -208,9 +208,10 @@ class _MyPageState extends BasePlayingState<MyPage>
         islucency: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         child: PreferredSize(
-          preferredSize: const Size.fromHeight(320),
+          preferredSize: const Size.fromHeight(294),
           child: Column(children: [
             _buildBaseInfo(),
+            const SizedBox(height: 8),
             _buildLikePlaylist(context),
           ]),
         ),
@@ -383,8 +384,8 @@ class _MyPageState extends BasePlayingState<MyPage>
       return Container();
     }
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Theme.of(context).hintColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),

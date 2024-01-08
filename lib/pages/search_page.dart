@@ -65,6 +65,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         hintText: '搜索歌曲、歌手、专辑',
         onSearch: (value) => _search(value),
         onChanged: (value) => _suggest(),
+        onCancel: () => Get.back(),
       ),
       body: ListView.builder(
           itemCount: _results.length,

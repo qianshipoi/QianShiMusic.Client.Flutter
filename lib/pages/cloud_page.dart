@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qianshi_music/models/responses/cloud/user_cloud_response.dart';
@@ -56,11 +60,75 @@ class _CloudPageState extends State<CloudPage> {
     }
   }
 
+  Future _upload() async {
+    var result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      dialogTitle: '选择音乐文件',
+      allowedExtensions: ['mp3'],
+    );
+    if (result == null) return;
+    final file = result.files.first;
+    try {
+      await EasyLoading.show(status: '上传中...');
+      final response = await UserProvider.cloudAdd(File(file.path!));
+      if (response.code != 200) {
+        Get.snackbar('上传失败', response.msg!);
+        return;
+      }
+      _list.insert(0, response.privateCloud!);
+      setState(() {});
+    } catch (e) {
+      Get.snackbar('上传失败', e.toString());
+      return;
+    } finally {
+      await EasyLoading.dismiss();
+    }
+  }
+
+  Future _trackMore(PrivateCloud privateCloud) async {
+    Get.bottomSheet(
+      Container(
+        color: Theme.of(context).cardColor,
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.delete),
+              title: const Text('删除'),
+              onTap: () async {
+                try {
+                  await EasyLoading.show(status: '删除中...');
+                  final response =
+                      await UserProvider.cloudDel([privateCloud.songId]);
+                  if (response.code != 200) {
+                    Get.snackbar('删除失败', response.msg!);
+                    return;
+                  }
+                  _list.remove(privateCloud);
+                  setState(() {});
+                  Get.back();
+                } finally {
+                  await EasyLoading.dismiss();
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+      backgroundColor: Colors.transparent,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('我的音乐云盘'),
+        actions: [
+          IconButton(
+            onPressed: _upload,
+            icon: const Icon(Icons.upload_file),
+          ),
+        ],
       ),
       body: _buildTrackListView(),
     );
@@ -89,7 +157,7 @@ class _CloudPageState extends State<CloudPage> {
               _playingController.addTracks(response.songs, palyNowIndex: index);
               Get.to(() => PlaySongPage.instance);
             },
-            onMoreTap: () {},
+            onMoreTap: () async => await _trackMore(privateCloud),
           );
         },
       ),
