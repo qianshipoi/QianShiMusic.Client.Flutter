@@ -85,7 +85,7 @@ class TrackTile extends StatelessWidget {
           Get.snackbar('获取MV详情失败', mv.msg!);
           return;
         }
-        Get.to(() => MvPage(mv.data!));
+        Get.to(() => MvPage(mv: mv.data!));
       },
       icon: const Icon(Icons.video_collection_outlined),
     );

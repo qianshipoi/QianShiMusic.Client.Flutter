@@ -13,7 +13,7 @@ import 'package:qianshi_music/widgets/video_player/video_player_utils.dart';
 
 class MvPage extends StatefulWidget {
   final Mv mv;
-  const MvPage(this.mv, {super.key});
+  const MvPage({super.key, required this.mv});
 
   @override
   State<MvPage> createState() => _MvPageState();

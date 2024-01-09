@@ -1,31 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:qianshi_music/models/album.dart';
 
 import 'package:qianshi_music/models/artist.dart';
-import 'package:qianshi_music/pages/album_page.dart';
+import 'package:qianshi_music/models/track.dart';
+import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/provider/artist_provider.dart';
-import 'package:qianshi_music/widgets/tiles/album_tile.dart';
+import 'package:qianshi_music/stores/playing_controller.dart';
+import 'package:qianshi_music/widgets/tiles/track_tile.dart';
 
-class ArtistAlbum extends StatefulWidget {
+class ArtistAllSongPage extends StatefulWidget {
   final Artist artist;
-  const ArtistAlbum({
+  const ArtistAllSongPage({
     Key? key,
     required this.artist,
   }) : super(key: key);
 
   @override
-  State<ArtistAlbum> createState() => _ArtistAlbumState();
+  State<ArtistAllSongPage> createState() => _ArtistAllSongPageState();
 }
 
-class _ArtistAlbumState extends State<ArtistAlbum> {
+class _ArtistAllSongPageState extends State<ArtistAllSongPage> {
+  final PlayingController _playingController = Get.find();
   final _refreshController = RefreshController(initialRefresh: false);
-  final _albums = <Album>[];
+  final _tracks = <Track>[];
   bool _more = true;
   int _offset = 0;
   final _limit = 20;
-  bool _loading = true;
 
   Future _onLoading() async {
     if (!_more) {
@@ -33,20 +34,18 @@ class _ArtistAlbumState extends State<ArtistAlbum> {
       return;
     }
     try {
-      final response = await ArtistProvider.album(widget.artist.id,
+      final response = await ArtistProvider.songs(widget.artist.id,
           offset: _offset, limit: _limit);
       if (response.code != 200) {
         Get.snackbar("获取歌手专辑失败", response.msg!);
         return;
       }
-      _albums.addAll(response.hotAlbums);
-      _offset = _albums.length;
+      _tracks.addAll(response.songs);
+      _offset = _tracks.length;
       _more = response.more;
       _refreshController.loadComplete();
       setState(() {});
     } finally {
-      _loading = false;
-      setState(() {});
       if (!_more) {
         _refreshController.loadNoData();
       }
@@ -69,9 +68,6 @@ class _ArtistAlbumState extends State<ArtistAlbum> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
     return _buildTrackListView();
   }
 
@@ -82,13 +78,14 @@ class _ArtistAlbumState extends State<ArtistAlbum> {
       enablePullDown: false,
       onLoading: _onLoading,
       child: ListView.builder(
-        itemCount: _albums.length,
+        itemCount: _tracks.length,
         itemBuilder: (context, index) {
-          final album = _albums[index];
-          return AlbumTile(
-            album: album,
+          final track = _tracks[index];
+          return TrackTile(
+            track: track,
             onTap: () {
-              Get.to(() => AlbumPage(album: album));
+              _playingController.addTracks(_tracks, palyNowIndex: index);
+              Get.to(() => PlaySongPage.instance);
             },
           );
         },

@@ -94,12 +94,12 @@ class _ArtistPageState extends State<ArtistPage> {
             ),
           ];
         },
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            KeepAliveWrapper(child: ArtistDest()),
-            KeepAliveWrapper(child: ArtistHotSongs()),
-            KeepAliveWrapper(child: ArtistAlbum()),
-            KeepAliveWrapper(child: ArtistVideo()),
+            KeepAliveWrapper(child: ArtistDest(artist: data!.artist)),
+            KeepAliveWrapper(child: ArtistHotSongs(artist: data!.artist)),
+            KeepAliveWrapper(child: ArtistAlbum(artist: data!.artist)),
+            KeepAliveWrapper(child: ArtistVideo(artist: data!.artist)),
           ],
         ),
       ),

@@ -67,7 +67,7 @@ class _SearchMvViewState extends State<SearchMvView> {
         itemBuilder: (context, index) => MvTile(
           video: _items[index],
           onTap: () {
-            Get.to(() => MvPage(_items[index]));
+            Get.to(() => MvPage(mv: _items[index]));
           },
         ),
       ),
