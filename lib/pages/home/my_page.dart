@@ -17,6 +17,7 @@ import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/stores/current_user_controller.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/common_sliver_header_delegate.dart';
+import 'package:qianshi_music/utils/toast.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
 import 'package:qianshi_music/widgets/tiles/album_tile.dart';
@@ -75,26 +76,9 @@ class _MyPageState extends BasePlayingState<MyPage>
   }
 
   Future<void> _deletePlaylistDialog(Playlist playlist) async {
-    final result = await Get.dialog<bool>(AlertDialog(
-      title: const Text("删除歌单"),
-      content: Text("确认是否删除歌单:[${playlist.name}]"),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Get.back(result: false);
-          },
-          child: const Text("取消"),
-        ),
-        TextButton(
-          onPressed: () async {
-            Get.back(result: true);
-          },
-          child: const Text("确定"),
-        ),
-      ],
-    ));
+    final result = await ToastUtil.alert("删除歌单", "确认是否删除歌单:[${playlist.name}]");
 
-    if (!(result ?? false)) {
+    if (!result) {
       Get.back();
       return;
     }
