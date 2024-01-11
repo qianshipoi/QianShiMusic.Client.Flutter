@@ -1,5 +1,5 @@
-import 'package:qianshi_music/models/responses/search_collect_response.dart';
-import 'package:qianshi_music/models/responses/search_suggest_response.dart';
+import 'package:qianshi_music/models/responses/search/search_collect_response.dart';
+import 'package:qianshi_music/models/responses/search/search_suggest_response.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 
 enum MusicSearchType {

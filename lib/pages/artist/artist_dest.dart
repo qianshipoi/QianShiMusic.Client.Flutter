@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/models/artist.dart';
-import 'package:qianshi_music/models/responses/artist_desc_response.dart';
+import 'package:qianshi_music/models/responses/artist/artist_desc_response.dart';
 import 'package:qianshi_music/provider/artist_provider.dart';
 
 class ArtistDest extends StatefulWidget {

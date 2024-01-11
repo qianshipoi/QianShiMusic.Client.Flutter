@@ -1,6 +1,6 @@
-import 'package:qianshi_music/models/responses/recommend_resource_response.dart';
-import 'package:qianshi_music/models/responses/recommend_songs_dislike_response.dart';
-import 'package:qianshi_music/models/responses/recommend_songs_response.dart';
+import 'package:qianshi_music/models/responses/recommend/recommend_resource_response.dart';
+import 'package:qianshi_music/models/responses/recommend/recommend_songs_dislike_response.dart';
+import 'package:qianshi_music/models/responses/recommend/recommend_songs_response.dart';
 import 'package:qianshi_music/provider/index.dart';
 
 class RecommendProvider {

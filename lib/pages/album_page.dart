@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:qianshi_music/models/album.dart';
-import 'package:qianshi_music/models/responses/album_response.dart';
+import 'package:qianshi_music/models/responses/album/album_response.dart';
 import 'package:qianshi_music/models/track.dart';
 import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/provider/album_provider.dart';
@@ -132,7 +132,8 @@ class _AlbumPageState extends State<AlbumPage> {
                   ),
                   ElevatedButton.icon(
                     onPressed: () async {
-                      _playingController.addAlbum(album, playTrackId: _tracks.firstOrNull?.id);
+                      _playingController.addAlbum(album,
+                          playTrackId: _tracks.firstOrNull?.id);
                       Get.to(() => PlaySongPage.instance);
                     },
                     icon: const Icon(Icons.play_arrow),

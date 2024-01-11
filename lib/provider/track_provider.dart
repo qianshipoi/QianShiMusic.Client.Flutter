@@ -1,12 +1,11 @@
 import 'package:qianshi_music/models/responses/base_response.dart';
-import 'package:qianshi_music/models/responses/check_music_response.dart';
-import 'package:qianshi_music/models/responses/likelist_response.dart';
-import 'package:qianshi_music/models/responses/lyric_response.dart';
-import 'package:qianshi_music/models/responses/song_detail_response.dart';
-import 'package:qianshi_music/models/responses/song_url_response.dart';
-import 'package:qianshi_music/models/responses/top_song_response.dart';
+import 'package:qianshi_music/models/responses/song/check_music_response.dart';
+import 'package:qianshi_music/models/responses/song/likelist_response.dart';
+import 'package:qianshi_music/models/responses/song/lyric_response.dart';
+import 'package:qianshi_music/models/responses/song/song_detail_response.dart';
+import 'package:qianshi_music/models/responses/song/song_url_response.dart';
+import 'package:qianshi_music/models/responses/song/top_song_response.dart';
 import 'package:qianshi_music/provider/index.dart';
-
 
 enum MusicLevel {
   standard,

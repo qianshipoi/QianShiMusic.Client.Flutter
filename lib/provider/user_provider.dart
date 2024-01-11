@@ -6,10 +6,10 @@ import 'package:qianshi_music/models/responses/base_response.dart';
 import 'package:qianshi_music/models/responses/cloud/cloud_upload_response.dart';
 import 'package:qianshi_music/models/responses/cloud/user_cloud_detail_response.dart';
 import 'package:qianshi_music/models/responses/cloud/user_cloud_response.dart';
-import 'package:qianshi_music/models/responses/user_detail_respinse.dart';
-import 'package:qianshi_music/models/responses/user_followeds_response.dart';
-import 'package:qianshi_music/models/responses/user_follows_response.dart';
-import 'package:qianshi_music/models/responses/user_playlist_response.dart';
+import 'package:qianshi_music/models/responses/user/user_detail_respinse.dart';
+import 'package:qianshi_music/models/responses/user/user_followeds_response.dart';
+import 'package:qianshi_music/models/responses/user/user_follows_response.dart';
+import 'package:qianshi_music/models/responses/user/user_playlist_response.dart';
 import 'package:qianshi_music/provider/index.dart';
 import 'package:qianshi_music/utils/http/http_util.dart';
 

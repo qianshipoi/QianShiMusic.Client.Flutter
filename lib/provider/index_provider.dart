@@ -1,5 +1,5 @@
 import 'package:qianshi_music/models/responses/personal_fm_response.dart';
-import 'package:qianshi_music/models/responses/personalized_response.dart';
+import 'package:qianshi_music/models/responses/recommend/personalized_response.dart';
 import 'package:qianshi_music/provider/index.dart';
 
 class IndexProvider {

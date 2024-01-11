@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:qianshi_music/models/artist.dart';
-import 'package:qianshi_music/models/responses/artist_detail_response.dart';
+import 'package:qianshi_music/models/responses/artist/artist_detail_response.dart';
 import 'package:qianshi_music/pages/artist/artist_album.dart';
 import 'package:qianshi_music/pages/artist/artist_dest.dart';
 import 'package:qianshi_music/pages/artist/artist_hot_songs.dart';

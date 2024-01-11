@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:qianshi_music/models/album.dart';
 import 'package:qianshi_music/models/responses/base_response.dart';
-import 'package:qianshi_music/models/responses/style_song_response.dart';
+import 'package:qianshi_music/models/responses/style/style_song_response.dart';
 
 class StyleAlbumResponse extends BaseResponse {
   final StyleAlbumData? data;

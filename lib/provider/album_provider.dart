@@ -1,8 +1,7 @@
-import 'package:qianshi_music/models/responses/album_sublist_response.dart';
+import 'package:qianshi_music/models/responses/album/album_response.dart';
+import 'package:qianshi_music/models/responses/album/album_sublist_response.dart';
 import 'package:qianshi_music/models/responses/base_response.dart';
 import 'package:qianshi_music/provider/index.dart';
-
-import '../models/responses/album_response.dart';
 
 class AlbumProvider {
   static Future<AlbumSublistResponse> sublist(
@@ -21,7 +20,7 @@ class AlbumProvider {
     }));
   }
 
-  static Future<AlbumResponse> index(int id) async{
+  static Future<AlbumResponse> index(int id) async {
     return AlbumResponse.fromMap(await requestGet('album', query: {
       'id': id,
     }));

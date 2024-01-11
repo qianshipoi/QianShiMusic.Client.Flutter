@@ -1,6 +1,6 @@
 import 'package:qianshi_music/models/responses/base_response.dart';
-import 'package:qianshi_music/models/responses/mv_detail_response.dart';
-import 'package:qianshi_music/models/responses/mv_sublist_response.dart';
+import 'package:qianshi_music/models/responses/mv/mv_detail_response.dart';
+import 'package:qianshi_music/models/responses/mv/mv_sublist_response.dart';
 import 'package:qianshi_music/provider/index.dart';
 
 class MvProvider {
