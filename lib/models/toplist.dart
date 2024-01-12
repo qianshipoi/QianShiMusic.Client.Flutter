@@ -6,7 +6,7 @@ class Toplist {
   final int subscribedCount;
   final int specialType;
   final int updateTime;
-  final int coverImgUrl;
+  final String coverImgUrl;
   final int coverImgId;
   final int trackCount;
   final String commentThreadId;
@@ -76,7 +76,7 @@ class Toplist {
       subscribedCount: map['subscribedCount'] as int,
       specialType: map['specialType'] as int,
       updateTime: map['updateTime'] as int,
-      coverImgUrl: map['coverImgUrl'] as int,
+      coverImgUrl: map['coverImgUrl'] as String,
       coverImgId: map['coverImgId'] as int,
       trackCount: map['trackCount'] as int,
       commentThreadId: map['commentThreadId'] as String,
