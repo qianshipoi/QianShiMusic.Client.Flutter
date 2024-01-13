@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:qianshi_music/constants.dart';
+import 'package:qianshi_music/models/album.dart';
 import 'package:qianshi_music/models/playlist.dart';
 import 'package:qianshi_music/pages/album_page.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
@@ -13,10 +14,12 @@ import 'package:qianshi_music/pages/history_page.dart';
 import 'package:qianshi_music/pages/home/edit_playlist_page.dart';
 import 'package:qianshi_music/pages/home/playlist_manage_page.dart';
 import 'package:qianshi_music/pages/playlist_detail_page.dart';
+import 'package:qianshi_music/provider/album_provider.dart';
 import 'package:qianshi_music/provider/playlist_provider.dart';
 import 'package:qianshi_music/stores/current_user_controller.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/common_sliver_header_delegate.dart';
+import 'package:qianshi_music/widgets/common_button_style.dart';
 import 'package:qianshi_music/widgets/fix_image.dart';
 import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
 import 'package:qianshi_music/widgets/tiles/album_tile.dart';
@@ -35,11 +38,12 @@ class _MyPageState extends BasePlayingState<MyPage>
   final PlayingController _playingController = Get.find();
   final _textEditingController = TextEditingController();
   late TabController _tabController;
+  final _tabs = ['创建', '收藏', '专辑'];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: _tabs.length, vsync: this);
   }
 
   @override
@@ -68,6 +72,130 @@ class _MyPageState extends BasePlayingState<MyPage>
     }
   }
 
+  Future<bool> _dialog(String title, String content) async {
+    return (await Get.dialog<bool>(AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back(result: false);
+              },
+              child: const Text("取消"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Get.back(result: true);
+              },
+              child: const Text("确定"),
+            ),
+          ],
+        ))) ??
+        false;
+  }
+
+  _moreFavoritePlaylist(Playlist playlist) {
+    Get.bottomSheet(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "收藏歌单",
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.delete),
+              title: const Text("取消关注"),
+              onTap: () {
+                Get.back();
+                _delFavoritePlaylist(playlist);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<bool> _delFavoritePlaylist(Playlist playlist) async {
+    final result = await _dialog("管理歌单", "确认是否取消收藏歌单:[${playlist.name}]");
+
+    if (!result) {
+      Get.back();
+      return false;
+    }
+
+    try {
+      await EasyLoading.show();
+      final response = await PlaylistProvider.subscribe(playlist.id, false);
+      if (response.code != 200) {
+        Get.snackbar("取消收藏歌单失败", response.msg!);
+        return false;
+      }
+      _currentUserController.favoritePlaylist
+          .removeWhere((element) => element.id == playlist.id);
+    } finally {
+      await EasyLoading.dismiss();
+    }
+    Get.back();
+    return true;
+  }
+
+  _moreFavoriteAlbum(Album album) {
+    Get.bottomSheet(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "收藏专辑",
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.delete),
+              title: const Text("取消关注"),
+              onTap: () {
+                Get.back();
+                _delFavoriteAlbum(album);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<bool> _delFavoriteAlbum(Album album) async {
+    final result = await _dialog("管理收藏专辑", "确认是否取消收藏专辑:[${album.name}]");
+
+    if (!result) {
+      Get.back();
+      return false;
+    }
+
+    try {
+      await EasyLoading.show();
+      final response = await AlbumProvider.sub(album.id, isSub: false);
+      if (response.code != 200) {
+        Get.snackbar("取消收藏专辑失败", response.msg!);
+        return false;
+      }
+      _currentUserController.favoriteAlbums
+          .removeWhere((element) => element.id == album.id);
+    } finally {
+      await EasyLoading.dismiss();
+    }
+    Get.back();
+    return true;
+  }
+
   @override
   void dispose() {
     _textEditingController.dispose();
@@ -75,26 +203,9 @@ class _MyPageState extends BasePlayingState<MyPage>
   }
 
   Future<void> _deletePlaylistDialog(Playlist playlist) async {
-    final result = await Get.dialog<bool>(AlertDialog(
-      title: const Text("删除歌单"),
-      content: Text("确认是否删除歌单:[${playlist.name}]"),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Get.back(result: false);
-          },
-          child: const Text("取消"),
-        ),
-        TextButton(
-          onPressed: () async {
-            Get.back(result: true);
-          },
-          child: const Text("确定"),
-        ),
-      ],
-    ));
+    final result = await _dialog("删除歌单", "确认是否删除歌单:[${playlist.name}]");
 
-    if (!(result ?? false)) {
+    if (!result) {
       Get.back();
       return;
     }
@@ -243,29 +354,20 @@ class _MyPageState extends BasePlayingState<MyPage>
                         color: Theme.of(context).colorScheme.primary, width: 3),
                     insets: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                   ),
-                  tabs: <Widget>[
-                    Tab(
-                      child: Text(
-                        "创建",
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ),
-                    Tab(
-                      child: Text(
-                        "收藏",
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ),
-                    Tab(
-                      child: Text(
-                        "专辑",
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ),
-                  ],
+                  tabs: _tabs
+                      .map(
+                        (e) => Tab(
+                          child: Text(
+                            e,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                      )
+                      .toList(),
                 ),
               ),
               IconButton(
+                iconSize: 16,
                 onPressed: _playlistManage,
                 icon: const Icon(Icons.more_vert),
               )
@@ -528,15 +630,18 @@ class _MyPageState extends BasePlayingState<MyPage>
         physics: const NeverScrollableScrollPhysics(),
         itemCount: _currentUserController.favoritePlaylist.length,
         itemBuilder: (context, index) {
+          final playlist = _currentUserController.favoritePlaylist[index];
           return PlaylistTile(
-            playlist: _currentUserController.favoritePlaylist[index],
+            playlist: playlist,
             onTap: () {
-              Get.to(() => PlaylistDetailPage(
-                    playlistId:
-                        _currentUserController.favoritePlaylist[index].id,
-                    heroTag: heroTag,
-                  ));
+              Get.to(
+                () => PlaylistDetailPage(
+                  playlistId: playlist.id,
+                  heroTag: heroTag,
+                ),
+              );
             },
+            onMoreTap: () => _moreFavoritePlaylist(playlist),
           );
         },
       );
@@ -556,6 +661,7 @@ class _MyPageState extends BasePlayingState<MyPage>
             onTap: () {
               Get.to(() => AlbumPage(album: album));
             },
+            onMoreTap: () => _moreFavoriteAlbum(album),
           );
         },
       );
@@ -564,23 +670,29 @@ class _MyPageState extends BasePlayingState<MyPage>
 
   Widget _buildActions() {
     return SliverToBoxAdapter(
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () => Get.to(() => const HistoryPage()),
-              icon: const Icon(Icons.history),
-              label: const Text("播放历史"),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                style: commonButtonStyle,
+                onPressed: () => Get.to(() => const HistoryPage()),
+                icon: const Icon(Icons.history),
+                label: const Text("播放历史"),
+              ),
             ),
-          ),
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () => Get.to(() => const CloudPage()),
-              icon: const Icon(Icons.history),
-              label: const Text("云盘"),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ElevatedButton.icon(
+                style: commonButtonStyle,
+                onPressed: () => Get.to(() => const CloudPage()),
+                icon: const Icon(Icons.history),
+                label: const Text("云盘"),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

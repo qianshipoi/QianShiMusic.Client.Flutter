@@ -5,19 +5,13 @@ import 'package:qianshi_music/pages/play_song/play_song_page.dart';
 import 'package:qianshi_music/pages/playlist_page.dart';
 import 'package:qianshi_music/pages/toplist_page.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
+import 'package:qianshi_music/widgets/common_button_style.dart';
 
 class RegularEnter extends StatelessWidget {
   const RegularEnter({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final buttonStyle = ButtonStyle(
-      shape: MaterialStateProperty.all(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-    );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GridView(
@@ -31,12 +25,12 @@ class RegularEnter extends StatelessWidget {
         ),
         children: [
           IconButton.filled(
-            style: buttonStyle,
+            style: commonButtonStyle,
             onPressed: () => Get.to(() => const DailySongsPage()),
             icon: const Icon(Icons.date_range),
           ),
           IconButton.filled(
-            style: buttonStyle,
+            style: commonButtonStyle,
             onPressed: () {
               final playingController = Get.find<PlayingController>();
               playingController.playFm();
@@ -45,12 +39,12 @@ class RegularEnter extends StatelessWidget {
             icon: const Icon(Icons.radio),
           ),
           IconButton.filled(
-            style: buttonStyle,
+            style: commonButtonStyle,
             onPressed: () => Get.to(() => const PlaylistPage()),
             icon: const Icon(Icons.my_library_music),
           ),
           IconButton.filled(
-            style: buttonStyle,
+            style: commonButtonStyle,
             onPressed: () => Get.to(() => const ToplistPage()),
             icon: const Icon(Icons.nature),
           ),
