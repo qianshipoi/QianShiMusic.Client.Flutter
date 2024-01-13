@@ -17,6 +17,7 @@ class AssetsContants {
   static const chatLottie = "assets/lottie/chat.json";
   static const defaultAvatar =
       "https://chat-api.kuriyama.top/Raw/DefaultAvatar/1.jpg";
+  static const loading = "assets/images/loading.gif";
 }
 
 String formatPlaycount(int? count) {

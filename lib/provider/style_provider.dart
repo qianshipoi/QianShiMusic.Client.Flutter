@@ -1,9 +1,9 @@
-import 'package:qianshi_music/models/responses/style_album_response.dart';
-import 'package:qianshi_music/models/responses/style_artist_response.dart';
-import 'package:qianshi_music/models/responses/style_list_response.dart';
-import 'package:qianshi_music/models/responses/style_playlist_response.dart';
-import 'package:qianshi_music/models/responses/style_preference_response.dart';
-import 'package:qianshi_music/models/responses/style_song_response.dart';
+import 'package:qianshi_music/models/responses/style/style_album_response.dart';
+import 'package:qianshi_music/models/responses/style/style_artist_response.dart';
+import 'package:qianshi_music/models/responses/style/style_list_response.dart';
+import 'package:qianshi_music/models/responses/style/style_playlist_response.dart';
+import 'package:qianshi_music/models/responses/style/style_preference_response.dart';
+import 'package:qianshi_music/models/responses/style/style_song_response.dart';
 import 'package:qianshi_music/provider/index.dart';
 
 class StyleProvider {

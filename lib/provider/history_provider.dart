@@ -1,4 +1,4 @@
-import 'package:qianshi_music/models/responses/history_recommendsongs_response.dart';
+import 'package:qianshi_music/models/responses/song/history_recommendsongs_response.dart';
 import 'package:qianshi_music/provider/index.dart';
 
 class HistoryProvider {

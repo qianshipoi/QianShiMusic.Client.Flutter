@@ -1,11 +1,11 @@
-import 'package:qianshi_music/models/responses/artist_desc_response.dart';
-import 'package:qianshi_music/models/responses/artist_detail_response.dart';
-import 'package:qianshi_music/models/responses/artist_sublist_response.dart';
-import 'package:qianshi_music/models/responses/artist_top_songs_response.dart';
+import 'package:qianshi_music/models/responses/artist/artist_album_response.dart';
+import 'package:qianshi_music/models/responses/artist/artist_desc_response.dart';
+import 'package:qianshi_music/models/responses/artist/artist_detail_response.dart';
+import 'package:qianshi_music/models/responses/artist/artist_mv_response.dart';
+import 'package:qianshi_music/models/responses/artist/artist_sublist_response.dart';
+import 'package:qianshi_music/models/responses/artist/artist_top_songs_response.dart';
 import 'package:qianshi_music/models/responses/base_response.dart';
-import 'package:qianshi_music/models/responses/artist_album_response.dart';
-import 'package:qianshi_music/models/responses/artist_mv_response.dart';
-import 'package:qianshi_music/models/responses/artists_response.dart';
+import 'package:qianshi_music/models/responses/artist/artists_response.dart';
 import 'package:qianshi_music/provider/index.dart';
 
 class ArtistProvider {

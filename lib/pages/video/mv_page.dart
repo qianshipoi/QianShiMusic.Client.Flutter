@@ -13,14 +13,13 @@ import 'package:qianshi_music/widgets/video_player/video_player_utils.dart';
 
 class MvPage extends StatefulWidget {
   final Mv mv;
-  const MvPage(this.mv, {super.key});
+  const MvPage({super.key, required this.mv});
 
   @override
   State<MvPage> createState() => _MvPageState();
 }
 
 class _MvPageState extends State<MvPage> with TickerProviderStateMixin {
-  // 是否全屏
   bool get _isFullScreen =>
       MediaQuery.of(context).orientation == Orientation.landscape;
   Size get _window => MediaQueryData.fromView(View.of(context)).size;
@@ -29,7 +28,7 @@ class _MvPageState extends State<MvPage> with TickerProviderStateMixin {
   Widget? _playerUI;
   VideoPlayerTop? _top;
   VideoPlayerBottom? _bottom;
-  LockIcon? _lockIcon; // 控制是否沉浸式的widget
+  LockIcon? _lockIcon;
   late TabController _controller;
 
   Future<void> _getVideoInfo() async {
@@ -107,7 +106,7 @@ class _MvPageState extends State<MvPage> with TickerProviderStateMixin {
     );
   }
 
-  _buildTabBarPageView() {
+  Widget _buildTabBarPageView() {
     return TabBarView(
       controller: _controller,
       children: [
@@ -138,7 +137,6 @@ class _MvPageState extends State<MvPage> with TickerProviderStateMixin {
 
   Widget safeAreaPlayerUI() {
     return SafeArea(
-      // 全屏的安全区域
       top: !_isFullScreen,
       bottom: !_isFullScreen,
       left: !_isFullScreen,

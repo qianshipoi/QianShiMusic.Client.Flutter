@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qianshi_music/models/mv.dart';
-import 'package:qianshi_music/models/responses/search_collect_response.dart';
+import 'package:qianshi_music/models/responses/search/search_collect_response.dart';
 import 'package:qianshi_music/pages/video/mv_page.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
 import 'package:qianshi_music/widgets/tiles/mv_title.dart';
@@ -67,7 +67,7 @@ class _SearchMvViewState extends State<SearchMvView> {
         itemBuilder: (context, index) => MvTile(
           video: _items[index],
           onTap: () {
-            Get.to(() => MvPage(_items[index]));
+            Get.to(() => MvPage(mv: _items[index]));
           },
         ),
       ),

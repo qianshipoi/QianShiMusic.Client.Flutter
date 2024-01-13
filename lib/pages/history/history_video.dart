@@ -51,7 +51,7 @@ class _HistoryVideosState extends State<HistoryVideos> {
                 Get.snackbar('获取MV失败', response.msg!);
                 return;
               }
-              Get.to(() => MvPage(response.data!));
+              Get.to(() => MvPage(mv: response.data!));
             },
           );
         } else if (recet.resourceType == RecordRecent.mlogTyoe) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qianshi_music/models/responses/search_suggest_response.dart';
+import 'package:qianshi_music/models/responses/search/search_suggest_response.dart';
 import 'package:qianshi_music/pages/search_result_page.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
 import 'package:qianshi_music/utils/logger.dart';

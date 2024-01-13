@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qianshi_music/models/toplist.dart';
 import 'package:qianshi_music/pages/base_playing_state.dart';
-
 import 'package:qianshi_music/pages/playlist_detail_page.dart';
-import 'package:qianshi_music/provider/playlist_provider.dart';
-import 'package:qianshi_music/widgets/cat_playlist.dart';
-import 'package:qianshi_music/widgets/keep_alive_wrapper.dart';
+import 'package:qianshi_music/provider/toplist_provider.dart';
 
 class ToplistPage extends StatefulWidget {
   const ToplistPage({super.key});
@@ -16,24 +14,21 @@ class ToplistPage extends StatefulWidget {
 
 class _ToplistPageState extends BasePlayingState<ToplistPage>
     with TickerProviderStateMixin {
-  final List<String> tabs = [];
-  late TabController _controller;
+  final List<Toplist> _toplists = [];
 
   @override
   void initState() {
     super.initState();
-    _controller = TabController(length: tabs.length, vsync: this);
-    getCatlist();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getToplists();
+    });
   }
 
-  Future getCatlist() async {
-    final response = await PlaylistProvider.catlist();
+  Future _getToplists() async {
+    final response = await ToplistProvider.detail();
     if (response.code == 200) {
-      tabs.clear();
-      tabs.add(response.all!.name);
-      tabs.addAll(response.sub.map((e) => e.name).toList());
-      _controller = TabController(
-          length: tabs.length, initialIndex: _controller.index, vsync: this);
+      _toplists.clear();
+      _toplists.addAll(response.list);
       setState(() {});
     }
   }
@@ -58,53 +53,34 @@ class _ToplistPageState extends BasePlayingState<ToplistPage>
         title: const Text('排行榜'),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          PreferredSize(
-            preferredSize: const Size.fromHeight(40),
-            child: _buildTabBar(),
-          ),
-          Expanded(
-            child: _buildTabBarPageView(),
-          )
-        ],
-      ),
+      body: _buildTabBarPageView(context),
     );
   }
 
-  TabBar _buildTabBar() {
-    return TabBar(
-      controller: _controller,
-      isScrollable: true,
-      indicator: const UnderlineTabIndicator(
-        borderSide: BorderSide(color: Color(0xff2fcfbb), width: 3),
-        insets: EdgeInsets.fromLTRB(0, 0, 0, 10),
-      ),
-      tabs: tabs.map<Tab>((e) => Tab(text: e)).toList(),
-    );
-  }
-
-  Widget _buildTabBarPageView() {
+  Widget _buildTabBarPageView(BuildContext context) {
     return Container(
       color: Colors.grey.withOpacity(0.3),
-      child: TabBarView(
-        controller: _controller,
-        children: _buildItems(),
+      child: ListView.builder(
+        itemCount: _toplists.length,
+        itemBuilder: (context, index) {
+          final toplist = _toplists[index];
+          return ListTile(
+            title: Text(toplist.name),
+            subtitle: Text(
+              toplist.description,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            onTap: () {
+              Get.to(() => PlaylistDetailPage(
+                    playlistId: toplist.id,
+                    heroTag: heroTag,
+                  ));
+            },
+          );
+        },
       ),
     );
-  }
-
-  List<Widget> _buildItems() {
-    return tabs.map<Widget>((e) {
-      return KeepAliveWrapper(
-          child: CatPlaylist(
-              cat: e,
-              onTap: (playlistId) {
-                Get.to(() => PlaylistDetailPage(
-                      playlistId: playlistId,
-                      heroTag: heroTag,
-                    ));
-              }));
-    }).toList();
   }
 }

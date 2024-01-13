@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:qianshi_music/models/artist.dart';
-import 'package:qianshi_music/models/responses/artist_detail_response.dart';
+import 'package:qianshi_music/models/responses/artist/artist_detail_response.dart';
 import 'package:qianshi_music/pages/artist/artist_album.dart';
 import 'package:qianshi_music/pages/artist/artist_dest.dart';
 import 'package:qianshi_music/pages/artist/artist_hot_songs.dart';
@@ -94,12 +94,12 @@ class _ArtistPageState extends State<ArtistPage> {
             ),
           ];
         },
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            KeepAliveWrapper(child: ArtistDest()),
-            KeepAliveWrapper(child: ArtistHotSongs()),
-            KeepAliveWrapper(child: ArtistAlbum()),
-            KeepAliveWrapper(child: ArtistVideo()),
+            KeepAliveWrapper(child: ArtistDest(artist: data!.artist)),
+            KeepAliveWrapper(child: ArtistHotSongs(artist: data!.artist)),
+            KeepAliveWrapper(child: ArtistAlbum(artist: data!.artist)),
+            KeepAliveWrapper(child: ArtistVideo(artist: data!.artist)),
           ],
         ),
       ),

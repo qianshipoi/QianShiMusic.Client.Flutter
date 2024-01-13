@@ -1,10 +1,5 @@
-import 'dart:io';
-
-import 'package:cookie_jar/cookie_jar.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:qianshi_music/constants.dart';
 import 'package:qianshi_music/locale/locale_message.dart';
 import 'package:qianshi_music/pages/login_page.dart';
@@ -20,8 +15,6 @@ import 'package:qianshi_music/utils/http/http_util.dart';
 import 'package:qianshi_music/utils/sputils.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-late CookieJar jar;
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initStore();
@@ -30,20 +23,15 @@ Future<void> main() async {
 
 Future<void> initStore() async {
   await SpUtil().init();
-
-  final Directory appDocDir = await getApplicationDocumentsDirectory();
-  final String appDocPath = appDocDir.path;
-  jar = PersistCookieJar(
-    ignoreExpires: true,
-    storage: FileStorage("$appDocPath/.cookies/"),
-  );
-
-  HttpUtils.init(
-      baseUrl: ApiContants.baseUrl, interceptors: [CookieManager(jar)]);
+  HttpUtils.init(baseUrl: ApiContants.baseUrl);
   Get.put(IndexController());
   Get.put(CurrentUserController());
   Get.put(PlayingController());
   Get.lazyPut(() => AuthProvider());
+  EasyLoading.instance.indicatorWidget = const SizedBox(
+      height: 60,
+      width: 60,
+      child: Image(image: AssetImage(AssetsContants.loading)));
 }
 
 class MyApp extends StatelessWidget {
@@ -55,11 +43,37 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'QianShi Music',
-      darkTheme: ThemeData.dark(useMaterial3: true),
+      darkTheme: ThemeData(
+        colorScheme: const ColorScheme(
+          primary: Color(0xFF45046A),
+          secondary: Color(0xFF5C2A9D),
+          surface: Color(0xFF4D4C7D),
+          background: Color(0xFF202040),
+          error: Color(0xFF7D0633),
+          onPrimary: Color(0xFFBBE1FA),
+          onSecondary: Color(0xFFBBE1FA),
+          onSurface: Color(0xFFBBE1FA),
+          onBackground: Color(0xFFBBE1FA),
+          onError: Color(0xFFFFFFFF),
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 196, 183, 215)),
+        colorScheme: const ColorScheme(
+          primary: Color(0xFFD9EDBF),
+          secondary: Color(0xFFFDFFAB),
+          surface: Color(0xFFDCF2F1),
+          background: Color(0xFFEEF5FF),
+          error: Color(0xFFFFB996),
+          onPrimary: Color(0xFF45474B),
+          onSecondary: Color(0xFF45474B),
+          onSurface: Color(0xFF45474B),
+          onBackground: Color(0xFF45474B),
+          onError: Color(0xFFFFFFFF),
+          brightness: Brightness.light,
+        ),
         useMaterial3: true,
       ),
       navigatorKey: navigatorKey,

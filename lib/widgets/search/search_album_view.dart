@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:qianshi_music/models/album.dart';
-import 'package:qianshi_music/models/responses/search_collect_response.dart';
+import 'package:qianshi_music/models/responses/search/search_collect_response.dart';
 import 'package:qianshi_music/provider/search_provider.dart';
 import 'package:qianshi_music/widgets/tiles/search_album_tile.dart';
 

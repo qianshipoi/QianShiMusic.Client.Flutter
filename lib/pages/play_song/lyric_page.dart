@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'package:qianshi_music/models/lyric_item.dart';
-import 'package:qianshi_music/models/responses/lyric_response.dart';
+import 'package:qianshi_music/models/responses/song/lyric_response.dart';
 import 'package:qianshi_music/provider/track_provider.dart';
 import 'package:qianshi_music/stores/playing_controller.dart';
 import 'package:qianshi_music/utils/logger.dart';
