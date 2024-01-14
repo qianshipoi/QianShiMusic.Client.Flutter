@@ -26,7 +26,12 @@ class HorizontalTitleListView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(title),
-                TextButton(onPressed: onTap, child: const Text('See All')),
+                TextButton(
+                    onPressed: onTap,
+                    child: Text(
+                      'See All',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    )),
               ],
             ),
           ),

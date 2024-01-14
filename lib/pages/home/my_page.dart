@@ -73,6 +73,110 @@ class _MyPageState extends BasePlayingState<MyPage>
     }
   }
 
+  _moreFavoritePlaylist(Playlist playlist) {
+    Get.bottomSheet(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "收藏歌单",
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.delete),
+              title: const Text("取消关注"),
+              onTap: () {
+                Get.back();
+                _delFavoritePlaylist(playlist);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<bool> _delFavoritePlaylist(Playlist playlist) async {
+    final result =
+        await ToastUtil.alert("管理歌单", "确认是否取消收藏歌单:[${playlist.name}]");
+
+    if (!result) {
+      Get.back();
+      return false;
+    }
+
+    try {
+      await EasyLoading.show();
+      final response = await PlaylistProvider.subscribe(playlist.id, false);
+      if (response.code != 200) {
+        Get.snackbar("取消收藏歌单失败", response.msg!);
+        return false;
+      }
+      _currentUserController.favoritePlaylist
+          .removeWhere((element) => element.id == playlist.id);
+    } finally {
+      await EasyLoading.dismiss();
+    }
+    Get.back();
+    return true;
+  }
+
+  _moreFavoriteAlbum(Album album) {
+    Get.bottomSheet(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "收藏专辑",
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.delete),
+              title: const Text("取消关注"),
+              onTap: () {
+                Get.back();
+                _delFavoriteAlbum(album);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<bool> _delFavoriteAlbum(Album album) async {
+    final result =
+        await ToastUtil.alert("管理收藏专辑", "确认是否取消收藏专辑:[${album.name}]");
+
+    if (!result) {
+      Get.back();
+      return false;
+    }
+
+    try {
+      await EasyLoading.show();
+      final response = await AlbumProvider.sub(album.id, isSub: false);
+      if (response.code != 200) {
+        Get.snackbar("取消收藏专辑失败", response.msg!);
+        return false;
+      }
+      _currentUserController.favoriteAlbums
+          .removeWhere((element) => element.id == album.id);
+    } finally {
+      await EasyLoading.dismiss();
+    }
+    Get.back();
+    return true;
+  }
+
   @override
   void dispose() {
     _textEditingController.dispose();
@@ -256,6 +360,9 @@ class _MyPageState extends BasePlayingState<MyPage>
   }
 
   SizedBox _buildBaseInfo() {
+    final textStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: Theme.of(context).colorScheme.primary,
+        );
     return SizedBox(
       height: 200,
       child: Stack(
@@ -270,18 +377,26 @@ class _MyPageState extends BasePlayingState<MyPage>
             ),
           ),
           Positioned(
-            bottom: 0,
+            bottom: 10,
             left: 16,
             right: 16,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
-              child: Container(
-                height: 120,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(32)),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                    child: Container(
+                      height: 120,
+                      padding: const EdgeInsets.only(bottom: 16),
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          color: Colors.transparent),
+                    ),
+                  ),
                 ),
-                child: Stack(
+                Stack(
                   children: [
                     Transform.translate(
                       offset: const Offset(0, -32),
@@ -300,14 +415,18 @@ class _MyPageState extends BasePlayingState<MyPage>
                     ),
                     Column(
                       children: [
-                        const SizedBox(height: 48),
+                        const SizedBox(height: 32),
                         Text(
-                          _currentUserController.currentProfile.value == null
-                              ? "未登录"
-                              : _currentUserController
-                                  .currentProfile.value!.nickname,
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
+                            _currentUserController.currentProfile.value == null
+                                ? "未登录"
+                                : _currentUserController
+                                    .currentProfile.value!.nickname,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                )),
                         const SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -321,7 +440,7 @@ class _MyPageState extends BasePlayingState<MyPage>
                               },
                               child: Text(
                                 "${_currentUserController.currentProfile.value == null ? 0 : _currentUserController.currentProfile.value!.follows} 关注",
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: textStyle,
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -335,13 +454,13 @@ class _MyPageState extends BasePlayingState<MyPage>
                               },
                               child: Text(
                                 "${_currentUserController.currentProfile.value == null ? 0 : _currentUserController.currentProfile.value!.followeds} 粉丝",
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: textStyle,
                               ),
                             ),
                             const SizedBox(width: 8),
                             Text(
                               "Lv.${_currentUserController.currentProfile.value == null ? 0 : _currentUserController.currentProfile.value!.vipType}",
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: textStyle,
                             ),
                           ],
                         )
@@ -349,7 +468,7 @@ class _MyPageState extends BasePlayingState<MyPage>
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
           ),
         ],
@@ -360,13 +479,13 @@ class _MyPageState extends BasePlayingState<MyPage>
   Widget _buildLikePlaylist(BuildContext context) {
     final likePlaylist = _currentUserController.likedPlaylist.value;
     if (likePlaylist == null) {
-      return Container();
+      return const SizedBox.shrink();
     }
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Theme.of(context).hintColor.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
         borderRadius: BorderRadius.circular(16),
       ),
       child: InkWell(
@@ -411,7 +530,8 @@ class _MyPageState extends BasePlayingState<MyPage>
               onPressed: () {
                 _playingController.addPlaylist(likePlaylist, playNow: true);
               },
-              child: const Text("播放全部"),
+              child:
+                  Text("播放全部", style: Theme.of(context).textTheme.bodyMedium),
             ),
           ],
         ),
@@ -555,8 +675,14 @@ class _MyPageState extends BasePlayingState<MyPage>
               child: ElevatedButton.icon(
                 style: commonButtonStyle,
                 onPressed: () => Get.to(() => const HistoryPage()),
-                icon: const Icon(Icons.history),
-                label: const Text("播放历史"),
+                icon: Icon(
+                  Icons.history,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                label: Text(
+                  "播放历史",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
             ),
             const SizedBox(width: 8),
@@ -564,8 +690,14 @@ class _MyPageState extends BasePlayingState<MyPage>
               child: ElevatedButton.icon(
                 style: commonButtonStyle,
                 onPressed: () => Get.to(() => const CloudPage()),
-                icon: const Icon(Icons.history),
-                label: const Text("云盘"),
+                icon: Icon(
+                  Icons.cloud_upload_outlined,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                label: Text(
+                  "云盘",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
             ),
           ],

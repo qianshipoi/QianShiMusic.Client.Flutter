@@ -15,11 +15,14 @@ class _IndexPageState extends State<IndexPage> {
   @override
   Widget build(BuildContext context) {
     return const SingleChildScrollView(
-      child: Column(children: [
-        RegularEnter(),
-        RecommendPlaylists(),
-        RecommendSongs(),
-      ]),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Column(children: [
+          RegularEnter(),
+          RecommendPlaylists(),
+          RecommendSongs(),
+        ]),
+      ),
     );
   }
 }
